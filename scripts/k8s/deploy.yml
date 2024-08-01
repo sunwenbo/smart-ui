@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-admin-ui
+  labels:
+    app: go-admin-ui
+    service: go-admim-ui
+spec:
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+  selector:
+    app: go-admin-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-admin-ui-v1
+  labels:
+    app: go-admin-ui
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-admin-ui
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: go-admin-ui
+        version: v1
+    spec:
+      containers:
+        - name: go-admin-ui
+          image: ${IMAGE}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: frontendconf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+      volumes:
+        - name: frontendconf
+          configMap:
+            name: nginx-frontend
+---
