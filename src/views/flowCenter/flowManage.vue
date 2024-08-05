@@ -26,7 +26,7 @@
       <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
         <el-table-column :label="$t('table.id')" min-width="30px" align="center" prop="id" />
         <el-table-column :label="$t('table.name')" min-width="80px" align="center" prop="name" />
-        <el-table-column :label="$t('table.linkTemplate')" min-width="50px" align="center" prop="template" />
+<!--        <el-table-column :label="$t('table.linkTemplate')" min-width="50px" align="center" prop="template" />-->
         <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-more" @click="toggleDescDialog(scope.row.description)" />
@@ -100,18 +100,18 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
-                <el-form-item label="模板:" prop="tempLate">
-                  <el-select v-model="ruleForm.template" filterable multiple placeholder="请选择模版" style="width: 100%">
-                    <el-option
-                      v-for="item in flowTemplateLists"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
+<!--              <el-col :span="12">-->
+<!--                <el-form-item label="模板:" prop="tempLate">-->
+<!--                  <el-select v-model="ruleForm.template" filterable multiple placeholder="请选择模版" style="width: 100%">-->
+<!--                    <el-option-->
+<!--                      v-for="item in flowTemplateLists"-->
+<!--                      :key="item.id"-->
+<!--                      :label="item.name"-->
+<!--                      :value="item.name"-->
+<!--                    />-->
+<!--                  </el-select>-->
+<!--                </el-form-item>-->
+<!--              </el-col>-->
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
@@ -128,7 +128,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item label="通知:">
-                  <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择流程任务" style="width: 100%">
+                  <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
                     <el-option label="邮件" :value="1" />
                     <el-option label="飞书" :value="2" />
                     <el-option label="电话" :value="3" />
@@ -196,9 +196,9 @@
       </el-dialog>
       <el-dialog :visible.sync="unbindDialogVisible" title="解绑确认" width="30%">
         <span>{{ descriptionDialogContent }}</span>
-        <span>确定要解绑以下模板吗？</span>
+        <span>确定要解绑绑定的所有模板吗？</span>
         <div>流程名称: {{ currentFlow ? currentFlow.name : '' }}</div>
-        <div>绑定模板: {{ currentTemplate }}</div>
+<!--        <div>绑定模板: {{ currentTemplate }}</div>-->
         <span slot="footer" class="dialog-footer">
           <el-button type="warning" @click="cancelUnbind">取消</el-button>
           <el-button type="primary" @click="confirmUnbind">确定</el-button>
@@ -221,7 +221,6 @@
 import waves from '@/directive/waves'
 import { listUser } from '@/api/admin/sys-user'
 import { listRole } from '@/api/admin/sys-role'
-import {mapGetters} from "vuex"
 import { categoryList, flowTemplateList } from '@/api/smart/flowCenter'
 import {parseTime} from "@/utils";
 import {createFlow, deleteFlow, flowDetails, getFlowList, updateFlow, cloneFlow } from "@/api/smart/flowManage";
@@ -248,7 +247,6 @@ export default {
       unbindDialogVisible: false,
       searchContent: '',
       currentFlow: null,
-      currentTemplate: null,
       queryParams: {
         pageIndex: 1,
         pageSize: 10
@@ -275,7 +273,7 @@ export default {
       template: [],
       taskListData: [],
       wfdDesignRefresh: true,
-      dialogFlowVisibleName: 1,
+      dialogFlowVisibleName: undefined,
       ruleForm: {
         id: undefined,
         name: '',
@@ -315,9 +313,6 @@ export default {
     this.getFlowInitData()
   },
   computed: {
-    ...mapGetters({
-      pickerOptions: 'pickerOptions/pickerOptions'
-    }),
     inputPlaceholder() {
       return this.searchType === 'name' ? '请输入流程名称' : '请输入ID'
     }
@@ -339,14 +334,14 @@ export default {
       })
     },
     // 获取任务列表
-    getTaskList() {
-      taskList({
-        page: 1,
-        pageSize: 99999
-      }).then(response => {
-        this.taskListData = response.data.data
-      })
-    },
+    // getTaskList() {
+    //   taskList({
+    //     page: 1,
+    //     pageSize: 99999
+    //   }).then(response => {
+    //     this.taskListData = response.data.data
+    //   })
+    // },
     // 获取部门
     getDepartments() {
       getDeptList().then(response => {
@@ -381,7 +376,7 @@ export default {
         // 仅保留 userId 和 username
         this.users = users.map(user => ({
           id: user.userId,
-          name: user.username
+          name: user.nickName
         }));
       })
     },
@@ -433,10 +428,9 @@ export default {
       })
     },
     verifyProcess(structureValue) {
+      console.log('structureValue=',structureValue)
       for (var r of structureValue.nodes) {
-        if (r.sort === undefined || r.sort === null || r.sort === '') {
-          return '流程节点顺序不能为空'
-        } else if (r.label === undefined || r.label === null || r.label === '') {
+        if (r.label === undefined || r.label === null || r.label === '') {
           return '流程节点标题不能为空'
         }
         if (r.clazz === 'userTask' || r.clazz === 'receiveTask') {
@@ -448,13 +442,14 @@ export default {
         }
       }
       for (var e of structureValue.edges) {
-        if (e.sort === undefined || e.sort === null || e.sort === '') {
-          return '流转顺序不能为空'
+        if (e.seq === undefined || e.seq === null || e.seq === '') {
+          return '流转序号不能为空'
         } else if (e.label === undefined || e.label === null || e.label === '') {
           return '流转标题不能为空'
-        } else if (e.flowProperties === undefined || e.flowProperties === null || e.flowProperties === '') {
-          return '流转属性不能为空'
         }
+        // } else if (e.flowProperties === undefined || e.flowProperties === null || e.flowProperties === '') {
+        //   return '流转属性不能为空'
+        // }
       }
       return ''
     },
@@ -463,24 +458,21 @@ export default {
         if (valid) {
           var structureValue = this.$refs.wfd.graph.save()
           console.log('structureValue=', structureValue)
-          // var r = this.verifyProcess(structureValue)
-          // if (r !== '') {
-          //   this.$message.error(r)
-          //   return
-          // }
-          this.ruleForm.structure = structureValue
-          createFlow(this.ruleForm).then(response => {
-            if (response.code === 200) {
-              this.$showSuccess('流程创建成功');
-              this.getList()
-              this.dialogVisible = false
-            }else {
-                this.$message.error('创建流程失败，请完善流程')
-              }
-          })
+          var r = this.verifyProcess(structureValue)
+          if (r !== '') {
+            this.$message.error(r)
+            return
+          }
           if (structureValue.nodes.length > 0 && structureValue.edges.length > 0) {
             this.ruleForm.structure = structureValue
             createFlow(this.ruleForm).then(response => {
+              if (response.code === 200) {
+                this.$showSuccess('流程创建成功');
+                this.getList()
+                this.dialogVisible = false
+              }else {
+                this.$showError('创建流程失败，请完善流程')
+              }
               this.getList()
               this.dialogVisible = false
             })
@@ -494,11 +486,11 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           var structureValue = this.$refs.wfd.graph.save()
-          // var r = this.verifyProcess(structureValue)
-          // if (r !== '') {
-          //   this.$message.error(r)
-          //   return
-          // }
+          var r = this.verifyProcess(structureValue)
+          if (r !== '') {
+            this.$message.error(r)
+            return
+          }
           if (structureValue.nodes.length > 0 && structureValue.edges.length > 0) {
             updateFlow({
               id: this.ruleForm.id,
@@ -564,7 +556,7 @@ export default {
     },
     handleUnbind(row) {
       this.currentFlow = row
-      this.currentTemplate = row.template // 假设 'linkTemplate' 是绑定的模板
+      // this.currentTemplate = row.template // 假设 'linkTemplate' 是绑定的模板
       this.unbindDialogVisible = true;
     },
     confirmUnbind() {

@@ -154,7 +154,7 @@ export default {
     process: '流程',
     status: '状态',
     actions: '操作',
-    description: '描述信息',
+    description: '描述',
     view: '查看',
     update: '更新',
     shift: '转交',

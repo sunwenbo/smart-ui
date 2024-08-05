@@ -31,7 +31,9 @@
             <el-col :span="12">
               <el-form-item label="优先级:" prop="priority">
                 <el-radio-group v-model="applyQuery.priority">
-                  <el-radio v-for="priority in orderWorksPriority" :key="priority.value" :label="priority.value">{{ priority.label }}</el-radio>
+                  <el-radio v-for="priority in orderWorksPriority" :key="priority.value" :label="priority.value">
+                    {{ priority.label }}
+                  </el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -77,6 +79,8 @@ export default {
         formConfig: {},
         widgetList: []
       },
+      formData: {},
+      optionData: {},
       applyQuery: {
         title: '',
         description: '',
@@ -89,8 +93,6 @@ export default {
       },
       flowTemplatedata: [],
       matchedTemplate: [],
-      formData: {},
-      optionData: {},
       listLoading: false,
       categoryList: [],
       departments: [],
@@ -108,14 +110,27 @@ export default {
     }
   },
   created() {
+    this.initializeTitle()
     this.loadData()
-    this.$route.params.bindTempLate
+  },
+  watch: {
+    generatedTitle(newTitle) {
+      this.applyQuery.title = newTitle;
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      // 将路由参数传递给组件
+      if (to.params.title) {
+        vm.applyQuery.title = vm.generatedTitle;
+      }
+    });
   },
   methods: {
     async loadData() {
       try {
         const [priorityResponse, templateResponse, categoryResponse, deptResponse] = await Promise.all([
-          this.getDicts('order_works_priority'),
+          this.getDicts('order_works_priority_type'),
           this.getFlowTemplate(),
           this.getCategory(),
           getDeptList()
@@ -145,7 +160,7 @@ export default {
     },
     // 处理返回操作，比如返回上一页
     goBack() {
-      this.$router.push('/order/apply')
+      this.$router.push('/orderCenter/apply')
     },
     // 生成工单标题
     generateTitle() {
@@ -154,6 +169,12 @@ export default {
         const formattedDate = new Date(now.getTime() + (8 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace(/[-T:]/g, '')
         this.applyQuery.title = `${this.$route.params.title}-${this.$store.getters.name}-${formattedDate}`
       }
+    },
+    initializeTitle() {
+      const routeTitle = this.$route.params.title || '默认标题'
+      const now = new Date()
+      const formattedDate = new Date(now.getTime() + (8 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace(/[-T:]/g, '')
+      this.applyQuery.title = `${routeTitle}-${this.$store.getters.name}-${formattedDate}`
     },
     // 提交工单
     async applyOrderWork() {

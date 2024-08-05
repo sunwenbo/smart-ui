@@ -603,9 +603,10 @@ export default {
       this.searchType = command
     },
     handleReset() {
-      this.searchContent = ''
-      this.getItemsList()
-      // this.itemsSearch()
+      setTimeout(() => {
+        this.searchContent = ''
+        this.getItemsList()
+      }, 400)
     },
     openDialog(row) {
       this.descriptionDialogContent = row

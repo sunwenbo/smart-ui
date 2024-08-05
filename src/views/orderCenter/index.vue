@@ -110,7 +110,6 @@ export default {
   methods: {
     // 跳转到对应的页面，根据数据库link字段的值进行跳转
     handleClick(item) {
-      console.log('item=', item)
       this.$router.push({ name: 'FormRender', params: { bindTempLate: item.bindTempLate, title: item.title,link: item.link }})
     },
     // 根据数据库数据Id字段，显示收藏图标
@@ -172,9 +171,11 @@ export default {
       return this.filteredData.filter(item => item.categoryId === categoryId)
     },
     handleReset() {
-      this.searchContent = ''
-      this.searchData()
-    }
+      setTimeout(() => {
+        this.searchContent = ''
+        this.searchData()
+      }, 400)
+    },
   }
 }
 </script>

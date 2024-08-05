@@ -29,13 +29,14 @@
         <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
           <el-table-column :label="$t('table.id')" min-width="30px" align="center" prop="id" />
           <el-table-column :label="$t('table.name')" min-width="80px" align="center" prop="name" />
-          <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
-          <el-table-column :label="$t('table.category')" min-width="50px" align="center">
+          <el-table-column :label="$t('table.creator')" min-width="30px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.regenerator')" min-width="30px" align="center" prop="regenerator" />
+          <el-table-column :label="$t('table.category')" min-width="40px" align="center">
             <template slot-scope="scope">
               {{ getCategoryName(scope.row.categoryId) }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.bindFlow')" min-width="30px" align="center">
+          <el-table-column :label="$t('table.bindFlow')" min-width="50px" align="center">
             <template slot-scope="scope">
               {{ getFlowNameById(scope.row.bindFlow) }}
             </template>
@@ -329,14 +330,12 @@ export default {
       }, 500)
     },
     handleReset() {
-      this.searchContent = ''
-      try {
-        this.getFlowTemplateList(this.searchContent)
-      } catch (error) {
-        console.error('Search failed:', error)
-      } finally {
-        this.listLoading = false // 停止加载状态
-      }
+      this.listLoading = true
+      setTimeout(() => {
+        this.searchContent = ''
+        this.getFlowTemplateList()
+        this.listLoading = false
+      }, 400)
     },
     sortChange({ prop, order }) {
       this.listLoading = true // 开始加载状态
@@ -408,7 +407,6 @@ export default {
     submitForm() {
       this.$refs.vFormRef.validate((valid) => {
         if (valid) {
-          console.log("this.isUpdate=", this.isUpdate)
           if (this.isUpdate) {
             // 更新表单
             this.updateFlowTemplates(this.currentData)

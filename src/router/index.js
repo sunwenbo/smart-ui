@@ -116,10 +116,20 @@ const createRouter = () => new Router({
 
 const router = createRouter()
 
+// 添加导航守卫
+router.beforeEach((to, from, next) => {
+  // 检查路由参数是否存在，不存在则设置默认值
+  if (!to.params.title) {
+    to.params.title = '默认标题'
+  }
+  next()
+})
+
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
+
 
 export default router

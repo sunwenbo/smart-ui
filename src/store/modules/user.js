@@ -4,6 +4,7 @@ import router, { resetRouter } from '@/router'
 import storage from '@/utils/storage'
 
 const state = {
+  userid: '',
   token: getToken(),
   name: '',
   avatar: '',
@@ -16,6 +17,9 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_USERID: (state, userid) => {
+    state.userid = userid
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -39,6 +43,7 @@ const mutations = {
 }
 
 const actions = {
+
   // user login
   login({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
@@ -62,8 +67,7 @@ const actions = {
           removeToken()
           resolve()
         }
-
-        const { roles, name, avatar, introduction, permissions } = response.data
+        const { roles, name, avatar, introduction, permissions,userId } = response.data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -74,6 +78,8 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
+        commit('SET_USERID', userId)
+
         resolve(response)
       }).catch(error => {
         reject(error)

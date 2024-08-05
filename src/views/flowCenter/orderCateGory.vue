@@ -103,6 +103,7 @@ import Pagination from '@/components/Pagination/index.vue'
 import { parseTime } from '@/utils'
 import { Message } from 'element-ui'
 import { categoryList, createCateGory, deleteCateGory, updateCateGory } from '@/api/smart/flowCenter'
+import {mapGetters} from "vuex";
 
 export default {
   name: 'OrderCateGory',
@@ -132,33 +133,6 @@ export default {
         page: 1,
         pageSize: 10,
       }, // 查询模板
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
       createCateGoryRules: {
         name: [
           { required: true, message: '请输入英文名称', trigger: 'blur' }
@@ -343,10 +317,13 @@ export default {
       this.searchType = command
     },
     handleReset() {
-      this.searchContent = ''
-      this.cateGorySearch()
+      this.listLoading = true
+      setTimeout(() => {
+        this.searchContent = ''
+        this.cateGorySearch()
+        this.listLoading = false
+      }, 400)
     },
-
     openDownloadDialog() {
       this.downloadDialogVisible = true
     },

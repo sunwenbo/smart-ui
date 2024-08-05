@@ -35,16 +35,17 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: false,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
-    hot: false, // 禁用热模块替换（HMR）
-    watchOptions: {
-      poll: false, // 禁用轮询
-      ignored: /node_modules/ // 忽略 node_modules 文件夹的变化
-    }
+    open: false
+    // overlay: {
+    //   warnings: false,
+    //   errors: true
+    // },
+    // hot: false // 禁用热模块替换（HMR）
+    // watchOptions: {
+    //   aggregateTimeout: 300, // 保存后30000毫秒后触发重新编译
+    //   poll: false, // 禁用轮询
+    //   ignored: /node_modules/ // 忽略node_modules文件夹
+    // }
   },
   configureWebpack: {
     plugins: [

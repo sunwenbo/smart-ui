@@ -78,3 +78,13 @@ export async function orderWorkHistory(params) {
     params
   })
 }
+
+
+// 处理工单
+export async function handleOrderWork(data) {
+  return request({
+    url: '/api/v1/order/works/handle',
+    method: 'put',
+    data
+  })
+}

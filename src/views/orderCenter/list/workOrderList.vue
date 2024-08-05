@@ -277,6 +277,8 @@ import { Message } from 'element-ui'
 import { orderWorksList, updateOrderWork, getRelatedToMeWorks,getMyBacklogWorks,getCreatedByMeWorks } from '@/api/smart/workOrder'
 import { listUser } from '@/api/admin/sys-user'
 import {createOrderWorkNotify} from "@/api/smart/common";
+import {mapGetters} from "vuex";
+import pickerOptions from "@/store/modules/pickerOptions";
 
 export default {
   name: 'OrderWorksList',
@@ -357,37 +359,14 @@ export default {
         currentHandler: '', // 当前操作人
         formData: {}
       },
+      priorityTagMap: [],
       downloadLoading: false,
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      }
     }
   },
   computed: {
+    ...mapGetters({
+        pickerOptions: 'pickerOptions/pickerOptions'
+    }),
     processOptions() {
       return this.getOptions('process')
     },
@@ -422,17 +401,26 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
     // 先获取字典数据
-    this.getDicts('order_works_status').then(response => {
-      this.orderWorksStatus = response.data
-    })
-    this.getDicts('order_works_priority').then(response => {
-      this.orderWorksPriority = response.data
-      console.log('this.orderWorksPriority =', this.orderWorksPriority )
-    })
-    // 再获取订单项数据
-    this.getOrderWorksList()
+    try {
+      const [statusResponse, priorityResponse, priorityResponseStatus] = await Promise.all([
+        this.getDicts('order_works_status'),
+        this.getDicts('order_works_priority_type'),
+        this.getDicts('order_works_priority_status')
+      ]);
+      this.orderWorksStatus = statusResponse.data;
+      this.orderWorksPriority = priorityResponse.data;
+      this.priorityTagMap = priorityResponseStatus.data.reduce((map, item) => {
+        map[item.label] = item.value;
+        return map;
+      }, {});
+
+      // 再获取订单项数据
+      await this.getOrderWorksList()
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
   },
   methods: {
     async getOrderWorksList() {
@@ -656,7 +644,7 @@ export default {
         this.searchContent = ''
           this.getOrderWorksList()
         this.listLoading = false
-      }, 500)
+      }, 400)
     },
     filterReset() {
       // 清除筛选条件
@@ -692,19 +680,10 @@ export default {
       return status ? status.label : row.status
     },
     getTagType(priority) {
-      switch (priority) {
-        case 'normal':
-          return 'success'
-        case 'urgent':
-          return 'warning'
-        case 'very-urgent':
-          return 'danger'
-        default:
-          return ''
-      }
+      return this.priorityTagMap[priority] || ''
     },
     getStatusTag(status) {
-      return this.statusTagMapping[status] || '';
+      return this.statusTagMapping[status] || ''
     },
     openDownloadDialog() {
       this.downloadDialogVisible = true
@@ -722,6 +701,8 @@ export default {
     handleOrderCreate() {
       // 在这里进行页面跳转
       this.$router.push('/orderCenter/apply')
+      // window.open(this.$router.resolve({ path: '/orderCenter/apply' }).href, '_blank')
+
     },
     sortChange({ prop, order }) {
       this.listLoading = true // 开始加载状态
@@ -766,7 +747,6 @@ export default {
       }))
     },
     actionsHandle(command, row) {
-      console.log('command=', command)
       switch (command) {
         case 'view':
           this.handleView(row)
