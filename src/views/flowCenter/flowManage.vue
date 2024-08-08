@@ -428,7 +428,6 @@ export default {
       })
     },
     verifyProcess(structureValue) {
-      console.log('structureValue=',structureValue)
       for (var r of structureValue.nodes) {
         if (r.label === undefined || r.label === null || r.label === '') {
           return '流程节点标题不能为空'
@@ -457,7 +456,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           var structureValue = this.$refs.wfd.graph.save()
-          console.log('structureValue=', structureValue)
           var r = this.verifyProcess(structureValue)
           if (r !== '') {
             this.$message.error(r)

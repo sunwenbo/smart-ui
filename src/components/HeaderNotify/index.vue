@@ -63,7 +63,6 @@ export default {
           readStatus: 1
         }
         const response = await updateOrderWorkNotify(updateNotifyQuery)
-        console.log('response=', response)
         if (response.code === 200) {
           this.$showSuccess('通知已读成功');
           await this.fetchNotifications(); // Refresh the notifications after update

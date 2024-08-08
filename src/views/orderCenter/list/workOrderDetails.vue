@@ -164,7 +164,6 @@ export default {
       await orderWorksSearch(this.$route.params.id).then(response => {
         this.orderDetail = response.data
       })
-      console.log("this.orderDetail=",this.orderDetail)
       await this.getOrderWorkHistory()
       await this.processOrderWork();
     } catch (error) {
