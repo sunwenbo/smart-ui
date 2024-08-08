@@ -65,12 +65,18 @@
         <span> 操作历史 </span>
         <hr class="divider">
         <el-table :data="histOperData" border stripe>
-          <el-table-column prop="nodeName" label="节点名称" width="180" align="center" />
-          <el-table-column prop="transfer" label="流转" width="180" align="center" />
-          <el-table-column prop="handler" label="处理人" align="center" />
-          <el-table-column prop="handleDuration" label="处理时长" align="center" />
-          <el-table-column prop="handleTime" label="处理时间" align="center" />
-          <el-table-column prop="remark" label="备注" align="center" />
+          <el-table-column prop="nodeName" label="节点名称" width="150" align="center" />
+          <el-table-column prop="transfer" label="流转" width="150" align="center" />
+          <el-table-column prop="handlerName" label="处理人" width="140" align="center" />
+          <el-table-column :label="$t('table.status')" width="140px" align="center" prop="status">
+            <template slot-scope="scope">
+              {{ getResultText(scope.row.status) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" width="140px" label="备注" align="center" />
+          <el-table-column prop="handleDuration" width="140px" label="处理时长(分)" align="center" />
+          <el-table-column prop="handleTime" width="180px" label="处理时间" align="center" />
+          <el-table-column :label="$t('table.createdAt')" min-width="90px" align="center" prop="createdAt" />
         </el-table>
       </div>
     </el-card>
@@ -109,6 +115,7 @@ export default {
       optionData: {},
       orderWorksStatus: [],
       orderWorksPriority: [],
+      flowResultResponse: [],
       priorityTagMap: [],
       histOperData: [],
       orderDetail: {
@@ -138,13 +145,15 @@ export default {
   async activated() {
     try {
       // 先获取字典数据
-      const [statusResponse, priorityResponse, priorityResponseStatus] = await Promise.all([
+      const [statusResponse, priorityResponse, priorityResponseStatus,flowResultResponse] = await Promise.all([
         this.getDicts('order_works_status'),
         this.getDicts('order_works_priority_type'),
-        this.getDicts('order_works_priority_status')
+        this.getDicts('order_works_priority_status'),
+        this.getDicts('order_works_flow_result')
       ]);
       this.orderWorksStatus = statusResponse.data;
       this.orderWorksPriority = priorityResponse.data;
+      this.flowResultResponse = flowResultResponse.data;
       // 转换 priorityTagMap 为对象
       this.priorityTagMap = priorityResponseStatus.data.reduce((map, item) => {
         map[item.label] = item.value;
@@ -232,14 +241,15 @@ export default {
       const priorityItem = this.orderWorksPriority.find(item => item.value === priority);
       return priorityItem ? priorityItem.label : priority;
     },
+    getResultText(value) {
+      const option = this.flowResultResponse.find(option => option.value === value)
+      return option ? option.label : '';
+    },
     async handleApprove() {
       try {
         const response = await handleOrderWork({
           id: this.orderDetail.id,
-          title: this.orderDetail.title,
-          currentNode: this.orderDetail.currentNode,
-          currentHandlerId: this.orderDetail.currentHandlerID,
-          actionType: 'approve'
+          actionType: '1' // 1 为同意  0 为拒绝
         })
 
         if (response.code === 200) {
@@ -260,11 +270,7 @@ export default {
         type: 'warning'
       }).then(async () => {
         this.handleData.id = this.orderDetail.id
-        this.handleData.title = this.orderDetail.title
-        this.handleData.currentNode = this.orderDetail.currentNode
-        this.handleData.currentHandlerId = this.orderDetail.currentHandlerID
-        this.handleData.actionType = 'approve'
-        console.log('this.handleData=',this.handleData)
+        this.handleData.actionType = '0'
         try {
           const response = await handleOrderWork(this.handleData)
           if (response.code === 200) {

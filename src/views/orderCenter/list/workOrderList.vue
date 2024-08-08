@@ -115,7 +115,7 @@
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.currentHandler')" width="88px" align="center" prop="currentHandler" />
-            <el-table-column :label="$t('table.priority')" min-width="87px" align="center">
+            <el-table-column :label="$t('table.priority')" width="87px" align="center">
               <template slot-scope="scope">
                 <el-tag :type="getTagType(scope.row.priority)">
                   {{ formatPriority(scope.row) }}
