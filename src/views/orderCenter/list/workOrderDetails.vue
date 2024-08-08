@@ -86,6 +86,7 @@
 <script>
 import {handleOrderWork, orderWorkHistory, orderWorksSearch} from '@/api/smart/workOrder'
 import {getDeptList} from "@/api/admin/sys-dept";
+import {deleteFlow} from "@/api/smart/flowManage";
 
 export default {
   name: 'WorkOrderDetails',
@@ -96,7 +97,7 @@ export default {
         widgetList: []
       },
       stepNodes: [],
-      currentStepIndex: 0,
+      currentStepIndex: 1,
       matchedTemplate: [],
       formData: {},
       currentFlowData: {
@@ -116,29 +117,38 @@ export default {
       },
       listHistor: {
         title: '',
-      }
+      },
+      handleData: {
+        id: '',
+        title: '',
+        currentHandler: '', // 当前操作人
+      },
     }
   },
   computed: {
     isCurrentUserHandler() {
-      return this.$store.getters.userid ===  this.orderDetail.currentHandlerID
+      if (this.orderDetail.currentNode !== "结束") {
+        return this.$store.getters.userid ===  this.orderDetail.currentHandlerID
+      } else {
+        return false
+      }
     }
   },
 
-  async created() {
+  async activated() {
     try {
       // 先获取字典数据
       const [statusResponse, priorityResponse, priorityResponseStatus] = await Promise.all([
-          this.getDicts('order_works_status'),
-          this.getDicts('order_works_priority_type'),
-          this.getDicts('order_works_priority_status')
+        this.getDicts('order_works_status'),
+        this.getDicts('order_works_priority_type'),
+        this.getDicts('order_works_priority_status')
       ]);
       this.orderWorksStatus = statusResponse.data;
       this.orderWorksPriority = priorityResponse.data;
       // 转换 priorityTagMap 为对象
       this.priorityTagMap = priorityResponseStatus.data.reduce((map, item) => {
-          map[item.label] = item.value;
-          return map;
+        map[item.label] = item.value;
+        return map;
       }, {});
 
       // 根据id查询该工单的详细数据
@@ -152,7 +162,6 @@ export default {
       console.error('Failed to fetch data:', error);
     }
   },
-
   methods: {
     async processOrderWork() {
       try {
@@ -163,8 +172,7 @@ export default {
         this.stepNodes = nodes;
 
         // 找到当前步骤的索引
-        this.currentStepIndex = nodes.findIndex(node => node.label === currentNode)
-
+        this.currentStepIndex = nodes.findIndex(node => node.label === currentNode) + 1
         // 查询该工单关联的模板详细数据
         await this.getFlowTemplate().then(response => {
           const flowTemplatedata = response.data;
@@ -228,6 +236,9 @@ export default {
       try {
         const response = await handleOrderWork({
           id: this.orderDetail.id,
+          title: this.orderDetail.title,
+          currentNode: this.orderDetail.currentNode,
+          currentHandlerId: this.orderDetail.currentHandlerID,
           actionType: 'approve'
         })
 
@@ -243,22 +254,30 @@ export default {
       }
     },
     async handleReject() {
-      try {
-        const response = await handleOrderWork({
-          id: this.orderDetail.id,
-          actionType: 'reject'
-        })
-
-        if (response.code === 200) {
-          this.$showSuccess('工单拒绝成功');
-          await this.$router.push('/orderCenter/list')
-        } else {
+      this.$confirm('此操作将会返回至上个流程, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        this.handleData.id = this.orderDetail.id
+        this.handleData.title = this.orderDetail.title
+        this.handleData.currentNode = this.orderDetail.currentNode
+        this.handleData.currentHandlerId = this.orderDetail.currentHandlerID
+        this.handleData.actionType = 'approve'
+        console.log('this.handleData=',this.handleData)
+        try {
+          const response = await handleOrderWork(this.handleData)
+          if (response.code === 200) {
+            this.$showSuccess('工单拒绝成功');
+            await this.$router.push('/orderCenter/list')
+          } else {
+            this.$showError('工单拒绝失败，请重试')
+          }
+        } catch (error) {
+          console.error('Failed to reject order:', error)
           this.$showError('工单拒绝失败，请重试')
         }
-      } catch (error) {
-        console.error('Failed to reject order:', error)
-        this.$showError('工单拒绝失败，请重试')
-      }
+      })
     }
   }
 }

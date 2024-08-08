@@ -101,20 +101,20 @@
             <span slot="label"><i class="el-icon-document" /> 所有工单</span>
           </el-tab-pane>
           <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-            <el-table-column :label="$t('table.id')" min-width="50px" align="center" prop="id" />
+            <el-table-column :label="$t('table.id')" min-width="40px" align="center" prop="id" />
             <el-table-column :label="$t('table.title')" min-width="130px" align="center" prop="title" />
             <el-table-column :label="$t('table.department')" min-width="110px" align="center" prop="department">
               <template slot-scope="scope">
                 {{ formatDepartment(scope.row) }}
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.process')" min-width="70px" align="center" prop="process" />
-            <el-table-column :label="$t('table.currentNode')" align="center" width="90" prop="currentNode">
+            <el-table-column :label="$t('table.process')" min-width="110px" align="center" prop="process" />
+            <el-table-column :label="$t('table.currentNode')" align="center" width="93" prop="currentNode">
               <template slot-scope="scope">
                 <el-tag type="success">{{ scope.row.currentNode }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.currentHandler')" width="90px" align="center" prop="currentHandler" />
+            <el-table-column :label="$t('table.currentHandler')" width="88px" align="center" prop="currentHandler" />
             <el-table-column :label="$t('table.priority')" min-width="87px" align="center">
               <template slot-scope="scope">
                 <el-tag :type="getTagType(scope.row.priority)">
@@ -129,18 +129,18 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.creator')" min-width="80px" align="center" prop="creator">
+            <el-table-column :label="$t('table.creator')" min-width="75px" align="center" prop="creator">
             </el-table-column>
             <el-table-column :label="$t('table.description')" width="70" align="center" prop="description">
               <template slot-scope="scope">
                 <el-button type="text" icon="el-icon-more" @click="openDialog(scope.row.description)" />
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.createdAt')" min-width="140px" align="center" prop="createdAt" />
-            <el-table-column :label="$t('table.updatedAt')" min-width="140px" align="center" prop="updatedAt" />
-            <el-table-column :label="$t('table.actions')" align="center" width="80">
+            <el-table-column :label="$t('table.createdAt')" min-width="90px" align="center" prop="createdAt" />
+            <el-table-column :label="$t('table.updatedAt')" min-width="90px" align="center" prop="updatedAt" />
+            <el-table-column :label="$t('table.actions')" align="center" width="70">
               <template v-slot="{ row }">
-                <el-dropdown trigger="click" placement="bottom" @command="(command) => actionsHandle(command, row)">
+                <el-dropdown trigger="click" size="small" placement="bottom" @command="(command) => actionsHandle(command, row)">
                 <span class="el-dropdown-link">
                   <el-button type="text" icon="el-icon-more" />
                 </span>
@@ -206,14 +206,14 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="状态:" prop="status">
+              <el-form-item label="状态:">
                 <el-select v-model="currentRow.status" :disabled="true" style="width: 100%">
                   <el-option v-for="status in orderWorksStatus" :key="status.value" :label="status.label" :value="status.value" />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="优先级:" prop="priority">
+              <el-form-item label="优先级:">
                 <el-select v-model="currentRow.priority" style="width: 100%">
                   <el-option v-for="priority in orderWorksPriority" :key="priority.value" :label="priority.label" :value="priority.value" />
                 </el-select>
@@ -329,14 +329,7 @@ export default {
       currentPage: 1, // 当前页码，默认为第一页
       pageSize: 10, // 每页显示条目数，可以根据需求调整
       listLoading: true,
-      currentRow: {
-        title: '',
-        department: '',
-        priority: '',
-        status: '',
-        description: '',
-        formData: {}
-      },
+      currentRow: {},
       listQuery: {
         page: 1,
         pageSize: 20
@@ -355,7 +348,6 @@ export default {
         priority: '',
         status: '',
         description: '',
-        handler: '', // 系统用户
         currentHandler: '', // 当前操作人
         formData: {}
       },
@@ -426,9 +418,7 @@ export default {
     async getOrderWorksList() {
       this.listLoading = true
       try {
-        await orderWorksList(
-          this.listQuery
-        ).then(response => {
+        await orderWorksList(this.listQuery).then(response => {
           this.orderWorks = response.data.filter(order => order.status !== 'reopened' && order.status !== 'closed')
           this.total = this.orderWorks.length
           this.currentHandler = [...new Set(this.orderWorks.map(order => order.currentHandler))];
@@ -445,7 +435,6 @@ export default {
       try {
         const { createdAt, updatedAt, ...cleanItem } = row
         this.updateQuery = cleanItem
-        this.updateQuery.handler = this.$store.getters.name
         await updateOrderWork(this.updateQuery).then(response => {
           if (response.code === 200) {
             this.getOrderWorksList()
@@ -466,7 +455,6 @@ export default {
         const { createdAt, updatedAt, ...cleanItem } = row
         this.updateQuery = cleanItem
         this.updateQuery.currentHandler = this.selectedUsers // 直接使用选中的用户名
-        this.updateQuery.handler = this.$store.getters.name
         await updateOrderWork(this.updateQuery).then(response => {
           if (response.code === 200) {
             this.getOrderWorksList()
@@ -503,7 +491,6 @@ export default {
         const { id,createdAt,updateBy,updatedAt,createBy,currentNode,description,formData,process, ...cleanItem } = row
         this.sendUrgeQuery = cleanItem
         this.sendUrgeQuery.orderID = row.id
-        console.log(this.sendUrgeQuery)
         await createOrderWorkNotify(this.sendUrgeQuery).then(response => {
           if (response.code === 200) {
             this.getOrderWorksList()
@@ -523,7 +510,6 @@ export default {
       try {
         this.updateQuery = row
         this.updateQuery.status = 'reopened'
-        this.updateQuery.handler = this.$store.getters.name
         await updateOrderWork(this.updateQuery).then(response => {
           if (response.code === 200) {
             this.getOrderWorksList()
@@ -543,7 +529,6 @@ export default {
       try {
         this.updateQuery = row
         this.updateQuery.status = 'closed'
-        this.updateQuery.handler = this.$store.getters.name
         await updateOrderWork(this.updateQuery).then(response => {
           if (response.code === 200) {
             this.getOrderWorksList()
@@ -840,7 +825,6 @@ export default {
       })
     },
     handleClose(row) {
-      console.log('handleDelete:', row)
       this.$confirm('是否确认关闭该工单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -852,7 +836,7 @@ export default {
       })
     },
     resetForm() {
-      this.currentRow = ''
+      this.currentRow = {}
     }
   }
 }

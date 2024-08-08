@@ -109,7 +109,7 @@ export default {
       },
     }
   },
-  created() {
+  activated() {
     this.initializeTitle()
     this.loadData()
   },
@@ -186,7 +186,7 @@ export default {
         const response = await createOrderWork(this.applyQuery)
         if (response.code === 200) {
           this.$showSuccess(`${this.applyQuery.title} 提交成功`)
-          setTimeout(() => {this.$router.push('/order/apply')}, 500) // 500毫秒等于0.5秒
+          setTimeout(() => {this.$router.push('/orderCenter/apply')}, 500) // 500毫秒等于0.5秒
         } else {
           this.$showError('提交错误，详情：', response.data)
         }
