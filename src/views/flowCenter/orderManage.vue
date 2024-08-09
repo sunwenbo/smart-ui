@@ -88,13 +88,14 @@
         <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
           <el-table-column :label="$t('table.id')" min-width="20px" align="center" prop="id" />
           <el-table-column :label="$t('table.title')" min-width="50px" align="center" prop="title" />
-          <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
-          <el-table-column :label="$t('table.icon')" min-width="60px" align="center" prop="icon" />
+          <el-table-column :label="$t('table.bindTempLate')" min-width="60px" align="center" prop="bindTempLate" />
           <el-table-column :label="$t('table.category')" min-width="40px" align="center">
             <template slot-scope="scope">
               {{ getCategoryName(scope.row.categoryId) }}
             </template>
           </el-table-column>
+          <el-table-column :label="$t('table.icon')" min-width="60px" align="center" prop="icon" />
+          <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
           <el-table-column :label="$t('table.link')" min-width="75px" align="center" prop="link" />
           <el-table-column :label="$t('table.favorite')" min-width="30px" align="center">
             <template slot-scope="scope">
@@ -106,9 +107,8 @@
               <el-button type="text" icon="el-icon-more" @click="openDialog(scope.row.description)" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.bindTempLate')" min-width="50px" align="center" prop="bindTempLate" />
-          <el-table-column :label="$t('table.createdAt')" min-width="65px" align="center" prop="createdAt" />
-          <el-table-column :label="$t('table.updatedAt')" min-width="65px" align="center" prop="updatedAt" />
+          <el-table-column :label="$t('table.createdAt')" min-width="45px" align="center" prop="createdAt" />
+          <el-table-column :label="$t('table.updatedAt')" min-width="45px" align="center" prop="updatedAt" />
           <el-table-column :label="$t('table.actions')" align="center" min-width="30px">
             <template v-slot="{ row }">
               <el-dropdown trigger="click" placement="bottom" @command="(command) => actionsHandle(command, row)">

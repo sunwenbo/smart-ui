@@ -111,7 +111,9 @@
             <el-table-column :label="$t('table.process')" min-width="110px" align="center" prop="process" />
             <el-table-column :label="$t('table.currentNode')" align="center" width="93" prop="currentNode">
               <template slot-scope="scope">
-                <el-tag type="success">{{ scope.row.currentNode }}</el-tag>
+                <el-tag :type="scope.row.currentNode === '结束' ? 'success' : 'warning'">
+                  {{ scope.row.currentNode }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.currentHandler')" width="88px" align="center" prop="currentHandler" />
@@ -488,7 +490,7 @@ export default {
     async sendUrgeMessage(row) {
       this.listLoading = true
       try {
-        const { id,createdAt,updateBy,updatedAt,createBy,currentNode,description,formData,process, ...cleanItem } = row
+        const { id,createdAt,updateBy,creator,updatedAt,template,createBy,currentNode,description,formData,currentHandlerID,regenerator,bindFlowData,process, ...cleanItem } = row
         this.sendUrgeQuery = cleanItem
         this.sendUrgeQuery.orderID = row.id
         await createOrderWorkNotify(this.sendUrgeQuery).then(response => {

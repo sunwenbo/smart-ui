@@ -27,7 +27,7 @@
     <el-card>
       <div class="form-window">
         <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-          <el-table-column :label="$t('table.id')" min-width="30px" align="center" prop="id" />
+          <el-table-column :label="$t('table.id')" min-width="25px" align="center" prop="id" />
           <el-table-column :label="$t('table.name')" min-width="80px" align="center" prop="name" />
           <el-table-column :label="$t('table.creator')" min-width="30px" align="center" prop="creator" />
           <el-table-column :label="$t('table.regenerator')" min-width="30px" align="center" prop="regenerator" />
@@ -47,9 +47,9 @@
             </template>
           </el-table-column>
           <el-table-column :label="$t('table.bindCount')" min-width="30px" align="center" prop="bindCount" />
-          <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
-          <el-table-column :label="$t('table.updatedAt')" min-width="60px" align="center" prop="updatedAt" />
-          <el-table-column :label="$t('table.actions')" align="center" width="180">
+          <el-table-column :label="$t('table.createdAt')" min-width="40px" align="center" prop="createdAt" />
+          <el-table-column :label="$t('table.updatedAt')" min-width="40px" align="center" prop="updatedAt" />
+          <el-table-column :label="$t('table.actions')" align="center" width="200px">
             <template v-slot="{ row }">
               <el-button type="text" icon="el-icon-copy-document" @click="handleCopy(row)">
                 {{ $t('table.copy') }}

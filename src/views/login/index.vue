@@ -24,6 +24,7 @@
     <div class="login-weaper animated bounceInDown">
       <div class="login-left">
         <div class="login-time" v-text="currentTime" />
+<!--        <img :src="logo" alt="" class="img">-->
         <img :src="sysInfo.sys_app_logo" alt="" class="img">
         <p class="title" v-text="sysInfo.sys_app_name" />
       </div>
@@ -190,6 +191,8 @@ export default {
   components: { SocialSign },
   data() {
     return {
+      // logo: require('@/views/login/logo.png'),
+
       codeUrl: '',
       cookiePassword: '',
       refreshParticles: true,
