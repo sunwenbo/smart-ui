@@ -9,6 +9,15 @@ export function login(data) {
   })
 }
 
+// Ldap login 登陆
+export function ldapLogin(data) {
+  return request({
+    url: '/api/v1/ldap/login',
+    method: 'post',
+    data
+  })
+}
+
 // logout 退出
 export function logout() {
   return request({

@@ -1,4 +1,4 @@
-import { login, logout, getInfo, refreshtoken } from '@/api/user'
+import { login, ldapLogin, logout, getInfo, refreshtoken } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import storage from '@/utils/storage'
@@ -39,6 +39,21 @@ const mutations = {
   },
   SET_PERMISSIONS: (state, permisaction) => {
     state.permisaction = permisaction
+  },
+  SET_DEPTID: (state, deptId) => {
+    state.deptId = deptId
+  },
+  SET_PHONE: (state, phone) => {
+    state.phone = phone
+  },
+  SET_SEX: (state, sex) => {
+    state.sex = sex
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
+  SET_POSTID: (state, postId) => {
+    state.postId = postId
   }
 }
 
@@ -57,17 +72,30 @@ const actions = {
       })
     })
   },
-
+  ldapLogin({ commit }, userInfo) {
+    return new Promise((resolve, reject) => {
+      ldapLogin(userInfo).then(response => {
+        const { token } = response
+        commit('SET_TOKEN', token)
+        setToken(token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo().then(response => {
+        console.log('response.data======',response.data)
+
         if (!response || !response.data) {
           commit('SET_TOKEN', '')
           removeToken()
           resolve()
         }
-        const { roles, name, avatar, introduction, permissions,userId } = response.data
+        const { roles, name, avatar,deptId,phone,sex,email,postId, introduction, permissions,userId } = response.data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -79,7 +107,11 @@ const actions = {
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
         commit('SET_USERID', userId)
-
+        commit('SET_DEPTID', deptId)
+        commit('SET_PHONE', phone)
+        commit('SET_SEX', sex)
+        commit('SET_EMAIL', email)
+        commit('SET_POSTID', postId)
         resolve(response)
       }).catch(error => {
         reject(error)

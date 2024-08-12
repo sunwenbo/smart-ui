@@ -29,7 +29,11 @@
                   <div class="pull-right">{{ deptName }}</div>
                 </li>
                 <li class="list-group-item">
-                  <svg-icon icon-class="peoples" />所属角色
+                  <svg-icon icon-class="user" />部门岗位
+                  <div class="pull-right">{{ postName }}</div>
+                </li>
+                <li class="list-group-item">
+                  <svg-icon icon-class="peoples" />系统角色
                   <div class="pull-right">{{ roleName }}</div>
                 </li>
                 <li class="list-group-item">

@@ -36,11 +36,6 @@ export default {
       return variables
     }
   },
-  // data () {
-  //   return {
-  //     logo: require('@/views/login/logo.png')
-  //   }
-  // }
 }
 </script>
 

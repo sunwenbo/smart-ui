@@ -116,6 +116,11 @@
               <el-table-column label="登录名" width="105" prop="username" sortable="custom" :show-overflow-tooltip="true" />
               <el-table-column label="昵称" prop="nickName" :show-overflow-tooltip="true" />
               <el-table-column label="部门" prop="dept.deptName" :show-overflow-tooltip="true" />
+              <el-table-column label="岗位" prop="postId" :show-overflow-tooltip="true" >
+                <template slot-scope="scope">
+                  {{ getPostNameById(scope.row.postId) }}
+                </template>
+              </el-table-column>
               <el-table-column label="手机号" prop="phone" width="108" />
               <el-table-column label="状态" width="80" sortable="custom">
                 <template slot-scope="scope">
@@ -419,6 +424,9 @@ export default {
   created() {
     this.getList()
     this.getTreeselect()
+    listPost({ pageSize: 1000 }).then(response => {
+      this.postOptions = response.data.list
+    })
     this.getDicts('sys_normal_disable').then(response => {
       this.statusOptions = response.data
     })
@@ -439,6 +447,10 @@ export default {
         this.loading = false
       }
       )
+    },
+    getPostNameById(postId) {
+      const post = this.postOptions.find(option => option.postId === postId);
+      return post ? post.postName : ''; // 如果找到了对应的岗位，则返回岗位名称，否则返回空字符串
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
@@ -545,7 +557,6 @@ export default {
     handleAdd() {
       this.reset()
       this.getTreeselect()
-
       listPost({ pageSize: 1000 }).then(response => {
         this.postOptions = response.data.list
       })
