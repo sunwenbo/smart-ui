@@ -6,6 +6,8 @@
         <a href="https://www.baidu.com" style="font-size: 13px" target="_blank">👉  一些日常的问题可以点击这里.</a>
       </el-alert>
     </el-card>
+
+    <!-- 查询结果显示 -->
     <el-card shadow="hover">
       <div class="outerframe">
         <div class="selectframe">
@@ -14,7 +16,9 @@
           </el-input>
           <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset" />
         </div>
-        <div class="flow-group-div">
+
+        <!-- 我的收藏 -->
+        <div class="flow-group-div" v-if="!isSingleSearch && favoriteItems.length > 0">
           <div class="flow-group">
             <div class="own-collection-title">
               <div class="collect-icon">
@@ -43,7 +47,9 @@
             </el-row>
           </div>
         </div>
-        <div class="flow-group-div" v-for="category in categories" :key="category.id">
+
+        <!-- 工单类别 -->
+        <div class="flow-group-div" v-for="category in categories" :key="category.id" v-if="filteredItems(category.id).length > 0">
           <div class="flow-group">
             <div class="own-collection-title">
               <div class="order-title">{{ category.chineseName }}</div>
@@ -76,16 +82,14 @@
 <script>
 import { itemsList, updateItems } from '@/api/smart/orderItems'
 import { categoryList} from '@/api/smart/flowCenter'
-import {getFlowList} from "@/api/smart/flowManage";
 
 export default {
   name: 'ItemsList',
   data() {
     return {
-      filteredData: [],
-      orderItems: [],
-      categories: [],
-      flowListResponse: [],
+      isSingleSearch: false,
+      orderItems: [],  // 全量的工单数据
+      categories: [],  // 全量的分类数据
       searchContent: '',
       showStar: false,
       showStarTip: false,
@@ -93,7 +97,8 @@ export default {
       itemsQuery: {
         page: 1,
         pageSize: 9999,
-      }
+      },
+      originalCategories: [], // 保存初始分类数据
     }
   },
   computed: {
@@ -110,7 +115,7 @@ export default {
   methods: {
     // 跳转到对应的页面，根据数据库link字段的值进行跳转
     handleClick(item) {
-      this.$router.push({ name: 'FormRender', params: { bindTempLate: item.bindTempLate, title: item.title,link: item.link }})
+      this.$router.push({ name: 'FormRender', params: { bindTempLate: item.bindTempLate, title: item.title, link: item.link }})
     },
     // 根据数据库数据Id字段，显示收藏图标
     toggleStar(value, ID) {
@@ -139,36 +144,50 @@ export default {
     getItemsList() {
       itemsList(this.itemsQuery).then(response => {
         this.orderItems = response.data
-        this.filteredData = this.orderItems
       })
     },
 
     // 查询工单类别用于在工单申请页面显示
     getTemplateCategory() {
       categoryList(
-        this.itemsQuery
+          this.itemsQuery
       ).then(response => {
         const categoryRes = response.data
-        this.categories = categoryRes.map(item => ({
+        this.originalCategories = categoryRes.map(item => ({
           id: item.id,
           name: item.name,
           chineseName: item.chineseName
         }))
+        this.categories = [...this.originalCategories]; // 初始化分类数据
       })
     },
     async searchData() {
-      this.listLoading = true
+      this.listLoading = true;
       setTimeout(() => {
         if (this.searchContent) {
-          this.filteredData = this.orderItems.filter(item => item.title.includes(this.searchContent))
+          // 过滤工单数据
+          const filteredOrderItems = this.orderItems.filter(item => item.title.includes(this.searchContent));
+          this.isSingleSearch = filteredOrderItems.length === 1; // 判断是否只搜索到一个结果
+
+          // 更新分类数据，仅保留包含搜索结果的分类
+          this.categories = this.originalCategories.map(category => {
+            const filteredItems = filteredOrderItems.filter(item => item.categoryId === category.id);
+            return {
+              ...category,
+              items: filteredItems,
+            };
+          }).filter(category => category.items.length > 0); // 过滤掉没有匹配项的分类
         } else {
-          this.getItemsList()
+          // 如果没有搜索内容，恢复原始数据
+          this.getItemsList();
+          this.categories = [...this.originalCategories]; // 恢复到原始分类数据
+          this.isSingleSearch = false;
         }
-        this.listLoading = false
-      }, 500)
+        this.listLoading = false;
+      }, 500);
     },
     filteredItems(categoryId) {
-      return this.filteredData.filter(item => item.categoryId === categoryId)
+      return this.orderItems.filter(item => item.categoryId === categoryId)
     },
     handleReset() {
       setTimeout(() => {
@@ -179,6 +198,7 @@ export default {
   }
 }
 </script>
+
 
 <style lang="scss" scoped>
 

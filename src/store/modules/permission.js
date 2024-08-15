@@ -144,8 +144,6 @@ const actions = {
           })
         } else {
           data = response.data
-          console.log('data=',data)
-
           Object.assign(loadMenuData, data)
 
           generaMenu(asyncRoutes, loadMenuData)

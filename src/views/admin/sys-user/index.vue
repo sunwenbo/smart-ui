@@ -112,17 +112,22 @@
               @sort-change="handleSortChang"
             >
               <el-table-column type="selection" width="45" align="center" />
-              <el-table-column label="编号" width="75" prop="userId" sortable="custom" />
-              <el-table-column label="登录名" width="105" prop="username" sortable="custom" :show-overflow-tooltip="true" />
-              <el-table-column label="昵称" prop="nickName" :show-overflow-tooltip="true" />
-              <el-table-column label="部门" prop="deptName" :show-overflow-tooltip="true" />
-              <el-table-column label="岗位" prop="postId" :show-overflow-tooltip="true" >
+              <el-table-column label="编号" align="center" width="75" prop="userId" sortable="custom" />
+              <el-table-column label="登录名" align="center" width="105" prop="username" sortable="custom" :show-overflow-tooltip="true" />
+              <el-table-column label="昵称" align="center" prop="nickName" :show-overflow-tooltip="true" />
+              <el-table-column label="部门" align="center" :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                  {{ getDeptNameById(scope.row.deptId) }}
+                </template>
+              </el-table-column>
+              <el-table-column label="岗位" align="center"  prop="postId" :show-overflow-tooltip="true" >
                 <template slot-scope="scope">
                   {{ getPostNameById(scope.row.postId) }}
                 </template>
               </el-table-column>
-              <el-table-column label="手机号" prop="phone" width="108" />
-              <el-table-column label="状态" width="80" sortable="custom">
+              <el-table-column label="手机号" align="center"  prop="phone" width="108" />
+              <el-table-column label="来源" align="center" width="80" prop="source" :show-overflow-tooltip="true" />
+              <el-table-column label="状态" align="center" width="80" sortable="custom">
                 <template slot-scope="scope">
                   <el-switch
                     v-model="scope.row.status"
@@ -448,6 +453,12 @@ export default {
       }
       )
     },
+    /* 获取部门名称*/
+    getDeptNameById(deptId) {
+      const dept = this.deptOptions.find(item => item.id === deptId);
+      return dept ? dept.label : ''; // 返回对应的部门名称
+    },
+    /* 获取岗位名称*/
     getPostNameById(postId) {
       const post = this.postOptions.find(option => option.postId === postId);
       return post ? post.postName : ''; // 如果找到了对应的岗位，则返回岗位名称，否则返回空字符串
