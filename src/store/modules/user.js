@@ -54,6 +54,9 @@ const mutations = {
   },
   SET_POSTID: (state, postId) => {
     state.postId = postId
+  },
+  SET_PROFILECOMPLAETE: (state, profileComplete) => {
+    state.profileComplete = profileComplete
   }
 }
 
@@ -88,14 +91,12 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo().then(response => {
-        console.log('response.data======',response.data)
-
         if (!response || !response.data) {
           commit('SET_TOKEN', '')
           removeToken()
           resolve()
         }
-        const { roles, name, avatar,deptId,phone,sex,email,postId, introduction, permissions,userId } = response.data
+        const { roles, name, avatar,deptId,phone,sex,email,postId, introduction, permissions,userId,profileComplete } = response.data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -112,6 +113,8 @@ const actions = {
         commit('SET_SEX', sex)
         commit('SET_EMAIL', email)
         commit('SET_POSTID', postId)
+        commit('SET_PROFILECOMPLAETE', profileComplete)
+
         resolve(response)
       }).catch(error => {
         reject(error)

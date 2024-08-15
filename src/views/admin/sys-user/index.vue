@@ -115,7 +115,7 @@
               <el-table-column label="编号" width="75" prop="userId" sortable="custom" />
               <el-table-column label="登录名" width="105" prop="username" sortable="custom" :show-overflow-tooltip="true" />
               <el-table-column label="昵称" prop="nickName" :show-overflow-tooltip="true" />
-              <el-table-column label="部门" prop="dept.deptName" :show-overflow-tooltip="true" />
+              <el-table-column label="部门" prop="deptName" :show-overflow-tooltip="true" />
               <el-table-column label="岗位" prop="postId" :show-overflow-tooltip="true" >
                 <template slot-scope="scope">
                   {{ getPostNameById(scope.row.postId) }}

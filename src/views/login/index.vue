@@ -135,7 +135,7 @@
               <span v-else>登 录 中...</span>
             </el-button>
             <span @click="toggleLoginMethod" style="cursor: pointer; color: #409EFF; padding: 12px 50px; margin-bottom: 20px">
-              {{ useLdap ? 'Use local user account to login' : '  Use LDAP account to login' }}
+              {{ useLdap ? 'Use local user account to login' : '   Use LDAP account to login' }}
             </span>
           </el-form>
         </div>
@@ -197,7 +197,7 @@ export default {
   data() {
     return {
       // logo: require('@/views/login/logo.png'),
-      useLdap: true, // 初始为 false，表示使用本地用户登录
+      useLdap: true, // 初始为 true，表示使用LDAP用户登陆
       codeUrl: '',
       cookiePassword: '',
       refreshParticles: true,
@@ -205,7 +205,8 @@ export default {
         username: 'caopengcheng',
         password: '123456',
         rememberMe: false,
-        code: '',
+        source: 'LDAP',
+        code: '1111',
         uuid: ''
       },
       loginRules: {
@@ -266,6 +267,11 @@ export default {
   methods: {
     toggleLoginMethod() {
       this.useLdap = !this.useLdap;
+      if (this.useLdap) {
+        this.loginForm.source = 'LDAP'
+      } else {
+        this.loginForm.source = 'SYSTEM'
+      }
     },
     getSystemSetting() {
       this.$store.dispatch('system/settingDetail').then((ret) => {
@@ -311,100 +317,25 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin1() {
-      this.$refs.loginForm.validate((valid) => {
-        if (!valid) {
-          console.log('Error: Form validation failed!')
-          return false
-        }
-
-        this.loading = true
-        this.loginForm.source = this.useLdap ? 'LDAP' : ''
-
-        const loginAction = this.useLdap ? 'user/ldapLogin' : 'user/login'
-
-        this.$store.dispatch(loginAction, this.loginForm)
-          .then(() => {
-            return this.$store.dispatch('user/getInfo')
-          })
-          .then((userInfo) => {
-            console.log('userInfo=',userInfo)
-            // 检查用户资料是否完整
-            const isProfileComplete = userInfo.name !== '' &&
-              userInfo.phone !== '' &&
-              userInfo.sex !== '' &&
-              userInfo.email !== '' &&
-              userInfo.deptId !== 0 &&
-              userInfo.postId !== 0;
-
-            // 跳转逻辑
-            const redirectPath = isProfileComplete ? this.redirect || '/' : '/profile/index'
-            this.$router.push({ path: redirectPath })
-          })
-          .catch(() => {
-            this.loading = false
-            this.getCode()
-          })
-      })
-    },
     handleLogin() {
-      if (this.useLdap) {
-        this.$refs.loginForm.validate((valid) => {
-          this.loginForm.source = 'LDAP';
-          if (valid) {
-            this.loading = true;
-            this.$store.dispatch('user/ldapLogin', this.loginForm)
-              .then(() => {
-                // 登录成功后，获取用户信息
-                return this.$store.dispatch('user/getInfo');
-              })
-              .then((response) => {
-                const userInfo = response.data;
-                // 检查用户资料是否完整
-                const isProfileComplete = userInfo.name !== '' &&
-                  userInfo.phone !== '' &&
-                  userInfo.sex !== '' &&
-                  userInfo.email !== '' &&
-                  userInfo.deptId !== 0 &&
-                  userInfo.postId !== 0;
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          this.loading = true;
 
-                if (isProfileComplete) {
-                  // 资料完整，跳转到主页
-                  this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {});
-                } else {
-                  // 资料不完整，跳转到个人信息页面
-                  this.$router.push({ path: '/profile/index' }).catch(() => {});
-                }
-              })
-              .catch(() => {
-                this.loading = false;
-                this.getCode();
-              });
-          } else {
-            console.log('Error: Form validation failed!');
-            return false;
-          }
-        })
-      } else {
-        this.$refs.loginForm.validate((valid) => {
-          if (valid) {
-            this.loading = true
-            this.$store.dispatch('user/login', this.loginForm).then(() => {
+          // 判断使用哪种登录方式
+          const loginAction = this.useLdap ? 'user/ldapLogin' : 'user/login'
 
-              this.$router
-                .push({ path: this.redirect || '/', query: this.otherQuery })
-                .catch(() => {})
-            })
-              .catch(() => {
-                this.loading = false
-                this.getCode()
-              })
-          } else {
-            console.log('error submit!!')
-            return false
-          }
-        })
-      }
+          this.$store.dispatch(loginAction, this.loginForm).then(() => {
+                this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {})
+          }).catch(() => {
+            this.loading = false;
+            this.getCode(); // 如果你使用验证码
+          });
+        } else {
+          console.log('Error: Form validation failed!');
+          return false;
+        }
+      });
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

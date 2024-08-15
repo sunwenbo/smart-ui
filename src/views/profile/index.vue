@@ -108,7 +108,13 @@ export default {
           this.roleName = '暂无'
         }
         this.dept = response.data.user.dept
-        this.deptName = this.dept.deptName
+      // 如果 this.dept 是 null 或 undefined，就给它一个默认值
+        if (!this.dept) {
+          this.dept = { deptName: '资料不完整' }; // 这里替换为你的默认值
+          this.deptName = this.dept.deptName
+        } else {
+          this.deptName = this.dept.deptName
+        }
       })
     }
   }
@@ -116,10 +122,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .list-group-item{
-    padding: 18px 0;
-  }
-  .svg-icon{
-    margin-right: 5px;
-  }
+.list-group-item{
+  padding: 18px 0;
+}
+.svg-icon{
+  margin-right: 5px;
+}
 </style>

@@ -308,7 +308,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.getFlowList()
     this.getCategoryList()
     this.getFlowInitData()
   },
@@ -319,7 +319,7 @@ export default {
   },
   methods: {
     /** 查询流程列表 */
-    getList() {
+    getFlowList() {
       this.listLoading = true
       getFlowList(this.queryParams).then(response => {
         this.flowDataList = response.data
@@ -388,7 +388,6 @@ export default {
       })
     },
     getFlowInitData() {
-      this.getCategoryList()
       this.getTemplatesList()
       this.getUsers()
       this.getRoles()

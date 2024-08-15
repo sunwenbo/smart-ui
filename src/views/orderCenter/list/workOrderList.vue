@@ -85,23 +85,28 @@
     <el-card>
       <div class="el-card is-hover-shadow box-card mb8" style="margin-bottom: 10px">
         <el-tabs v-model="activeTab" type="border-card" @tab-click="handleTabClick">
-          <el-tab-pane name="myBacklog">
+          <el-tab-pane name="myBacklog" >
             <span slot="label"><i class="el-icon-date" />我的待办</span>
           </el-tab-pane>
           <el-tab-pane name="createdByMe">
             <span slot="label"><i class="el-icon-s-flag" />我创建的</span>
           </el-tab-pane>
-          <el-tab-pane name="relatedToMe">
-          <span slot="label">
-            <i class="el-icon-link" />
-            我相关的
-          </span>
+          <el-tab-pane name="relatedToMe" >
+          <span slot="label"><i class="el-icon-link" />我相关的</span>
           </el-tab-pane>
-          <el-tab-pane name="allOrders">
+          <el-tab-pane name="allOrders" >
             <span slot="label"><i class="el-icon-document" /> 所有工单</span>
           </el-tab-pane>
           <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-            <el-table-column :label="$t('table.id')" min-width="40px" align="center" prop="id" />
+            <el-table-column :label="$t('table.id')" min-width="40px" align="center" prop="id">
+              <template #default="scope">
+                <el-link
+                    type="primary"
+                    @click="handleView(scope.row)">
+                  {{ scope.row.id }}
+                </el-link>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('table.title')" min-width="130px" align="center" prop="title" />
             <el-table-column :label="$t('table.department')" min-width="110px" align="center" prop="department">
               <template slot-scope="scope">

@@ -11,7 +11,7 @@ export async function orderWorksList(params) {
 // 根据工单ID获取数据
 export async function orderWorksSearch(id) {
   return request({
-    url: `/api/v1/order/works/list${id}`,
+    url: `/api/v1/order/works/list/${id}`,
     method: 'get',
   })
 }
