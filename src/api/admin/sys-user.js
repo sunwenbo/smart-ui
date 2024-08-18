@@ -9,6 +9,15 @@ export function listUser(query) {
   })
 }
 
+// 根据用户名查询指定用户
+export function getSpecifyUser(query) {
+  return request({
+    url: '/api/v1/sys-user/specify-user',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询用户详细
 export function getUser(userId) {
   return request({

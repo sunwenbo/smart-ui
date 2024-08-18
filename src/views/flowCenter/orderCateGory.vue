@@ -59,9 +59,9 @@
               </el-col>
             </el-row>
           </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
+          <div class="el-dialog__footer">
             <el-button type="primary" @click="validateForm">创建</el-button>
+            <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
           </div>
         </el-dialog>
         <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
@@ -418,8 +418,23 @@ export default {
     padding: 15px;
     background: #f5f7fa;
   }
-  .el-dialog__body {
-    padding-top: 25px;
+  .el-dialog__body  {
+    padding-top: 30px;
+    padding-bottom: 20px; /* 调整为按钮的高度 */
+  }
+
+  .el-dialog__footer {
+    position: absolute;
+    right: 0;
+    left: 0;
+    padding: 15px;
+    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
+    border-top: 1px solid #e4e7ed;
+    text-align: right;
+  }
+
+  .el-dialog__footer .el-button {
+    margin-left: 20px; /* 按钮之间的间距 */
   }
 }
 </style>

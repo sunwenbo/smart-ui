@@ -102,16 +102,11 @@
               <span>{{ scope.row.favorite ? '是' : '否' }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
-            <template slot-scope="scope">
-              <el-button type="text" icon="el-icon-more" @click="openDialog(scope.row.description)" />
-            </template>
-          </el-table-column>
           <el-table-column :label="$t('table.createdAt')" min-width="45px" align="center" prop="createdAt" />
           <el-table-column :label="$t('table.updatedAt')" min-width="45px" align="center" prop="updatedAt" />
           <el-table-column :label="$t('table.actions')" align="center" min-width="30px">
             <template v-slot="{ row }">
-              <el-dropdown trigger="click" placement="bottom" @command="(command) => actionsHandle(command, row)">
+              <el-dropdown trigger="click" size="small" placement="bottom" @command="(command) => actionsHandle(command, row)">
               <span class="el-dropdown-link">
                 <el-button type="text" icon="el-icon-more" />
               </span>
@@ -189,9 +184,9 @@
               </el-col>
             </el-row>
           </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="createItemsDialog = false">取消</el-button>
+          <div class="el-dialog__footer">
             <el-button type="primary" @click="validateForm">创建</el-button>
+            <el-button type="warning" @click="createItemsDialog = false">取消</el-button>
           </div>
         </el-dialog>
         <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
@@ -275,12 +270,6 @@
             <el-button v-if="isEditable" type="primary" @click="updateOrderItems(currentItem)">保存</el-button>
           </div>
         </el-dialog>
-        <el-dialog :visible.sync="descDialogVisible" title="描述信息" width="30%" :before-close="closeDescDialog">
-          <span>{{ descriptionDialogContent }}</span>
-          <span slot="footer">
-          <el-button type="warning" @click="descDialogVisible = false">关闭</el-button>
-        </span>
-        </el-dialog>
         <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="closeDownloadDiglog">
           <span>确认要导出数据吗？</span>
           <span slot="footer">
@@ -337,8 +326,6 @@ export default {
       },
       total: 0,
       screenDialog: false, // 筛选框是否可见，默认不可见
-      descriptionDialogContent: '', // 描述字段内容
-      descDialogVisible: false, // 对话框是否可见
       downloadDialogVisible: false, // 对话框是否可见
       createItemsDialog: false,
       updateDialog: false,
@@ -519,7 +506,7 @@ export default {
           this.listLoading = false // 停止加载状态
         }
       }).catch(() => {
-        this.$showinfo('创建已取消')
+        this.$showInfo('创建已取消')
       })
     },
     async updateOrderItems(item) {
@@ -546,7 +533,7 @@ export default {
           this.listLoading = false // 停止加载状态
         }
       }).catch(() => {
-        this.$showinfo('更新已取消')
+        this.$showInfo('更新已取消')
       })
     },
     deleteOrderItems(row) {
@@ -608,13 +595,6 @@ export default {
         this.getItemsList()
       }, 400)
     },
-    openDialog(row) {
-      this.descriptionDialogContent = row
-      this.descDialogVisible = true
-    },
-    closeDescDialog() {
-      this.descDialogVisible = false
-    },
     actionsHandle(command, row) {
       switch (command) {
         case 'view':
@@ -659,7 +639,7 @@ export default {
         this.dialogTitle = '删除工单模版'
         this.deleteOrderItems(row)
       }).catch(() => {
-        this.$showinfo('删除已取消')
+        this.$showInfo('删除已取消')
       })
     },
     createItemsHandler() {
@@ -765,11 +745,34 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
+::v-deep .el-dialog{
+  .el-dialog__header{
+    position:sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    padding: 15px;
+    background: #f5f7fa;
+  }
+  .el-dialog__body {
+    padding-top: 20px;
+    padding-bottom: 60px; /* 调整为按钮的高度 */
+  }
 
+  .el-dialog__footer {
+    position: absolute;
+    right: 0;
+    left: 0;
+    padding: 15px;
+    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
+    border-top: 1px solid #e4e7ed;
+    text-align: right;
+  }
+
+  .el-dialog__footer .el-button {
+    margin-left: 10px; /* 按钮之间的间距 */
+  }
+}
 .baseInfo-window {
   border: 2px solid #eeeeee;
   padding: 20px;
@@ -812,18 +815,5 @@ export default {
 }
 ::v-deep label {
   font-weight: normal;
-}
-::v-deep .el-dialog{
-  .el-dialog__header{
-    position:sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    padding: 15px;
-    background: #f5f7fa;
-  }
-  .el-dialog__body {
-    padding-top: 25px;
-  }
 }
 </style>

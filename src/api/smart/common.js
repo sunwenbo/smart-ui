@@ -27,3 +27,11 @@ export async function createOrderWorkNotify(data) {
   })
 }
 
+// 发送催办通知
+export async function sendFeishuNotify(data) {
+  return request({
+    url: '/api/v1/notify',
+    method: 'post',
+    data
+  })
+}

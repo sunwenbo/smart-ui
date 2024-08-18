@@ -26,7 +26,7 @@
       <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
         <el-table-column :label="$t('table.id')" min-width="30px" align="center" prop="id" />
         <el-table-column :label="$t('table.name')" min-width="80px" align="center" prop="name" />
-<!--        <el-table-column :label="$t('table.linkTemplate')" min-width="50px" align="center" prop="template" />-->
+        <!--        <el-table-column :label="$t('table.linkTemplate')" min-width="50px" align="center" prop="template" />-->
         <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-more" @click="toggleDescDialog(scope.row.description)" />
@@ -40,41 +40,41 @@
         <el-table-column :label="$t('table.actions')" align="center" width="240">
           <template slot-scope="scope">
             <el-button
-              v-permisaction="['process:admin:manager:unbind']"
-              size="mini"
-              type="text"
-              icon="fa fa-unlink"
-              @click="handleUnbind(scope.row)"
+                v-permisaction="['process:admin:manager:unbind']"
+                size="mini"
+                type="text"
+                icon="fa fa-unlink"
+                @click="handleUnbind(scope.row)"
             >解绑</el-button>
             <el-button
-              v-permisaction="['process:admin:manager:clone']"
-              size="mini"
-              type="text"
-              icon="el-icon-receiving"
-              @click="handleClone(scope.row)"
+                v-permisaction="['process:admin:manager:clone']"
+                size="mini"
+                type="text"
+                icon="el-icon-receiving"
+                @click="handleClone(scope.row)"
             >克隆</el-button>
             <el-button
-              v-permisaction="['process:admin:manager:edit']"
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleEdit(scope.row)"
+                v-permisaction="['process:admin:manager:edit']"
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="handleEdit(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permisaction="['process:admin:manager:delete']"
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
+                v-permisaction="['process:admin:manager:delete']"
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
             >删除</el-button>
 
           </template>
         </el-table-column>
       </el-table>
-      <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getFlowList" />
       <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  :fullscreen="true" style="margin-top: 0">
         <div>
-          <el-form ref="ruleForm" :model="ruleForm" label-width="100px">
+          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
             <el-row>
               <el-col :span="12">
                 <el-form-item label="名称" prop="name">
@@ -92,26 +92,26 @@
                 <el-form-item label="类别:" prop="categoryId">
                   <el-select v-model="ruleForm.categoryId" filterable placeholder="请选择流程分类" style="width: 100%">
                     <el-option
-                      v-for="item in categoryLists"
-                      :key="item.id"
-                      :label="item.chineseName"
-                      :value="item.id"
+                        v-for="item in categoryLists"
+                        :key="item.id"
+                        :label="item.chineseName"
+                        :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
               </el-col>
-<!--              <el-col :span="12">-->
-<!--                <el-form-item label="模板:" prop="tempLate">-->
-<!--                  <el-select v-model="ruleForm.template" filterable multiple placeholder="请选择模版" style="width: 100%">-->
-<!--                    <el-option-->
-<!--                      v-for="item in flowTemplateLists"-->
-<!--                      :key="item.id"-->
-<!--                      :label="item.name"-->
-<!--                      :value="item.name"-->
-<!--                    />-->
-<!--                  </el-select>-->
-<!--                </el-form-item>-->
-<!--              </el-col>-->
+              <!--              <el-col :span="12">-->
+              <!--                <el-form-item label="模板:" prop="tempLate">-->
+              <!--                  <el-select v-model="ruleForm.template" filterable multiple placeholder="请选择模版" style="width: 100%">-->
+              <!--                    <el-option-->
+              <!--                      v-for="item in flowTemplateLists"-->
+              <!--                      :key="item.id"-->
+              <!--                      :label="item.name"-->
+              <!--                      :value="item.name"-->
+              <!--                    />-->
+              <!--                  </el-select>-->
+              <!--                </el-form-item>-->
+              <!--              </el-col>-->
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
@@ -139,10 +139,10 @@
                 <el-form-item label="任务:">
                   <el-select v-model="ruleForm.task" multiple filterable clearable placeholder="请选择流程任务" style="width: 100%">
                     <el-option
-                      v-for="(item, index) in taskListData"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.full_name"
+                        v-for="(item, index) in taskListData"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -150,11 +150,11 @@
             </el-row>
             <el-form-item label="描述" prop="description">
               <el-input
-                v-model="ruleForm.description"
-                placeholder="请输入流程描述"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                style="width: 100%"
+                  v-model="ruleForm.description"
+                  placeholder="请输入流程描述"
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 4}"
+                  style="width: 100%"
               />
             </el-form-item>
             <el-form-item label="流程" prop="structure">
@@ -163,25 +163,25 @@
                 <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveImg()}">导出图片</el-button>
                 <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.modalVisible=true}">查看流程图</el-button>
                 <WfdDesign
-                  v-if="wfdDesignRefresh"
-                  :isView=false
-                  ref="wfd"
-                  :data="ruleForm.structure"
-                  :height="600"
-                  :users="users"
-                  :roles="roles"
-                  :categorys="categoryLists"
-                  :departments="departments"
-                  :template="ruleForm.template"
-                  :templates-base="template"
-                  :lang="lang"
+                    v-if="wfdDesignRefresh"
+                    :isView=false
+                    ref="wfd"
+                    :data="ruleForm.structure"
+                    :height="600"
+                    :users="users"
+                    :roles="roles"
+                    :categorys="categoryLists"
+                    :departments="departments"
+                    :template="ruleForm.template"
+                    :templates-base="template"
+                    :lang="lang"
                 />
               </div>
             </el-form-item>
           </el-form>
-          <div style="text-align: center; margin-top: 20px">
+          <div class="el-dialog__footer">
             <el-button type="primary" @click="dialogFlowVisibleName===1?submitForm('ruleForm'):editForm('ruleForm')">提交</el-button>
-            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="warning" @click="dialogVisible = false">取 消</el-button>
           </div>
         </div>
       </el-dialog>
@@ -198,7 +198,7 @@
         <span>{{ descriptionDialogContent }}</span>
         <span>确定要解绑绑定的所有模板吗？</span>
         <div>流程名称: {{ currentFlow ? currentFlow.name : '' }}</div>
-<!--        <div>绑定模板: {{ currentTemplate }}</div>-->
+        <!--        <div>绑定模板: {{ currentTemplate }}</div>-->
         <span slot="footer" class="dialog-footer">
           <el-button type="warning" @click="cancelUnbind">取消</el-button>
           <el-button type="primary" @click="confirmUnbind">确定</el-button>
@@ -217,7 +217,6 @@
 
 <script>
 
-// import { taskList } from '@/api/process/admin/task'
 import waves from '@/directive/waves'
 import { listUser } from '@/api/admin/sys-user'
 import { listRole } from '@/api/admin/sys-role'
@@ -225,6 +224,7 @@ import { categoryList, flowTemplateList } from '@/api/smart/flowCenter'
 import {parseTime} from "@/utils";
 import {createFlow, deleteFlow, flowDetails, getFlowList, updateFlow, cloneFlow } from "@/api/smart/flowManage";
 import {getDeptList} from "@/api/admin/sys-dept";
+import {getTaskList} from "@/api/smart/taskCenter";
 
 export default {
   name: 'FlowManage',
@@ -325,8 +325,6 @@ export default {
         this.flowDataList = response.data
         this.filteredData = this.flowDataList
         this.total = response.data.length
-        // this.queryParams.pageIndex = response.data.page
-        // this.queryParams.pageSize = response.data.pageSize
         this.listLoading = false
       }).catch(error => {
         console.error("Error fetching flow list:", error)
@@ -334,14 +332,16 @@ export default {
       })
     },
     // 获取任务列表
-    // getTaskList() {
-    //   taskList({
-    //     page: 1,
-    //     pageSize: 99999
-    //   }).then(response => {
-    //     this.taskListData = response.data.data
-    //   })
-    // },
+    getTaskList() {
+      getTaskList({
+        page: 1,
+        pageSize: 99999
+      }).then(response => {
+        this.taskListData = response.data
+        console.log(response.data)
+        console.log('taskListData=',this.taskListData)
+      })
+    },
     // 获取部门
     getDepartments() {
       getDeptList().then(response => {
@@ -392,6 +392,7 @@ export default {
       this.getUsers()
       this.getRoles()
       this.getDepartments()
+      this.getTaskList()
     },
     createFlowDialog() {
       this.dialogFlowVisibleName = 1
@@ -465,12 +466,12 @@ export default {
             createFlow(this.ruleForm).then(response => {
               if (response.code === 200) {
                 this.$showSuccess('流程创建成功');
-                this.getList()
+                this.getFlowList()
                 this.dialogVisible = false
               }else {
                 this.$showError('创建流程失败，请完善流程')
               }
-              this.getList()
+              this.getFlowList()
               this.dialogVisible = false
             })
           } else {
@@ -503,7 +504,7 @@ export default {
               description: this.ruleForm.description
             }).then(response => {
               this.$showSuccess(`${this.ruleForm.name}流程更新成功`)
-              this.getList()
+              this.getFlowList()
               this.dialogVisible = false
             })
           } else {
@@ -519,13 +520,13 @@ export default {
     handleQuery() {
       this.queryParams.pageIndex = 1
       this.queryParams.pageSize = 10
-      this.getList()
+      this.getFlowList()
     },
     handleReset() {
       this.listLoading = true;
       setTimeout(() => {
         this.searchContent = ''
-        this.getList()
+        this.getFlowList()
         this.listLoading = false;
       }, 500);
     },
@@ -537,7 +538,7 @@ export default {
       }).then(() => {
         deleteFlow({id: row.id}).then(response => {
           if (response !== undefined) {
-            this.getList()
+            this.getFlowList()
             this.$message({
               type: 'success',
               message: '流程已删除!'
@@ -562,7 +563,7 @@ export default {
         this.currentFlow.template = []
         updateFlow(this.currentFlow).then(response => {
           if (response !== undefined) {
-            this.getList();
+            this.getFlowList();
             this.$message({
               type: 'success',
               message: '流程已解绑!'
@@ -592,7 +593,7 @@ export default {
         type: 'info'
       }).then(() => {
         cloneFlow(row.id).then(() => {
-          this.getList()
+          this.getFlowList()
           this.$message({
             type: 'success',
             message: '流程已克隆!'
@@ -673,3 +674,39 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+::v-deep .el-table th {
+  background-color: #f5f7fa; /* 你想要的背景颜色 */
+  color: #333; /* 字体颜色 */
+}
+
+::v-deep .el-dialog{
+  .el-dialog__header{
+    position:sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    padding: 15px;
+    background: #f5f7fa;
+  }
+  .el-dialog__body {
+    padding-top: 20px;
+    padding-bottom: 60px; /* 调整为按钮的高度 */
+  }
+
+  .el-dialog__footer {
+    position: absolute;
+    right: 0;
+    left: 0;
+    padding: 15px;
+    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
+    border-top: 1px solid #e4e7ed;
+    text-align: right;
+  }
+
+  .el-dialog__footer .el-button {
+    margin-left: 10px; /* 按钮之间的间距 */
+  }
+}
+
+</style>

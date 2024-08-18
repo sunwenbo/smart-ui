@@ -122,7 +122,7 @@
               </template>
             </el-table-column>
             <el-table-column :label="$t('table.currentHandler')" width="88px" align="center" prop="currentHandler" />
-            <el-table-column :label="$t('table.priority')" width="87px" align="center">
+            <el-table-column :label="$t('table.priority')" width="95px" align="center">
               <template slot-scope="scope">
                 <el-tag :type="getTagType(scope.row.priority)">
                   {{ formatPriority(scope.row) }}
@@ -260,8 +260,20 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="工单转交:" prop="priority">
-                <el-select v-model="selectedUsers" style="width: 400px; height: 40px;" filterable remote reserve-key-word :remote-method="getUserList" :loading="listLoading">
-                  <el-option v-for="item in userOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-select
+                  v-model="selectedUsers"
+                  style="width: 400px; height: 40px;"
+                  filterable
+                  remote
+                  reserve-key-word
+                  :remote-method="filterUsers"
+                  :loading="listLoading"
+                  @focus="loadAllUsers"> <!-- 点击输入框时加载所有用户 -->
+                  <el-option
+                      v-for="item in userOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -280,12 +292,10 @@
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
-import { Message } from 'element-ui'
 import { orderWorksList, updateOrderWork, getRelatedToMeWorks,getMyBacklogWorks,getCreatedByMeWorks } from '@/api/smart/workOrder'
 import { listUser } from '@/api/admin/sys-user'
-import {createOrderWorkNotify} from "@/api/smart/common";
+import {createOrderWorkNotify, sendFeishuNotify} from "@/api/smart/common";
 import {mapGetters} from "vuex";
-import pickerOptions from "@/store/modules/pickerOptions";
 
 export default {
   name: 'OrderWorksList',
@@ -293,6 +303,9 @@ export default {
   directives: { waves },
   data() {
     return {
+      selectedUsers: null, // 默认选择的用户
+      allUsers: [], // 存储所有用户
+      userOptions: [], // 处理后的下拉选项
       orderWorksStatus: [],
       orderWorksPriority: [],
       orderStatusOptions: [],
@@ -323,8 +336,6 @@ export default {
         createdAt: [] // 创建时间范围筛选条件，以数组形式存储开始时间和结束时间
       },
       orderWorks: [], // 后端返回工单信息数据
-      userOptions: [], // 处理后的下拉选项
-      selectedUsers: '', // 选择的用户
       updateOrderWorksData: [], // 接收后端更新后的工单数据
       filteredData: [], // 存放筛选后的数据
       downloadDialogVisible: false, // 对话框是否可见
@@ -476,42 +487,63 @@ export default {
         this.listLoading = false // 停止加载状态
       }
     },
-    async getUserList() {
+    // 加载所有用户列表
+    async loadAllUsers() {
       this.listLoading = true
       try {
-        await listUser().then(response => {
-          // 根据输入的query进行模糊匹配
-          this.userOptions = response.data.list.map(user => ({
-            label: user.username,
-            value: user.nickName
-          }))
-        })
+        const response = await listUser() // 加载所有用户
+        this.allUsers = response.data.list.map(user => ({
+          label: user.username,
+          value: user.nickName
+        }))
+        this.userOptions = this.allUsers // 默认显示所有用户
       } catch (error) {
-        console.error('Failed to fetch get user list:', error)
+        console.error('Failed to load all users:', error)
       } finally {
         this.listLoading = false // 停止加载状态
       }
     },
+    // 本地过滤用户列表
+    filterUsers(query) {
+      if (query) {
+        this.userOptions = this.allUsers.filter(user => user.label.includes(query))
+      } else {
+        this.userOptions = this.allUsers // 如果没有输入内容，则显示所有用户
+      }
+    },
+
     async sendUrgeMessage(row) {
-      this.listLoading = true
+      this.listLoading = true;
       try {
-        const { id,createdAt,updateBy,creator,updatedAt,template,createBy,currentNode,description,formData,currentHandlerID,regenerator,bindFlowData,process, ...cleanItem } = row
-        this.sendUrgeQuery = cleanItem
-        this.sendUrgeQuery.orderID = row.id
-        await createOrderWorkNotify(this.sendUrgeQuery).then(response => {
-          if (response.code === 200) {
-            this.getOrderWorksList()
-            this.$showSuccess(`${this.updateQuery.title} 工单催办成功`)
-          } else {
-            this.$showError('催办出错，请重试或者联系管理员', response.data)
-          }
-        })
+        const {
+          id, createdAt, updateBy, creator, updatedAt, template, createBy, currentNode,
+          description, formData, currentHandlerID, regenerator, bindFlowData, process,
+          ...cleanItem
+        } = row;
+
+        this.sendUrgeQuery = cleanItem;
+        this.sendUrgeQuery.orderID = row.id;
+
+        await sendFeishuNotify({
+          orderName: row.title,
+          receiveName: row.currentHandler,
+        });
+        const orderNotifyResponse = await createOrderWorkNotify(this.sendUrgeQuery)
+
+        if (orderNotifyResponse.code === 200) {
+          this.getOrderWorksList();
+          this.$showSuccess(`${this.updateQuery.title} 工单催办成功`)
+        } else {
+          this.$showError('催办出错，请重试或者联系管理员', orderNotifyResponse.data)
+        }
       } catch (error) {
-        console.error('Transfer of work order failed', error)
+        console.error('Transfer of work order failed', error);
       } finally {
-        this.listLoading = false // 停止加载状态
+        this.listLoading = false;
       }
     },
+
+
     async reopenOrderWorks(row) {
       this.listLoading = true
       try {
@@ -798,7 +830,7 @@ export default {
         this.currentRow = { ...row }
         this.shiftDialogVisible = true
       }).catch(() => {
-        this.$showinfo('已取消重新开启')
+        this.$showInfo('已取消重新开启')
       })
     },
     handleUrge(row) {
@@ -813,7 +845,7 @@ export default {
         this.currentRow = { ...row }
         this.sendUrgeMessage(this.currentRow)
       }).catch(() => {
-        this.$showinfo('催办已取消')
+        this.$showInfo('催办已取消')
       })
     },
     handleReopen(row) {
@@ -828,7 +860,7 @@ export default {
       }).then(() => {
         this.reopenOrderWorks(row)
       }).catch(() => {
-        this.$showinfo('转交已取消')
+        this.$showInfo('转交已取消')
       })
     },
     handleClose(row) {
@@ -839,7 +871,7 @@ export default {
       }).then(() => {
         this.closeOrderWorks(row)
       }).catch(() => {
-        this.$showinfo('已关闭')
+        this.$showInfo('已关闭')
       })
     },
     resetForm() {

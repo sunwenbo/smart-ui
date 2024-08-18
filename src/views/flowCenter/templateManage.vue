@@ -379,7 +379,7 @@ export default {
           this.listLoading = false // 停止加载状态
         }
       }).catch(() => {
-        this.$showinfo('复制已取消')
+        this.$showInfo('复制已取消')
       })
     },
     createTempLateDialog() {
@@ -431,7 +431,7 @@ export default {
       }).then(() => {
         this.DeleteFlowTemplate(row)
       }).catch(() => {
-        this.$showinfo('删除模板已取消')
+        this.$showInfo('删除模板已取消')
       })
     },
     openDialog(description) {
