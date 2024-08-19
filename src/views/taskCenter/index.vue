@@ -26,10 +26,14 @@
       <el-table v-loading="listLoading" :data="taskDataList" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
         <el-table-column :label="$t('table.id')" min-width="20px" align="center" prop="id" />
         <el-table-column :label="$t('table.name')" min-width="80px" align="center" prop="name" />
-        <el-table-column :label="$t('table.taskType')" min-width="30px" align="center" prop="taskType" />
-        <el-table-column :label="$t('table.interpreter')" min-width="100px" align="center" prop="interpreter" />
-        <el-table-column :label="$t('table.creator')" min-width="30px" align="center" prop="creator" />
-        <el-table-column :label="$t('table.regenerator')" min-width="30px" align="center" prop="regenerator" />
+        <el-table-column :label="$t('table.taskType')" min-width="40px" align="center" prop="taskType" >
+          <template slot-scope="scope">
+            {{ getTaskTypeName(scope.row.taskType) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('table.interpreter')" min-width="80px" align="center" prop="interpreter" />
+        <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
+        <el-table-column :label="$t('table.regenerator')" min-width="40px" align="center" prop="regenerator" />
         <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
         <el-table-column :label="$t('table.updatedAt')" min-width="60px" align="center" prop="updatedAt" />
         <el-table-column :label="$t('table.actions')" align="center" width="150">
@@ -47,11 +51,13 @@
       <el-dialog :title="dialogTaskVisibleName === 1 ? '新建任务' : '编辑任务'" :visible.sync="dialogVisible" width="70%" style="margin-top: 0">
         <div>
           <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-            <el-col :span="24">
-              <el-form-item label="名称:" prop="name">
-                <el-input v-model="ruleForm.name" placeholder="请输入任务名称" style="width: 100%" />
-              </el-form-item>
-            </el-col>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="名称:" prop="name">
+                  <el-input v-model="ruleForm.name" placeholder="请输入任务名称" style="width: 100%" />
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item label="类型:" prop="taskType">
@@ -82,7 +88,6 @@
           </div>
         </div>
       </el-dialog>
-
       <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="() => toggleDownloadDialog(false)">
         <span>确认要导出数据吗？</span>
         <span slot="footer">
@@ -102,14 +107,37 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/shell/shell.js'
+import 'codemirror/theme/eclipse.css'
+import {parseTime} from "@/utils"; // 引入主题样式
+
 
 export default {
   name: 'TaskList',
   directives: { waves },
-
+  watch: {
+    'ruleForm.interpreter': function(newVal) {
+      this.updateContent();
+    }
+  },
   data() {
     return {
       searchType: 'name',
+      defaultContentTemplate: `workOrderForm=$1 # 接受工单工单数据
+
+# 推荐使用 jq 命令来获取 Json 结构对应的键值数据。具体使用方法，还请自行百度。
+# 此外，还需注意 jq 命令，若没有还需在任务工作节点安装此命令。
+
+# ------------- 在下面编写您的业务逻辑代码 -------------`,
+      interpreterTemplates: {
+        shell: `#!/bin/bash\n\n# 在这里编写 shell 脚本`,
+        python: `#!/usr/bin/env python3\n\n# 在这里编写 Python 脚本`,
+        javascript: `#!/usr/bin/env node\n\n// 在这里编写 JavaScript 脚本`
+      },
+      interpreterPaths: {
+        "/bin/bash": "shell",
+        "/usr/bin/python3": "python",
+        "node": "javascript"
+      },
       taskType: [],
       taskDataList: [],
       downloadDialogVisible: false,
@@ -122,10 +150,12 @@ export default {
       editorOptions: {
         mode: 'shell',
         lineNumbers: true,
-        theme: 'default',
+        theme: 'eclipse',
         tabSize: 2,
         lineWrapping: true,
-        viewportMargin: Infinity
+        viewportMargin: Infinity,
+        styleActiveLine: true // 启用高亮当前行
+
       },
       interpreterList: {
         shell: [
@@ -155,13 +185,16 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入流程名称', trigger: 'blur' }
+          { required: true, message: '请输入任务名称', trigger: 'blur' }
         ],
         taskType: [
           { required: true, message: '请选择类型', trigger: 'blur' }
         ],
         interpreter: [
           { required: true, message: '请选择解释器', trigger: 'blur' }
+        ],
+        content: [
+          { required: true, message: '请输入脚本内容', trigger: 'blur' }
         ]
       }
     }
@@ -179,102 +212,11 @@ export default {
   },
 
   methods: {
-    handleCommand(command) {
-      this.searchType = command
-    },
-
-    onTaskTypeChange(value) {
-      this.ruleForm.interpreter = ''
-      switch (value) {
-        case 'Shell':
-          this.interpreterOptions = this.interpreterList.shell
-          break
-        case 'Python':
-          this.interpreterOptions = this.interpreterList.python
-          break
-        case 'JavaScript':
-          this.interpreterOptions = this.interpreterList.javascript
-          break
-        default:
-          this.interpreterOptions = []
-      }
-    },
-
-    createTaskDialog() {
-      this.dialogTaskVisibleName = 1
-      this.dialogVisible = true
-    },
-
-    handleEdit(row) {
-      this.dialogTaskVisibleName = 2
-      this.dialogVisible = true
-      this.ruleForm = { ...row }
-      this.onTaskTypeChange(this.ruleForm.taskType)
-    },
-
-    taskSearch() {
-      this.queryParams.pageIndex = 1
-      this.getTaskList()
-    },
-
-    handleReset() {
-      this.searchContent = ''
-      this.queryParams.pageIndex = 1
-      this.getTaskList()
-    },
-
-    toggleDownloadDialog(value) {
-      this.downloadDialogVisible = value
-    },
-
-    handleDownload() {
-      this.downloadDialogVisible = false
-      // Add your download logic here
-    },
-
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          createTask(this.ruleForm).then(() => {
-            this.$message.success('创建成功')
-            this.dialogVisible = false
-            this.getTaskList()
-          }).catch((error) => {
-            this.$message.error(error)
-          })
-        }
-      })
-    },
-
-    editForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          updateTask(this.ruleForm).then(() => {
-            this.$message.success('编辑成功')
-            this.dialogVisible = false
-            this.getTaskList()
-          }).catch((error) => {
-            this.$message.error(error)
-          })
-        }
-      })
-    },
-
-    getTaskType() {
-      // Retrieve task type data from API or static configuration
-      this.taskType = [
-        { value: 'Shell', label: 'Shell' },
-        { value: 'Python', label: 'Python' },
-        { value: 'JavaScript', label: 'JavaScript' }
-      ]
-    },
-
     getTaskList() {
       this.listLoading = true
       const params = {
         page: this.queryParams.pageIndex,
         size: this.queryParams.pageSize,
-        [this.searchType]: this.searchContent
       }
       getTaskList(params).then(response => {
         this.taskDataList = response.data
@@ -284,13 +226,133 @@ export default {
       })
     },
 
+    getTaskType() {
+      this.getDicts('order_works_task_type').then(response => {
+        this.taskType = response.data
+      })
+    },
+
+    getTaskTypeName(taskType) {
+      // 查找 taskTypeList 中的对应项
+      const found = this.taskType.find(item => item.value === taskType);
+      return found ? found.label : 'Unknown'; // 默认值为 'Unknown'
+    },
+    handleCommand(command) {
+      this.searchType = command
+    },
+
+    onTaskTypeChange(taskType) {
+      const interpreterMapping = {
+        '0': this.interpreterList.shell,
+        '1': this.interpreterList.python,
+        '2': this.interpreterList.javascript,
+      };
+
+      // 更新解释器选项
+      this.interpreterOptions = interpreterMapping[taskType] || [];
+
+      // 设置解释器字段，如果任务数据中已有解释器，则赋值
+      if (this.ruleForm.interpreter === '') {
+        this.ruleForm.interpreter = interpreterMapping[taskType][0]?.value || '';
+      }
+    },
+
+    updateContent() {
+      const { interpreter } = this.ruleForm
+      const templateType = this.interpreterPaths[interpreter];
+      const template = this.interpreterTemplates[templateType] || '';
+      this.ruleForm.content = `${template}\n\n${this.defaultContentTemplate}`
+    },
+
+    createTaskDialog() {
+      this.dialogTaskVisibleName = 1
+      this.dialogVisible = true
+      this.resetForm()
+    },
+
+    handleEdit(row) {
+      this.dialogTaskVisibleName = 2
+      this.dialogVisible = true
+      this.ruleForm = {...row}
+      this.onTaskTypeChange(this.ruleForm.taskType)
+    },
+
+    async taskSearch() {
+      try {
+        await this.getTaskList();
+
+        if (this.searchContent) {
+          if (this.searchType === 'name') {
+            this.taskDataList = this.taskDataList.filter(item =>
+                item.name.toLowerCase().includes(this.searchContent.toLowerCase())
+            );
+          } else if (this.searchType === 'id') {
+            this.taskDataList = this.taskDataList.filter(item =>
+                item.id.toString() === this.searchContent
+            )
+          }
+        }
+        // 处理分页
+        this.taskDataList = this.getPaginatedData(this.taskDataList, this.queryParams.pageIndex, this.queryParams.pageSize);
+      } catch (error) {
+        console.error('获取任务列表失败:', error);
+      } finally {
+        this.listLoading = false;
+      }
+    },
+    getPaginatedData(data, page, pageSize) {
+      const start = (page - 1) * pageSize
+      const end = page * pageSize
+      return data.slice(start, end)
+    },
+    handleReset() {
+      this.listLoading = true
+      setTimeout(() => {
+        this.searchContent = ''
+        this.getTaskList()
+        this.listLoading = false
+      }, 400)
+    },
+
+    toggleDownloadDialog(value) {
+      this.downloadDialogVisible = value
+    },
+
+
+    async handleSubmit(isEdit = false) {
+      try {
+        const valid = await this.$refs.ruleForm.validate();
+        if (valid) {
+          const action = isEdit ? updateTask : createTask;
+          await action(this.ruleForm);
+          this.$message.success(isEdit ? '编辑成功' : '创建成功');
+          this.dialogVisible = false;
+          this.getTaskList();
+        }
+      } catch (error) {
+        this.handleError(error);
+      }
+    },
+    handleError(error) {
+      this.$message.error(error);
+    },
+
+    submitForm() {
+      this.handleSubmit(false);
+    },
+
+    editForm() {
+      this.handleSubmit(true);
+    },
+
     handleDelete(row) {
       this.$confirm('此操作将永久删除该任务, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteTask(row.id).then(() => {
+        console.log({id: row.id})
+        deleteTask({id: row.id}).then(() => {
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -305,11 +367,48 @@ export default {
       })
     },
 
-    sortChange({ prop, order }) {
+    sortChange({prop, order}) {
       this.queryParams.sort = prop
       this.queryParams.order = order
       this.getTaskList()
+    },
+
+    resetForm() {
+      this.ruleForm = {
+        name: '',
+        taskType: '',
+        interpreter: '',
+        description: '',
+        content: this.defaultContentTemplate // 设置默认内容
+      };
+    },
+    formatJson(filterVal) {
+      return this.taskDataList.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
+    handleDownload() {
+      this.downloadDialogVisible = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['ID', '名称',  '类型', '解释器', '描述信息','创建人', '更新人', '创建时间', '更新时间']
+        const filterVal = ['id', 'name','taskType', 'interpreter', 'description', 'creator', 'regenerator',  'createdAt', 'updatedAt']
+        const data = this.formatJson(filterVal)
+        // 获取当前日期并格式化为 YYYY-MM-DD
+        const currentDate = new Date().toISOString().slice(0, 10)
+        const filename = `task-list-${currentDate}`
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: filename
+        })
+        this.downloadDialogVisible = false
+      })
     }
+
   }
 }
 </script>

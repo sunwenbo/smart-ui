@@ -384,13 +384,7 @@ export default {
     },
     createTempLateDialog() {
       // 打开创建表单对话框
-      this.currentData = {
-        name: '',
-        description: '',
-        creator: '',
-        bindCount: 0,
-        formData: {}
-      }
+      this.resetForm()
       this.templateDialogVisible = true
       this.$nextTick(() => {
         this.$refs.vfDesigner.resetForm() // 重置表单设计器内的表单数据
