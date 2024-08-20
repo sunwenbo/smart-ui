@@ -167,7 +167,6 @@ export default {
     closed: '结单',
     cancel: '取 消',
     confirm: '确 定',
-    flowGroup: '类别',
     linkTemplate: '关联模版'
   },
   example: {

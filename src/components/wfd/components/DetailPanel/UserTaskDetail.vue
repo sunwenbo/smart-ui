@@ -3,6 +3,21 @@
         <div class="panelTitle">{{i18n['userTask']}}</div>
         <div class="panelBody">
             <DefaultDetail :model="model" :onChange="onChange" :readOnly="readOnly" />
+          <div class="panelRow">
+            <div>之后任务：</div>
+            <el-select
+                size="small"
+                style="width:90%; font-size:12px"
+                placeholder="选择任务"
+                :disabled="readOnly"
+                :value="model.task"
+                :multiple="true"
+                :filterable="true"
+                @change="(e) => onChange('task', e)"
+            >
+              <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.full_name" />
+            </el-select>
+          </div>
             <div class="panelRow">
                 <div>{{i18n['userTask.assignType']}}：</div>
                 <el-select style="width:90%; font-size: 12px"
@@ -99,6 +114,10 @@
       onChange: {
         type: Function,
         default: ()=>{}
+      },
+      tasks: {
+        type: Array,
+        default: () => ([])
       },
       readOnly:{
         type: Boolean,

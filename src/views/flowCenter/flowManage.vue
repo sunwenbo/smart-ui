@@ -32,7 +32,7 @@
             <el-button type="text" icon="el-icon-more" @click="toggleDescDialog(scope.row.description)" />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('table.flowGroup')" min-width="40px" align="center" prop="categoryId" :formatter="categoryFormatter" />
+        <el-table-column :label="$t('table.category')" min-width="40px" align="center" prop="categoryId" :formatter="categoryFormatter" />
         <el-table-column :label="$t('table.creator')" min-width="30px" align="center" prop="creator" />
         <el-table-column :label="$t('table.regenerator')" min-width="30px" align="center" prop="regenerator" />
         <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
@@ -72,7 +72,7 @@
         </el-table-column>
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getFlowList" />
-      <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  :fullscreen="true" style="margin-top: 0">
+      <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  :fullscreen="true">
         <div>
           <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
             <el-row>
@@ -142,7 +142,7 @@
                         v-for="(item, index) in taskListData"
                         :key="item.id"
                         :label="item.name"
-                        :value="item.id"
+                        :value="item.name"
                     />
                   </el-select>
                 </el-form-item>
@@ -170,6 +170,7 @@
                     :height="600"
                     :users="users"
                     :roles="roles"
+                    :tasks="taskListData"
                     :categorys="categoryLists"
                     :departments="departments"
                     :template="ruleForm.template"
@@ -198,7 +199,6 @@
         <span>{{ descriptionDialogContent }}</span>
         <span>确定要解绑绑定的所有模板吗？</span>
         <div>流程名称: {{ currentFlow ? currentFlow.name : '' }}</div>
-        <!--        <div>绑定模板: {{ currentTemplate }}</div>-->
         <span slot="footer" class="dialog-footer">
           <el-button type="warning" @click="cancelUnbind">取消</el-button>
           <el-button type="primary" @click="confirmUnbind">确定</el-button>
@@ -338,8 +338,6 @@ export default {
         pageSize: 99999
       }).then(response => {
         this.taskListData = response.data
-        console.log(response.data)
-        console.log('taskListData=',this.taskListData)
       })
     },
     // 获取部门

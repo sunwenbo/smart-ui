@@ -320,21 +320,14 @@ export default {
 
 
     async handleSubmit(isEdit = false) {
-      try {
-        const valid = await this.$refs.ruleForm.validate();
-        if (valid) {
-          const action = isEdit ? updateTask : createTask;
-          await action(this.ruleForm);
-          this.$message.success(isEdit ? '编辑成功' : '创建成功');
-          this.dialogVisible = false;
-          this.getTaskList();
-        }
-      } catch (error) {
-        this.handleError(error);
+      const valid = await this.$refs.ruleForm.validate();
+      if (valid) {
+        const action = isEdit ? updateTask : createTask;
+        await action(this.ruleForm);
+        this.$message.success(isEdit ? '编辑成功' : '创建成功');
+        this.dialogVisible = false;
+        this.getTaskList();
       }
-    },
-    handleError(error) {
-      this.$message.error(error);
     },
 
     submitForm() {
