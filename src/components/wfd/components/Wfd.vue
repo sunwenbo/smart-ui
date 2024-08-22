@@ -1,9 +1,12 @@
 <template>
   <div class="root">
+<!--    工具栏-->
     <ToolbarPanel ref="toolbar" v-if="!isView" />
     <div style="display: flex">
+<!--      侧边栏-->
       <ItemPanel ref="addItemPanel" v-if="!isView" :height="height"/>
       <div ref="canvas" class="canvasPanel" :style="{'height':height+'px','width':isView?'100%':'70%','border-bottom':isView?0:null}"></div>
+<!--      配置详情-->
       <DetailPanel
          ref="detailPanel"
          v-if="!isView"
@@ -15,8 +18,6 @@
          :categorys="categorys"
          :departments="departments"
          :tasks="tasks"
-         :template="template"
-         :templates-base="templatesBase"
          :groups="groups"
          :signalDefs="processModel.signalDefs"
          :messageDefs="processModel.messageDefs"
@@ -71,7 +72,7 @@
       },
       data: {
         type: Object,
-        default: () => ({nodes:[],edges:[]})
+        default: () => ({ nodes: [], edges: [] })
       },
       users: {
         type: Array,
@@ -82,14 +83,6 @@
         default: () => ([])
       },
       departments: {
-        type: Array,
-        default: () => ([])
-      },
-      template: {
-        type: Array,
-        default: () => ([])
-      },
-      templatesBase: {
         type: Array,
         default: () => ([])
       },
@@ -151,7 +144,7 @@
             'dragPanelItemAddNode','clickSelected','deleteItem','itemAlign','dragPoint','brush-select'],
         },
         defaultEdge: {
-          shape: 'flow-polyline-round',
+          type: 'flow-polyline-round',
         },
       });
       this.graph.saveXML = (createFile = true) => exportXML(this.graph.save(),this.processModel,createFile);
@@ -168,14 +161,14 @@
       this.initEvents();
     },
     watch:{
-      data(oldData,newData){
-        if(oldData !== newData) {
+      data(oldData, newData) {
+        if (oldData !== newData) {
           if (this.graph) {
-            this.graph.changeData(this.initShape(newData));
-            this.graph.setMode(this.mode);
-            this.graph.emit('canvas:click');
+            this.graph.changeData(this.initShape(newData))
+            this.graph.setMode(this.mode)
+            this.graph.emit('canvas:click')
             if (this.cmdPlugin) {
-              this.cmdPlugin.initPlugin(this.graph);
+              this.cmdPlugin.initPlugin(this.graph)
             }
             if (this.isView) {
               this.graph.fitView(5)
@@ -185,19 +178,19 @@
       },
     },
     methods: {
-      initShape(data){
-        if(data && data.nodes){
+      initShape(data) {
+        if (data && data.nodes) {
           return {
             nodes: data.nodes.map(node => {
               return {
                 shape: getShapeName(node.clazz),
-                ...node,
+                ...node
               }
             }),
             edges: data.edges
           }
         }
-        return data;
+        return data
       },
       initEvents(){
         this.graph.on('afteritemselected',(items)=>{
@@ -207,8 +200,10 @@
               item = this.getNodeInSubProcess(items[0])
             }
             this.selectedModel = {...item.getModel()};
+            console.log('this.selectedModel1=',this.selectedModel)
           } else {
             this.selectedModel = this.processModel;
+            console.log('this.selectedModel2=',this.selectedModel)
           }
         });
         const page = this.$refs['canvas'];
@@ -235,9 +230,13 @@
             this.graph.updateItem(item, {[key]: value});
           }
           this.selectedModel = {...item.getModel()};
+          console.log('this.selectedModel3=',this.selectedModel)
+
         } else {
           const canvasModel = { ...this.processModel, [key]: value};
           this.selectedModel = canvasModel;
+          console.log('this.selectedModel4=',this.selectedModel)
+
           this.processModel = canvasModel;
         }
       },

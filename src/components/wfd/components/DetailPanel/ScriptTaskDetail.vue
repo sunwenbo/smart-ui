@@ -1,19 +1,4 @@
 <template>
-<!--    <div :data-clazz="model.clazz">-->
-<!--        <div class="panelTitle">{{i18n['scriptTask']}}</div>-->
-<!--        <div class="panelBody">-->
-<!--            <DefaultDetail :model="model" :onChange="onChange" :readOnly="readOnly" />-->
-<!--            <div class="panelRow">-->
-<!--                <div>{{i18n['scriptTask.script']}}：</div>-->
-<!--                <el-input style="width:90%; font-size:12px"-->
-<!--                          type="textarea"-->
-<!--                          :rows="4"-->
-<!--                          :disabled="readOnly"-->
-<!--                          :value="model.script"-->
-<!--                          @input="(value) => {onChange('script', value)}" />-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
   <div :data-clazz="model.clazz">
     <div class="panelTitle">{{ i18n['scriptTask'] }}</div>
     <div class="panelBody">
@@ -54,7 +39,7 @@
             :filterable="true"
             @change="(e) => onChange('task', e)"
         >
-          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.full_name" />
+          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.name" />
         </el-select>
       </div>
     </div>

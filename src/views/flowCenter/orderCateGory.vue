@@ -91,7 +91,7 @@
           <el-button type="primary" @click="handleDownload">确 定</el-button>
         </span>
         </el-dialog>
-        <pagination v-show="total > 0" :total="total" :page.sync="cateGoryQuery.page" :limit.sync="cateGoryQuery.pageSize" @pagination="getCategoryList" />
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getCategoryList" />
       </div>
     </el-card>
   </div>
@@ -101,9 +101,7 @@
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination/index.vue'
 import { parseTime } from '@/utils'
-import { Message } from 'element-ui'
 import { categoryList, createCateGory, deleteCateGory, updateCateGory } from '@/api/smart/flowCenter'
-import {mapGetters} from "vuex";
 
 export default {
   name: 'OrderCateGory',
@@ -119,6 +117,10 @@ export default {
         name: '',
         chineseName: ''
       },
+      queryParams: {
+        page: 1,
+        pageSize: 10
+      },
       updateCateGoryData: {},
       total: 0,
       downloadDialogVisible: false, // 对话框是否可见
@@ -129,10 +131,6 @@ export default {
       searchContent: '', // 搜索框内容默认为空
       getCateGoryData: [], // 保存table数据
       filteredData: [],
-      cateGoryQuery: {
-        page: 1,
-        pageSize: 10,
-      }, // 查询模板
       createCateGoryRules: {
         name: [
           { required: true, message: '请输入英文名称', trigger: 'blur' }
@@ -156,24 +154,18 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.getCategoryList()
   },
   methods: {
     async getCategoryList() {
       this.listLoading = true
-      await categoryList(
-        this.cateGoryQuery
-      ).then(response => {
-        this.getCateGoryData = response.data
+      await categoryList(this.queryParams).then(response => {
+        this.getCateGoryData = response.data.list
+        this.filteredData = this.getCateGoryData
+        this.total = response.data.count
+        this.listLoading = false
       })
-      this.filteredData = this.getPaginatedData(this.getCateGoryData, this.cateGoryQuery.page, this.cateGoryQuery.pageSize)
-      this.listLoading = false
-    },
-    getPaginatedData(data, page, pageSize) {
-      const start = (page - 1) * pageSize
-      const end = page * pageSize
-      return data.slice(start, end)
     },
     createCategoryHandler() {
       // 创建新项目逻辑
@@ -307,8 +299,6 @@ export default {
           } else if (this.searchType === 'id') {
             this.filteredData = this.getCateGoryData.filter(item => item.id.toString() === this.searchContent)
           }
-        } else {
-          this.filteredData = this.getPaginatedData(this.getCateGoryData, this.cateGoryQuery.page, this.cateGoryQuery.pageSize)
         }
         this.listLoading = false
       }, 500)

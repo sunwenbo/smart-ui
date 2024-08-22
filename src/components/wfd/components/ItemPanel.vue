@@ -5,20 +5,24 @@
                 <img data-item="{clazz:'start',size:'30*30',label:''}"
                      :src="require('../assets/flow/start.svg')" style="width:42px;height:42px" />
                 <div>{{i18n['startEvent']}}</div>
-                <img data-item="{clazz:'timerStart',size:'30*30',label:''}"
-                     :src="require('../assets/flow/timer-start.svg')" style="width:42px;height:42px" />
-                <div>{{i18n['timerEvent']}}</div>
-                <img data-item="{clazz:'messageStart',size:'30*30',label:''}"
-                     :src="require('../assets/flow/message-start.svg')" style="width:42px;height:42px" />
-                <div>{{i18n['messageEvent']}}</div>
-                <img data-item="{clazz:'signalStart',size:'30*30',label:''}"
-                     :src="require('../assets/flow/signal-start.svg')" style="width:42px;height:42px" />
-                <div>{{i18n['signalEvent']}}</div>
+<!--                <img data-item="{clazz:'timerStart',size:'30*30',label:''}"-->
+<!--                     :src="require('../assets/flow/timer-start.svg')" style="width:42px;height:42px" />-->
+<!--                <div>{{i18n['timerEvent']}}</div>-->
+<!--                <img data-item="{clazz:'messageStart',size:'30*30',label:''}"-->
+<!--                     :src="require('../assets/flow/message-start.svg')" style="width:42px;height:42px" />-->
+<!--                <div>{{i18n['messageEvent']}}</div>-->
+<!--                <img data-item="{clazz:'signalStart',size:'30*30',label:''}"-->
+<!--                     :src="require('../assets/flow/signal-start.svg')" style="width:42px;height:42px" />-->
+<!--                <div>{{i18n['signalEvent']}}</div>-->
             </el-collapse-item>
             <el-collapse-item :title="i18n['task']" name="2">
                 <img :data-item="userTaskData"
                      :src="require('../assets/flow/user-task.svg')" style="width:80px;height:44px" />
                 <div>{{i18n['userTask']}}</div>
+              <img :data-item="handleNodeData"
+                   :src="require('../assets/flow/receive-task.svg')"
+                   style="width:80px;height:44px;margin-top:10px">
+              <div>{{ i18n['handleNode'] }}</div>
                 <img :data-item="scriptTaskData"
                      :src="require('../assets/flow/script-task.svg')" style="width:80px;height:44px" />
                 <div>{{i18n['scriptTask']}}</div>
@@ -28,9 +32,10 @@
                 <img :data-item="mailTaskData"
                      :src="require('../assets/flow/mail-task.svg')" style="width:80px;height:44px" />
                 <div>{{i18n['mailTask']}}</div>
-                <img :data-item="receiveTaskData"
-                     :src="require('../assets/flow/receive-task.svg')" style="width:80px;height:44px" />
-                <div>{{i18n['receiveTask']}}</div>
+<!--                <img :data-item="receiveTaskData"-->
+<!--                     :src="require('../assets/flow/receive-task.svg')" style="width:80px;height:44px" />-->
+<!--                <div>{{i18n['receiveTask']}}</div>-->
+
             </el-collapse-item>
             <el-collapse-item :title="i18n['gateway']" name="3">
                 <img data-item="{clazz:'exclusiveGateway',size:'40*40',label:''}"
@@ -78,7 +83,8 @@
         scriptTaskData: "{clazz:'scriptTask',size:'80*44',label:'"+this.i18n['scriptTask']+"'}",
         javaTaskData: "{clazz:'javaTask',size:'80*44',label:'"+this.i18n['javaTask']+"'}",
         mailTaskData: "{clazz:'mailTask',size:'80*44',label:'"+this.i18n['mailTask']+"'}",
-        receiveTaskData: "{clazz:'receiveTask',size:'80*44',label:'"+this.i18n['receiveTask']+"'}",
+        // receiveTaskData: "{clazz:'receiveTask',size:'80*44',label:'"+this.i18n['receiveTask']+"'}",
+        handleNodeData: "{clazz:'receiveTask',size:'80*44',label:'" + this.i18n['handleNode'] + "'}"
       };
     },
   }

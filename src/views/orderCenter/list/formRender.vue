@@ -136,7 +136,7 @@ export default {
           getDeptList()
         ]);
         this.orderWorksPriority = priorityResponse.data
-        this.flowTemplatedata = templateResponse.data;
+        this.flowTemplatedata = templateResponse.data.list;
 
         this.matchedTemplate = this.flowTemplatedata.find(template =>
             template.name === this.$route.params.bindTempLate
@@ -144,10 +144,10 @@ export default {
         if (this.matchedTemplate) {
           this.$refs.vFormRef.setFormJson(this.matchedTemplate.formData)
         }
-        this.categoryList = categoryResponse.data;
+        this.categoryList = categoryResponse.data.list
         const matchingCategory = this.categoryList.find(item => item.id === this.matchedTemplate.categoryId);
         if (matchingCategory) {
-          this.category = matchingCategory.chineseName;
+          this.category = matchingCategory.chineseName
         }
 
         this.departments = deptResponse.data.map(dept => ({

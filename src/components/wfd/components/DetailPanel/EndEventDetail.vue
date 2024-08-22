@@ -22,8 +22,6 @@
               :model="model"
               :on-change="onChange"
               :read-only="readOnly"
-              :templates="templates"
-              :templates-base="templatesBase"
               :write-preview="false"
               :readonly-preview="false"
               :cc-preview="false"
@@ -33,10 +31,13 @@
 </template>
 <script>
   import DefaultDetail from "./DefaultDetail";
+  import NodeDetail from './NodeDetail'
+
   export default {
     inject: ['i18n'],
     components: {
-      DefaultDetail
+      DefaultDetail,
+      NodeDetail
     },
     props: {
       model: {

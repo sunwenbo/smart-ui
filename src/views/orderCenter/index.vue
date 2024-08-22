@@ -94,9 +94,9 @@ export default {
       showStar: false,
       showStarTip: false,
       currentHovered: null,
-      itemsQuery: {
+      queryParams: {
         page: 1,
-        pageSize: 9999,
+        pageSize: 9999
       },
       originalCategories: [], // 保存初始分类数据
     }
@@ -142,17 +142,15 @@ export default {
     },
     // 调用后端接口，取回工单页面的数据
     getItemsList() {
-      itemsList(this.itemsQuery).then(response => {
-        this.orderItems = response.data
+      itemsList(this.queryParams).then(response => {
+        this.orderItems = response.data.list
       })
     },
 
     // 查询工单类别用于在工单申请页面显示
     getTemplateCategory() {
-      categoryList(
-          this.itemsQuery
-      ).then(response => {
-        const categoryRes = response.data
+      categoryList(this.queryParams).then(response => {
+        const categoryRes = response.data.list
         this.originalCategories = categoryRes.map(item => ({
           id: item.id,
           name: item.name,

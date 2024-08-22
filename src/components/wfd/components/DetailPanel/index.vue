@@ -1,65 +1,76 @@
 <template>
     <div class="detailPanel" :style="{'height':height+'px'}">
-        <UserTaskDetail v-if="model.clazz === 'userTask'" :model="model" :onChange="onChange" :tasks="tasks" :readOnly="readOnly" :users="users" :groups="groups" />
-        <ScriptTaskDetail v-else-if="model.clazz === 'scriptTask'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
-        <HandleNodeDetail
-            v-else-if="model.clazz === 'receiveTask'"
-            :model="model"
-            :on-change="onChange"
-            :read-only="readOnly"
-            :users="users"
-            :roles="roles"
-            :groups="groups"
-            :departments="departments"
-            :tasks="tasks"
-            :templates="templates"
-            :templates-base="templatesBase"
-        />
-        <JavaTaskDetail v-else-if="model.clazz === 'javaTask'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-        <ReceiveTaskDetail v-else-if="model.clazz === 'receiveTask'" :model="model" :onChange="onChange" :tasks="tasks" :readOnly="readOnly" />
-        <MailTaskDetail v-else-if="model.clazz === 'mailTask'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-        <TimerEventDetail v-else-if="model.clazz === 'timerStart' || model.clazz === 'timerCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-        <SignalEventDetail v-else-if="model.clazz === 'signalStart' || model.clazz === 'signalCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" :signalDefs="signalDefs" />
-        <MessageEventDetail v-else-if="model.clazz === 'messageStart' || model.clazz === 'messageCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" :messageDefs="messageDefs" />
-        <GatewayDetail v-else-if="model.clazz === 'gateway' || model.clazz === 'exclusiveGateway' || model.clazz === 'parallelGateway' || model.clazz === 'inclusiveGateway'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-        <FlowDetail v-else-if="model.clazz === 'flow'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-        <StartEventDetail v-else-if="model.clazz === 'start'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
-        <EndEventDetail v-else-if="model.clazz === 'end'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
-        <ProcessDetail v-else-if="model.clazz === 'process'" :model="model" :onChange="onChange" :readOnly="readOnly" :categorys="categorys" />
+      <UserTaskDetail
+          v-if="model.clazz === 'userTask'"
+          :model="model"
+          :onChange="onChange"
+          :readOnly="readOnly"
+          :users="users"
+          :groups="groups"
+          :roles="roles"
+          :departments="departments"
+          :tasks="tasks"
+      />
+      <ScriptTaskDetail v-else-if="model.clazz === 'scriptTask'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
+      <HandleNodeDetail
+          v-else-if="model.clazz === 'receiveTask'"
+          :model="model"
+          :on-change="onChange"
+          :read-only="readOnly"
+          :users="users"
+          :roles="roles"
+          :groups="groups"
+          :departments="departments"
+          :tasks="tasks"
+          :categorys="categorys"
+      />
+      <MessageEventDetail v-else-if="model.clazz === 'messageStart' || model.clazz === 'messageCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" :messageDefs="messageDefs" />
+      <GatewayDetail v-else-if="model.clazz === 'gateway' || model.clazz === 'exclusiveGateway' || model.clazz === 'parallelGateway' || model.clazz === 'inclusiveGateway'" :model="model" :onChange="onChange" :readOnly="readOnly" />
+      <FlowDetail v-else-if="model.clazz === 'flow'" :model="model" :onChange="onChange" :readOnly="readOnly" />
+      <StartEventDetail v-else-if="model.clazz === 'start'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
+      <EndEventDetail v-else-if="model.clazz === 'end'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
+<!--        <ReceiveTaskDetail v-else-if="model.clazz === 'receiveTask'" :model="model" :onChange="onChange" :tasks="tasks" :readOnly="readOnly" />-->
+<!--        <ProcessDetail v-else-if="model.clazz === 'process'" :model="model" :onChange="onChange" :readOnly="readOnly" :categorys="categorys" />-->
+<!--        <JavaTaskDetail v-else-if="model.clazz === 'javaTask'" :model="model" :onChange="onChange" :readOnly="readOnly" />-->
+<!--        <MailTaskDetail v-else-if="model.clazz === 'mailTask'" :model="model" :onChange="onChange" :readOnly="readOnly" />-->
+<!--        <TimerEventDetail v-else-if="model.clazz === 'timerStart' || model.clazz === 'timerCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" />-->
+<!--        <SignalEventDetail v-else-if="model.clazz === 'signalStart' || model.clazz === 'signalCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" :signalDefs="signalDefs" />-->
+
     </div>
 </template>
 <script>
   import UserTaskDetail from "./UserTaskDetail"
-  import JavaTaskDetail from "./JavaTaskDetail"
   import ScriptTaskDetail from "./ScriptTaskDetail"
   import HandleNodeDetail from './HandleNodeDetail'
-  import ReceiveTaskDetail from "./ReceiveTaskDetail"
   import MailTaskDetail from "./MailTaskDetail"
-  import TimerEventDetail from "./TimerEventDetail"
-  import SignalEventDetail from "./SignalEventDetail"
   import MessageEventDetail from "./MessageEventDetail"
   import GatewayDetail from "./GatewayDetail"
   import FlowDetail from "./FlowDetail"
   import StartEventDetail from "./StartEventDetail"
   import EndEventDetail from "./EndEventDetail"
-  import ProcessDetail from "./ProcessDetail"
+  // import TimerEventDetail from "./TimerEventDetail"
+  // import SignalEventDetail from "./SignalEventDetail"
+  // import JavaTaskDetail from "./JavaTaskDetail"
+  // import ReceiveTaskDetail from "./ReceiveTaskDetail"
+  // import ProcessDetail from "./ProcessDetail"
+
   export default {
     inject: ['i18n'],
     components:{
       UserTaskDetail,
       ScriptTaskDetail,
-      JavaTaskDetail,
       HandleNodeDetail,
-      ReceiveTaskDetail,
       MailTaskDetail,
-      TimerEventDetail,
-      SignalEventDetail,
       MessageEventDetail,
       GatewayDetail,
       FlowDetail,
       StartEventDetail,
       EndEventDetail,
-      ProcessDetail,
+      // TimerEventDetail,
+      // SignalEventDetail,
+      // ReceiveTaskDetail,
+      // JavaTaskDetail,
+      // ProcessDetail,
     },
     props: {
       height: {
@@ -85,6 +96,14 @@
       categorys: {
         type: Array,
         default: ()=>([]),
+      },
+      roles: {
+        type: Array,
+        default: () => ([])
+      },
+      departments: {
+        type: Array,
+        default: () => ([])
       },
       signalDefs: {
         type: Array,

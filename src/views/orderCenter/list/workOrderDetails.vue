@@ -183,7 +183,7 @@ export default {
         this.currentStepIndex = nodes.findIndex(node => node.label === currentNode) + 1
         // 查询该工单关联的模板详细数据
         await this.getFlowTemplate().then(response => {
-          const flowTemplatedata = response.data;
+          const flowTemplatedata = response.data.list
           this.matchedTemplate = flowTemplatedata.find(template =>
               template.name === this.orderDetail.template
           )

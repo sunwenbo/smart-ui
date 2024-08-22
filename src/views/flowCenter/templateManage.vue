@@ -63,7 +63,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination v-show="total > 0" :total="total" :page.sync="tempLateQuery.page" :limit.sync="tempLateQuery.pageSize" @pagination="getFlowTemplateList" />
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getFlowTemplateList" />
       </div>
     </el-card>
     <el-dialog :visible.sync="templateDialogVisible" title="模板管理" :fullscreen="true">
@@ -127,7 +127,6 @@
 <script>
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination/index.vue'
-import { Message } from 'element-ui'
 import {
   categoryList, copyFlowTemplate, createFlowTemplate,
   deleteFlowTemplate, flowTemplateList, updateFlowTemplate
@@ -174,10 +173,10 @@ export default {
         bindFlow: undefined,
         formData: {}
       }, // 复制模板
-      tempLateQuery: {
+      queryParams: {
         page: 1,
-        pageSize: 10,
-      }, // 查询模板
+        pageSize: 10
+      },
       tempLateRules: {
         name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         category:  [{ required: false, message: '请选择类别', trigger: 'blur' }],
@@ -209,41 +208,28 @@ export default {
       }
     }
   },
-  // watch: {
-  //   getTempLateData: {
-  //     deep: true,
-  //     handler() {
-  //       // 在 tempLateData 对象发生变化时触发搜索
-  //       this.templateSearch()
-  //     }
-  //   }
-  // },
-  mounted() {
+  created() {
     this.getCategoryList()
     // 在组件创建时自动发送请求获取模板数据
     this.getFlowTemplateList()
     this.getFlowList({ pageIndex: 1, pageSize: 9999 }).then(response => {
-      this.flowListResponse = response.data
+      this.flowListResponse = response.data.list
     })
   },
   methods: {
     getFlowTemplateList() {
       this.listLoading = true
-      flowTemplateList (
-        this.tempLateQuery
-      ).then(response => {
-        this.getTempLateData = response.data
-        this.total = this.getTempLateData.length
+      flowTemplateList (this.queryParams).then(response => {
+        this.getTempLateData = response.data.list
+        this.total = response.data.count
         this.filteredData = this.getTempLateData
         this.listLoading = false
       })
     },
     getCategoryList() {
       this.listLoading = true
-      categoryList(
-        this.tempLateQuery
-      ).then(response => {
-        this.categoryList = response.data
+      categoryList({ pageIndex: 1, pageSize: 9999 }).then(response => {
+        this.categoryList = response.data.list
       })
       this.listLoading = false
     },
@@ -324,7 +310,6 @@ export default {
           }
         } else {
           this.handleReset()
-          this.filteredData = this.getPaginatedData(this.getTempLateData, this.tempLateQuery.page, this.tempLateQuery.pageSize)
         }
         this.listLoading = false
       }, 500)

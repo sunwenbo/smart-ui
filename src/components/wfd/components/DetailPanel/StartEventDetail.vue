@@ -22,8 +22,6 @@
               :model="model"
               :on-change="onChange"
               :read-only="readOnly"
-              :templates="templates"
-              :templates-base="templatesBase"
               :write-preview="false"
               :users="users"
           />
@@ -48,7 +46,23 @@
         type: Function,
         default: ()=>{}
       },
+      users: {
+        type: Array,
+        default: ()=>([]),
+      },
       tasks: {
+        type: Array,
+        default: () => ([])
+      },
+      groups: {
+        type: Array,
+        default: ()=>([]),
+      },
+      categorys: {
+        type: Array,
+        default: ()=>([]),
+      },
+      roles: {
         type: Array,
         default: () => ([])
       },

@@ -15,7 +15,7 @@
           :filterable="true"
           @change="(e) => onChange('task', e)"
         >
-          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.full_name" />
+          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.name" />
         </el-select>
       </div>
       <div class="panelRow">
@@ -30,7 +30,6 @@
         >
           <el-option key="person" value="person" :label="i18n['handleNode.assignType.person']" />
           <el-option key="role" value="role" :label="i18n['userTask.assignType.role']" />
-          <!-- <el-option key="persongroup" value="persongroup" :label="i18n['handleNode.assignType.persongroup']"/> -->
           <el-option key="department" value="department" :label="i18n['handleNode.assignType.department']" />
           <el-option key="variable" value="variable" :label="i18n['handleNode.assignType.variable']" />
         </el-select>
@@ -47,7 +46,7 @@
           :filterable="true"
           @change="(e) => { onChange('assignValue', e); getPersons(e) }"
         >
-          <el-option v-for="user in users" :key="user.userId" :label="user.nickName===''?user.username:user.nickName" :value="user.userId" />
+          <el-option v-for="user in users" :key="user.id" :label="user.name===''?user.name:user.name" :value="user.id" />
         </el-select>
       </div>
       <div v-else-if="model.assignType === 'role'" class="panelRow">
@@ -64,20 +63,6 @@
           <el-option v-for="(item, index) in roles" :key="index" :label="item.roleName" :value="item.roleId" />
         </el-select>
       </div>
-      <!-- <div v-else-if="model.assignType === 'persongroup'" class="panelRow">
-        <div>{{ i18n['handleNode.assignType.persongroup.title'] }}：</div>
-        <el-select
-          style="width:90%; font-size:12px"
-          :placeholder="i18n['handleNode.assignType.persongroup.placeholder']"
-          :value="model.assignValue"
-          :disabled="readOnly"
-          :multiple="true"
-          :filterable="true"
-          @change="(e) => { onChange('assignValue', e); getPersons(e) }"
-        >
-          <el-option v-for="group in groups" :key="group.id" :label="group.nickname===''?group.name:group.nickname" :value="group.id" />
-        </el-select>
-      </div> -->
       <div v-else-if="model.assignType === 'department'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['userTask.assignType.department.title'] }}：</div>
         <el-select
@@ -93,6 +78,7 @@
           <el-option v-for="department in departments" :key="department.deptId" :label="department.deptName" :value="department.deptId" />
         </el-select>
       </div>
+
       <div v-else-if="model.assignType === 'variable'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['handleNode.assignType.variable.title'] }}：</div>
         <el-select
@@ -146,8 +132,6 @@
         :model="model"
         :on-change="onChange"
         :read-only="readOnly"
-        :templates="templates"
-        :templates-base="templatesBase"
         :readonly-preview="false"
         :users="users"
       />
@@ -195,14 +179,6 @@ export default {
     readOnly: {
       type: Boolean,
       default: false
-    },
-    templates: {
-      type: Array,
-      default: () => ([])
-    },
-    templatesBase: {
-      type: Array,
-      default: () => ([])
     }
   },
   data() {

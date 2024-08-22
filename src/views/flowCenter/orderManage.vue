@@ -277,7 +277,7 @@
           <el-button type="primary" @click="handleDownload">确 定</el-button>
         </span>
         </el-dialog>
-        <pagination v-show="total > 0" :total="total" :page.sync="itemsQuery.page" :limit.sync="itemsQuery.pageSize" @pagination="getItemsList" />
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getItemsList" />
       </div>
     </el-card>
   </div>
@@ -331,17 +331,17 @@ export default {
       updateDialog: false,
       isUpdate: false,
       listLoading: false,
-      getTempLateData: {}, // 获取模版数据
+      getTempLateData: [], // 获取模版数据
       searchContent: '', // 搜索框内容默认为空
       getItemsData: [], // 保存table数据
       filteredData: [],
       currentPage: 1, // 当前页码，默认为第一页
       pageSize: 10, // 每页显示条目数，可以根据需求调整
       currentData: {},
-      itemsQuery: {
+      queryParams: {
         page: 1,
-        pageSize: 15,
-      }, // 查询模板
+        pageSize: 10
+      },
       tempLateRules: {
         name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         description: [{ required: true, message: '请输入描述信息', trigger: 'blur' }]
@@ -416,7 +416,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.getCategoryList()
     // 在组件创建时自动发送请求获取数据
     this.getItemsList()
@@ -425,24 +425,23 @@ export default {
   },
   methods: {
     async getCategoryList() {
-      await categoryList(this.itemsQuery).then(response => {
-        this.categoryList = response.data
+      await categoryList({ pageIndex: 1, pageSize: 9999 }).then(response => {
+        this.categoryList = response.data.list
       })
     },
     getItemsList() {
       this.listLoading = true
-      itemsList(this.itemsQuery).then(response => {
-        this.getItemsData = response.data
-        this.total = this.getItemsData.length
+      itemsList(this.queryParams).then(response => {
+        this.getItemsData = response.data.list
+        this.filteredData = this.getItemsData
+        this.total = response.data.count
       })
-      this.filteredData = this.getPaginatedData(this.getItemsData, this.page, this.pageSize)
       this.listLoading = false // 停止加载状态
     },
     async getFlowTemplateList() {
       try {
-        await flowTemplateList(this.itemsQuery).then(response =>{
-          this.getTempLateData = response.data
-          this.total = this.getTempLateData.length
+        await flowTemplateList({ pageIndex: 1, pageSize: 9999 }).then(response =>{
+          this.getTempLateData = response.data.list
           this.searchModelData()
         })
       } catch (error) {
@@ -463,14 +462,8 @@ export default {
     // 根据类别选择更新模板列表
     handleCategoryChange() {
       const categoryId = this.createItems.categoryId || this.currentItem.categoryId
-      this.filteredTemplates = this.templateData
-        .filter(templateData => templateData.categoryId === categoryId)
-        .map(templateData => templateData.name)
-    },
-    getPaginatedData(data, page, pageSize) {
-      const start = (page - 1) * pageSize
-      const end = page * pageSize
-      return data.slice(start, end)
+      this.filteredTemplates = this.templateData.filter(templateData => templateData.categoryId === categoryId).
+      map(templateData => templateData.name)
     },
     validateForm() {
       this.$refs.createForm.validate((valid) => {
@@ -580,8 +573,6 @@ export default {
           } else if (this.searchType === 'id') {
             this.filteredData = this.getItemsData.filter(item => item.id.toString() === this.searchContent)
           }
-        } else {
-          this.filteredData = this.getPaginatedData(this.getItemsData, this.itemsQuery.page, this.itemsQuery.pageSize)
         }
         this.listLoading = false
       }, 500)

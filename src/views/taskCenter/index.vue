@@ -172,6 +172,7 @@ export default {
         ]
       },
       interpreterOptions: [],
+      originalTaskDataList: [],
       total: 0,
       dialogVisible: false,
       dialogTaskVisibleName: undefined,
@@ -214,13 +215,10 @@ export default {
   methods: {
     getTaskList() {
       this.listLoading = true
-      const params = {
-        page: this.queryParams.pageIndex,
-        size: this.queryParams.pageSize,
-      }
-      getTaskList(params).then(response => {
-        this.taskDataList = response.data
-        this.total = response.data.length
+      getTaskList(this.queryParams).then(response => {
+        this.taskDataList = response.data.list
+        this.originalTaskDataList = response.data.list
+        this.total = response.data.count
       }).finally(() => {
         this.listLoading = false
       })
@@ -277,33 +275,23 @@ export default {
       this.onTaskTypeChange(this.ruleForm.taskType)
     },
 
-    async taskSearch() {
-      try {
-        await this.getTaskList();
-
-        if (this.searchContent) {
-          if (this.searchType === 'name') {
-            this.taskDataList = this.taskDataList.filter(item =>
-                item.name.toLowerCase().includes(this.searchContent.toLowerCase())
-            );
-          } else if (this.searchType === 'id') {
-            this.taskDataList = this.taskDataList.filter(item =>
-                item.id.toString() === this.searchContent
-            )
-          }
+    taskSearch() {
+      // 搜索功能逻辑
+      if (this.searchContent) {
+        const searchLower = this.searchContent.toLowerCase();
+        if (this.searchType === 'name') {
+          this.taskDataList = this.originalTaskDataList.filter(item =>
+              item.name.toLowerCase().includes(searchLower)
+          );
+        } else if (this.searchType === 'id') {
+          this.taskDataList = this.originalTaskDataList.filter(item =>
+              item.id.toString().includes(this.searchContent)
+          );
         }
-        // 处理分页
-        this.taskDataList = this.getPaginatedData(this.taskDataList, this.queryParams.pageIndex, this.queryParams.pageSize);
-      } catch (error) {
-        console.error('获取任务列表失败:', error);
-      } finally {
-        this.listLoading = false;
+      } else {
+        // 如果搜索内容为空，恢复原始数据
+        this.taskDataList = this.originalTaskDataList;
       }
-    },
-    getPaginatedData(data, page, pageSize) {
-      const start = (page - 1) * pageSize
-      const end = page * pageSize
-      return data.slice(start, end)
     },
     handleReset() {
       this.listLoading = true

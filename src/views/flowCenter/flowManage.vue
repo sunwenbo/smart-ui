@@ -26,7 +26,6 @@
       <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
         <el-table-column :label="$t('table.id')" min-width="30px" align="center" prop="id" />
         <el-table-column :label="$t('table.name')" min-width="80px" align="center" prop="name" />
-        <!--        <el-table-column :label="$t('table.linkTemplate')" min-width="50px" align="center" prop="template" />-->
         <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-more" @click="toggleDescDialog(scope.row.description)" />
@@ -71,8 +70,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getFlowList" />
-      <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  :fullscreen="true">
+      <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getFlowList" />
+      <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  ref="ruleForm" :fullscreen="true">
         <div>
           <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
             <el-row>
@@ -100,18 +99,15 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <!--              <el-col :span="12">-->
-              <!--                <el-form-item label="模板:" prop="tempLate">-->
-              <!--                  <el-select v-model="ruleForm.template" filterable multiple placeholder="请选择模版" style="width: 100%">-->
-              <!--                    <el-option-->
-              <!--                      v-for="item in flowTemplateLists"-->
-              <!--                      :key="item.id"-->
-              <!--                      :label="item.name"-->
-              <!--                      :value="item.name"-->
-              <!--                    />-->
-              <!--                  </el-select>-->
-              <!--                </el-form-item>-->
-              <!--              </el-col>-->
+              <el-col :span="12">
+                <el-form-item label="通知:">
+                  <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
+                    <el-option label="邮件" :value="1" />
+                    <el-option label="飞书" :value="2" />
+                    <el-option label="电话" :value="3" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
@@ -122,29 +118,6 @@
               <el-col :span="12">
                 <el-form-item label="开启评分:">
                   <el-switch v-model="ruleForm.ratings" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="通知:">
-                  <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
-                    <el-option label="邮件" :value="1" />
-                    <el-option label="飞书" :value="2" />
-                    <el-option label="电话" :value="3" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="任务:">
-                  <el-select v-model="ruleForm.task" multiple filterable clearable placeholder="请选择流程任务" style="width: 100%">
-                    <el-option
-                        v-for="(item, index) in taskListData"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.name"
-                    />
-                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -163,18 +136,17 @@
                 <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveImg()}">导出图片</el-button>
                 <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.modalVisible=true}">查看流程图</el-button>
                 <WfdDesign
+                    ref="wfd"
                     v-if="wfdDesignRefresh"
                     :isView=false
-                    ref="wfd"
                     :data="ruleForm.structure"
                     :height="600"
                     :users="users"
                     :roles="roles"
+                    :groups="groups"
                     :tasks="taskListData"
                     :categorys="categoryLists"
                     :departments="departments"
-                    :template="ruleForm.template"
-                    :templates-base="template"
                     :lang="lang"
                 />
               </div>
@@ -248,7 +220,7 @@ export default {
       searchContent: '',
       currentFlow: null,
       queryParams: {
-        pageIndex: 1,
+        page: 1,
         pageSize: 10
       },
       // 遮罩层
@@ -270,21 +242,10 @@ export default {
       groups: [],
       lang: 'zh',
       departments: [],
-      template: [],
       taskListData: [],
       wfdDesignRefresh: true,
       dialogFlowVisibleName: undefined,
-      ruleForm: {
-        id: undefined,
-        name: '',
-        template: [],
-        structure: {},
-        categoryId: undefined,
-        task: [],
-        notice: [],
-        icon: '',
-        description: ''
-      },
+      ruleForm: {},
       rules: {
         name: [
           {required: true, message: '请输入流程名称', trigger: 'blur'}
@@ -294,9 +255,6 @@ export default {
         ],
         categoryId: [
           {required: true, message: '请选择流程类别', trigger: 'blur, change'}
-        ],
-        template: [
-          {required: true, message: '请选择绑定的模版', trigger: 'blur, change'}
         ],
         structure: [
           {required: true, message: '请设计流程', trigger: 'blur'}
@@ -310,7 +268,6 @@ export default {
   created() {
     this.getFlowList()
     this.getCategoryList()
-    this.getFlowInitData()
   },
   computed: {
     inputPlaceholder() {
@@ -322,9 +279,9 @@ export default {
     getFlowList() {
       this.listLoading = true
       getFlowList(this.queryParams).then(response => {
-        this.flowDataList = response.data
+        this.flowDataList = response.data.list
         this.filteredData = this.flowDataList
-        this.total = response.data.length
+        this.total = response.data.count
         this.listLoading = false
       }).catch(error => {
         console.error("Error fetching flow list:", error)
@@ -352,7 +309,7 @@ export default {
         page: 1,
         pageSize: 99999
       }).then(response => {
-        this.categoryLists = response.data
+        this.categoryLists = response.data.list
       })
     },
     // 获取模板
@@ -393,6 +350,16 @@ export default {
       this.getTaskList()
     },
     createFlowDialog() {
+      this.getFlowInitData()
+      this.ruleForm =  {
+        id: undefined,
+        name: '',
+        structure: {nodes: [], edges: [] },
+        categoryId: undefined,
+        notice: [],
+        icon: '',
+        description: ''
+      }
       this.dialogFlowVisibleName = 1
       this.dialogVisible = true
       this.wfdDesignRefresh = false
@@ -401,8 +368,8 @@ export default {
       })
     },
     handleEdit(row) {
-      this.dialogFlowVisibleName = 2
       this.getFlowInitData()
+      this.dialogFlowVisibleName = 2
       this.wfdDesignRefresh = false
       this.dialogVisible = true
       flowDetails(row.id).then(response => {
@@ -411,11 +378,9 @@ export default {
           name: response.data.name,
           icon: response.data.icon,
           categoryId: response.data.categoryId,
-          template: response.data.template,
           comments: response.data.comments,
           ratings: response.data.ratings,
           notice: response.data.notice,
-          task: response.data.task,
           structure: response.data.structure,
           description: response.data.description
         }
@@ -450,20 +415,21 @@ export default {
       }
       return ''
     },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+    submitForm() {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          var structureValue = this.$refs.wfd.graph.save()
-          var r = this.verifyProcess(structureValue)
-          if (r !== '') {
-            this.$message.error(r)
-            return
-          }
+          const structureValue = this.$refs.wfd.graph.save()
+          // 校验流程属性
+          // const r = this.verifyProcess(structureValue)
+          // if (r !== '') {
+          //   this.$message.error(r)
+          //   return
+          // }
           if (structureValue.nodes.length > 0 && structureValue.edges.length > 0) {
             this.ruleForm.structure = structureValue
             createFlow(this.ruleForm).then(response => {
               if (response.code === 200) {
-                this.$showSuccess('流程创建成功');
+                this.$showSuccess('流程创建成功')
                 this.getFlowList()
                 this.dialogVisible = false
               }else {
@@ -478,11 +444,11 @@ export default {
         }
       })
     },
-    editForm(formName) {
-      this.$refs[formName].validate((valid) => {
+    editForm() {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          var structureValue = this.$refs.wfd.graph.save()
-          var r = this.verifyProcess(structureValue)
+          const structureValue = this.$refs.wfd.graph.save()
+          const r = this.verifyProcess(structureValue)
           if (r !== '') {
             this.$message.error(r)
             return
@@ -493,11 +459,9 @@ export default {
               name: this.ruleForm.name,
               icon: this.ruleForm.icon,
               categoryId: this.ruleForm.categoryId,
-              template: this.ruleForm.template,
               comments: this.ruleForm.comments,
               raings: this.ruleForm.ratings,
               notice: this.ruleForm.notice,
-              task: this.ruleForm.task,
               structure: structureValue,
               description: this.ruleForm.description
             }).then(response => {
@@ -516,7 +480,7 @@ export default {
       })
     },
     handleQuery() {
-      this.queryParams.pageIndex = 1
+      this.queryParams.page = 1
       this.queryParams.pageSize = 10
       this.getFlowList()
     },
@@ -552,7 +516,6 @@ export default {
     },
     handleUnbind(row) {
       this.currentFlow = row
-      // this.currentTemplate = row.template // 假设 'linkTemplate' 是绑定的模板
       this.unbindDialogVisible = true;
     },
     confirmUnbind() {
@@ -647,8 +610,8 @@ export default {
     async handleDownload() {
       this.toggleDownloadDialog(false);
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '名称', '创建人', '关联模板','描述信息', '类别', '创建时间', '更新时间']
-        const filterVal = ['id', 'name', 'creator', 'template', 'description', 'categoryId', 'createdAt', 'updatedAt']
+        const tHeader = ['ID', '名称', '创建人','更新人','描述信息', '类别', '创建时间', '更新时间']
+        const filterVal = ['id', 'name', 'creator', 'regenerator','description', 'categoryId', 'createdAt', 'updatedAt']
         const data = this.formatJson(filterVal, this.flowDataList) // 确保传递数据
         // 获取当前日期并格式化为 YYYY-MM-DD
         const currentDate = new Date().toISOString().slice(0, 10)

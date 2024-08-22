@@ -183,7 +183,8 @@
           </el-table>
         </el-tabs>
       </div>
-      <pagination v-show="total > 0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getOrderWorksList" />
+      <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getOrderWorksList" />
+
     </el-card>
     <div>
       <el-dialog :visible.sync="descDialogVisible" title="描述信息" width="30%" :before-close="closeDescDiglog">
@@ -348,7 +349,7 @@ export default {
       pageSize: 10, // 每页显示条目数，可以根据需求调整
       listLoading: true,
       currentRow: {},
-      listQuery: {
+      queryParams: {
         page: 1,
         pageSize: 20
       },
@@ -436,9 +437,9 @@ export default {
     async getOrderWorksList() {
       this.listLoading = true
       try {
-        await orderWorksList(this.listQuery).then(response => {
-          this.orderWorks = response.data.filter(order => order.status !== 'reopened' && order.status !== 'closed')
-          this.total = this.orderWorks.length
+        await orderWorksList(this.queryParams).then(response => {
+          this.orderWorks = response.data.list.filter(order => order.status !== 'reopened' && order.status !== 'closed')
+          this.total = response.data.count
           this.currentHandler = [...new Set(this.orderWorks.map(order => order.currentHandler))];
           this.filteredData = this.orderWorks // 确保初始显示所有数据
         })
