@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import { Message } from 'element-ui'
 import { getOrderWorkNotify, updateOrderWorkNotify } from '@/api/smart/common'
 
 export default {
@@ -44,11 +43,25 @@ export default {
     this.fetchNotifications()
   },
   methods: {
+    messageNotify(data) {
+      const h = this.$createElement;
+      this.$notify({
+        title: '工单通知',
+        message: h('i', {style: 'color: teal'}, data.message)
+      });
+    },
     async fetchNotifications() {
       try {
         const response = await getOrderWorkNotify();
         if (response.code === 200) {
-          this.notifications = response.data;
+          this.notifications = response.data
+          if (this.notifications.length > 0 && this.notifications) {
+            this.notifications.forEach(item => {
+              if (item.readStatus === 0) {  // 判断每个通知的 readStatus 是否为 0, 0 未读 1 已读
+                this.messageNotify(item)
+              }
+            })
+          }
         } else {
           console.error('Unexpected response structure', response);
         }
