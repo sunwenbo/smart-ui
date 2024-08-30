@@ -24,18 +24,20 @@
         <el-table-column :label="$t('table.id')" min-width="20px" align="center" prop="id" />
         <el-table-column :label="$t('table.hostname')" min-width="80px" align="center" prop="hostName" />
         <el-table-column :label="$t('table.ip')" min-width="50px" align="center" prop="ip" />
-        <el-table-column :label="$t('table.port')" min-width="50px" align="center" prop="port" />
         <el-table-column :label="$t('table.heartbeat')" min-width="60px" align="center" prop="heartbeat" />
         <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
         <el-table-column :label="$t('table.regenerator')" min-width="40px" align="center" prop="regenerator" />
         <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
         <el-table-column :label="$t('table.updatedAt')" min-width="60px" align="center" prop="updatedAt" />
-        <el-table-column :label="$t('table.actions')" align="center" width="150">
+        <el-table-column :label="$t('table.actions')" align="center" min-width="90px" >
           <template slot-scope="scope">
-            <el-button v-permisaction="['process:admin:manager:edit']" size="mini" type="text" icon="el-icon-edit" @click="handleEdit(scope.row)">
+            <el-button v-permisaction="['process:admin:manager:test']" type="text" icon="el-icon-mouse" @click="handleTestCon(scope.row)">
+              连接测试
+            </el-button>
+            <el-button v-permisaction="['process:admin:manager:edit']" type="text" icon="el-icon-edit" @click="handleEdit(scope.row)">
               编辑
             </el-button>
-            <el-button v-permisaction="['process:admin:manager:delete']" size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">
+            <el-button v-permisaction="['process:admin:manager:delete']"  type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">
               删除
             </el-button>
           </template>
@@ -119,7 +121,15 @@
 
 <script>
 import waves from '@/directive/waves'
-import { getExecMachine, createExecMachine, deleteExecMachine, updateExecMachine, getExecMachineId } from '@/api/smart/execMachine'
+import {
+  getExecMachine,
+  createExecMachine,
+  deleteExecMachine,
+  updateExecMachine,
+  getExecMachineId,
+  testConnExecMachine
+} from '@/api/smart/execMachine'
+import {updateItems} from "@/api/smart/orderItems";
 
 
 export default {
@@ -239,7 +249,15 @@ export default {
       this.dialogMachineVisibleName = 1
       this.dialogVisible = true
     },
-
+    handleTestCon(row) {
+      testConnExecMachine({id: row.id,}).then(response => {
+        if (response.code === 200) {
+          this.$message.success(response.msg)
+        } else {
+          this.$message.error(response.msg)
+        }
+      })
+    },
     handleEdit(row) {
       this.dialogMachineVisibleName = 2
       this.dialogVisible = true

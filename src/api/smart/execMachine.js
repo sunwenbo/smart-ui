@@ -46,3 +46,13 @@ export function deleteExecMachine(data) {
   })
 }
 
+
+// 测试连接
+export function testConnExecMachine(data) {
+  return request({
+    url: '/api/v1/machine/testConnection',
+    method: 'post',
+    data
+  })
+}
+
