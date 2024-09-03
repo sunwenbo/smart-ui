@@ -160,16 +160,15 @@
                   v-permisaction="['job:sysJob:remove']"
                   size="mini"
                   type="text"
-                  icon="el-icon-edit"
+                  icon="el-icon-video-pause"
                   @click="handleRemove(scope.row)"
                 >停止
                 </el-button>
                 <el-button
                   v-if="scope.row.entry_id==0 && scope.row.status!=1"
                   v-permisaction="['job:sysJob:start']"
-                  size="mini"
                   type="text"
-                  icon="el-icon-edit"
+                  icon="el-icon-video-play"
                   @click="handleStart(scope.row)"
                 >启动
                 </el-button>
@@ -506,11 +505,11 @@ export default {
         return delSysJob({ 'ids': Ids })
       }).then((response) => {
         if (response.code === 200) {
-          this.msgSuccess(response.msg)
+          this.msgSuccess('编号为"' + row.jobId + '任务删除成功~~')
           this.open = false
           this.getList()
         } else {
-          this.msgError(response.msg)
+          this.msgError('编号为"' + row.jobId + '任务删除失败! ')
         }
       }).catch(function() {})
     },
@@ -524,11 +523,11 @@ export default {
         return startJob(row.jobId)
       }).then((response) => {
         if (response.code === 200) {
-          this.msgSuccess(response.msg)
+          this.msgSuccess('编号为"' + row.jobId + '任务启动成功~~')
           this.open = false
           this.getList()
         } else {
-          this.msgError(response.msg)
+          this.msgError('编号为"' + row.jobId + '任务启动失败! ')
         }
       }).catch(function() {})
     },
@@ -542,11 +541,11 @@ export default {
         return removeJob(row.jobId)
       }).then((response) => {
         if (response.code === 200) {
-          this.msgSuccess(response.msg)
+          this.msgSuccess('编号为"' + row.jobId + '任务停止成功~~')
           this.open = false
           this.getList()
         } else {
-          this.msgError(response.msg)
+          this.msgError('编号为"' + row.jobId + '任务停止失败! ')
         }
       }).catch(function() {})
     },

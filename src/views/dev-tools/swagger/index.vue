@@ -20,7 +20,7 @@ export default {
   components: {},
   data() {
     return {
-      src: process.env.VUE_APP_BASE_API + '/swagger/admin/index.html',
+      src: process.env.VUE_APP_BASE_API + '/swagger/smart/index.html',
       height: document.documentElement.clientHeight - 94.5 + 'px;',
       loading: true
     }

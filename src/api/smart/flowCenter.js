@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取所有flow模板列表
 export async function flowTemplateList(params) {
   return request({
-    url: '/api/v1/flow/templates/list',
+    url: '/api/v1/flow-templates',
     method: 'get',
     params
   })
@@ -12,24 +12,15 @@ export async function flowTemplateList(params) {
 // 根据模板ID获取模板数据
 export async function flowTemplateListId(id) {
   return request({
-    url: `/api/v1/flow/templates/list${id}`,
+    url: `/api/v1/flow-templates/${id}`,
     method: 'get',
-  })
-}
-
-// 根据模板名称获取模板数据
-export async function specifyTemplateName(data) {
-  return request({
-    url: '/api/v1/flow/templates/list',
-    method: 'get',
-    data
   })
 }
 
 // 创建流程模板
 export async function createFlowTemplate(data) {
   return request({
-    url: '/api/v1/flow/templates/create',
+    url: '/api/v1/flow-templates',
     method: 'post',
     data
   })
@@ -38,7 +29,7 @@ export async function createFlowTemplate(data) {
 // 复制流程模板
 export async function copyFlowTemplate(data) {
   return request({
-    url: '/api/v1/flow/templates/create',
+    url: '/api/v1/flow-templates',
     method: 'post',
     data
   })
@@ -47,7 +38,7 @@ export async function copyFlowTemplate(data) {
 // 删除流程模板
 export async function deleteFlowTemplate(data) {
   return request({
-    url: '/api/v1/flow/templates/delete',
+    url: '/api/v1/flow-templates',
     method: 'delete',
     data
   })
@@ -56,7 +47,7 @@ export async function deleteFlowTemplate(data) {
 // 更新flowTemplate
 export async function updateFlowTemplate(data) {
   return request({
-    url: '/api/v1/flow/templates/update',
+    url: '/api/v1/flow-templates',
     method: 'put',
     data
   })
@@ -65,7 +56,7 @@ export async function updateFlowTemplate(data) {
 // 获取工单类别
 export async function categoryList(params) {
   return request({
-    url: '/api/v1/flow/category/list',
+    url: '/api/v1/order-category',
     method: 'get',
     params
   })
@@ -74,7 +65,7 @@ export async function categoryList(params) {
 // 创建工单类别
 export async function createCateGory(data) {
   return request({
-    url: '/api/v1/flow/category/create',
+    url: '/api/v1/order-category',
     method: 'post',
     data
   })
@@ -83,7 +74,7 @@ export async function createCateGory(data) {
 // 更新工单类别
 export async function updateCateGory(data) {
   return request({
-    url: '/api/v1/flow/category/update',
+    url: '/api/v1/order-category',
     method: 'put',
     data
   })
@@ -93,7 +84,7 @@ export async function updateCateGory(data) {
 // 删除工单类别
 export async function deleteCateGory(data) {
   return request({
-    url: '/api/v1/flow/category/delete',
+    url: '/api/v1/order-category',
     method: 'delete',
     data
   })

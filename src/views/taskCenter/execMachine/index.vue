@@ -24,7 +24,14 @@
         <el-table-column :label="$t('table.id')" min-width="20px" align="center" prop="id" />
         <el-table-column :label="$t('table.hostname')" min-width="80px" align="center" prop="hostName" />
         <el-table-column :label="$t('table.ip')" min-width="50px" align="center" prop="ip" />
-        <el-table-column :label="$t('table.heartbeat')" min-width="60px" align="center" prop="heartbeat" />
+        <el-table-column :label="$t('table.status')" min-width="40px" align="center" prop="status">
+          <template slot-scope="scope">
+            <el-tag :type="getStatusTag(scope.row.status)">
+              {{ formatStatus(scope.row.status) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('table.heartbeat')" min-width="65px" align="center" prop="heartbeat" />
         <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
         <el-table-column :label="$t('table.regenerator')" min-width="40px" align="center" prop="regenerator" />
         <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
@@ -50,24 +57,24 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item label="IP:" prop="ip">
-                  <el-input v-model="ruleForm.ip" placeholder="请输入主机IP" style="width: 100%" />
+                  <el-input v-model="ruleForm.ip" placeholder="请输入主机IP" style="width: 100%" :disabled="dialogMachineVisibleName !== 1" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="主机名:" prop="hostname">
-                  <el-input v-model="ruleForm.hostName" placeholder="请输入主机名" style="width: 100%" />
+                <el-form-item label="主机名:" prop="hostName">
+                  <el-input v-model="ruleForm.hostName" placeholder="请输入主机名" style="width: 100%" :disabled="dialogMachineVisibleName !== 1" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="用户名:" prop="username">
-                  <el-input v-model="ruleForm.username" placeholder="请输入用户名" style="width: 100%" />
+                <el-form-item label="用户名:" prop="userName">
+                  <el-input v-model="ruleForm.userName" placeholder="请输入用户名" style="width: 100%" :disabled="dialogMachineVisibleName !== 1" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="端口号:" prop="port">
-                  <el-input v-model="ruleForm.port" placeholder="请输入端口号" style="width: 100%" />
+                  <el-input v-model="ruleForm.port" placeholder="请输入端口号" style="width: 100%" type="number" @input="handlePortInput" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -85,25 +92,38 @@
               <el-col :span="12">
                 <el-form-item label="认证方式:" prop="authType">
                   <el-select v-model="ruleForm.authType" filterable placeholder="请选择主机认证方式" style="width: 100%" @change="onAuthTypeChange">
-                    <el-option v-for="item in machineAuth" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in machineAuth"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
 
+            </el-row>
+            <el-row :gutter="20">
               <!-- 用户密码认证 -->
-              <el-col :span="12" v-if="ruleForm.authType === '1'">
+              <el-col :span="24" v-if="ruleForm.authType === '1'">
                 <el-form-item label="主机密码:" prop="passWord">
                   <el-input v-model="ruleForm.passWord" placeholder="请输入密码" type="password" style="width: 100%" />
                 </el-form-item>
               </el-col>
-
-              <!-- 公私钥认证 -->
-              <el-col :span="12" v-if="ruleForm.authType === '2'">
-                <el-form-item label="公私钥路径:" prop="keyPath">
-                  <el-input v-model="ruleForm.keyPath" placeholder="请选择公私钥路径" style="width: 100%" />
+              <!-- 私钥认证 -->
+              <el-col :span="24" v-if="ruleForm.authType === '2'">
+                <el-form-item label="私钥内容:" prop="privateKey">
+                  <el-input
+                    v-model="ruleForm.privateKey"
+                    type="textarea"
+                    placeholder="请输入您的私钥"
+                    rows="20"
+                    style="width: 100%"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
+
             <el-form-item label="描述:" prop="description">
               <el-input v-model="ruleForm.description" placeholder="请输入主机描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" style="width: 100%" />
             </el-form-item>
@@ -129,8 +149,6 @@ import {
   getExecMachineId,
   testConnExecMachine
 } from '@/api/smart/execMachine'
-import {updateItems} from "@/api/smart/orderItems";
-
 
 export default {
   name: 'ExecMachine',
@@ -158,19 +176,22 @@ export default {
         passWord: '',
         port: 22,
         status: 1, // 默认为在线
-        authType: undefined, // 默认为用户名密码
-        keyPath: '',
+        authType: null, // 默认为用户名密码
+        privateKey: '',
         description: '',
       },
       rules: {
         ip: [
           { required: true, message: '请输入IP', trigger: 'blur' }
         ],
-        hostname: [
+        hostName: [
           { required: true, message: '请输入主机名', trigger: 'blur' }
         ],
         userName: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        passWord: [
+          { required: true, message: '请输入用户密码', trigger: 'blur' }
         ],
         port: [
           { required: true, message: '请输入端口号', trigger: 'blur' }
@@ -187,11 +208,7 @@ export default {
   created() {
     this.getMachineList()
     this.getDicts('order_exec_machine_status').then(response => {
-      this.machineStatus= response.data
-      // 确保默认的 status 为 1，且正确设置 active 和 inactive 状态值
-      if (!this.ruleForm.status) {
-        this.ruleForm.status = 1;
-      }
+      this.machineStatus = response.data
     })
     this.getDicts('order_exec_machine_auth').then(response => {
       this.machineAuth = response.data
@@ -224,17 +241,20 @@ export default {
     // 监听认证类型的变化
     onAuthTypeChange(value) {
       this.ruleForm.authType = value; // 更新当前认证类型
-      if (value === 1) {
-        // 用户密码认证
+      if (value === '1') {
+        // 用户名密码认证
         this.ruleForm.passWord = ''; // 清空密码字段
-        this.ruleForm.keyPath = ''; // 清空公私钥路径字段
-      } else if (value === 2) {
+        this.ruleForm.privateKey = ''; // 清空公私钥路径字段
+      } else if (value === '2') {
         // 公私钥认证
-        this.ruleForm.keyPath = ''; // 清空公私钥路径字段
+        this.ruleForm.privateKey = ''; // 清空公私钥路径字段
         this.ruleForm.passWord = ''; // 清空密码字段
       }
     },
-
+    handlePortInput(value) {
+      // 将输入值转换为数字
+      this.ruleForm.port = value ? Number(value) : '';
+    },
     handleCommand(command) {
       this.searchType = command
     },
@@ -253,34 +273,40 @@ export default {
       testConnExecMachine({id: row.id,}).then(response => {
         if (response.code === 200) {
           this.$message.success(response.msg)
+          this.getMachineList()
         } else {
           this.$message.error(response.msg)
         }
       })
     },
     handleEdit(row) {
+      this.ruleForm = {...row}
       this.dialogMachineVisibleName = 2
       this.dialogVisible = true
-      this.ruleForm = {...row}
     },
 
     machineSearch() {
       // 搜索功能逻辑
-      if (this.searchContent) {
-        const searchLower = this.searchContent.toLowerCase();
-        if (this.searchType === 'hostname') {
-          this.execMachineList = this.originalExecMachineList.filter(item =>
-              item.name.toLowerCase().includes(searchLower)
-          );
-        } else if (this.searchType === 'ip') {
-          this.execMachineList = this.originalExecMachineList.filter(item =>
-              item.id.toString().includes(this.searchContent)
-          );
+      this.listLoading = true
+      setTimeout(() => {
+        if (this.searchContent) {
+          const searchLower = this.searchContent.toLowerCase();
+          if (this.searchType === 'hostname') {
+            this.execMachineList = this.originalExecMachineList.filter(item =>
+                item.hostName.toLowerCase().includes(searchLower)
+            );
+          } else if (this.searchType === 'ip') {
+            console.log('this.originalExecMachineList=',this.originalExecMachineList)
+            this.execMachineList = this.originalExecMachineList.filter(item =>
+                item.ip.toString().includes(this.searchContent)
+            )
+          }
+        } else {
+          // 如果搜索内容为空，恢复原始数据
+          this.execMachineList = this.originalExecMachineList;
         }
-      } else {
-        // 如果搜索内容为空，恢复原始数据
-        this.execMachineList = this.originalExecMachineList;
-      }
+        this.listLoading = false
+      }, 300)
     },
     handleReset() {
       this.listLoading = true
@@ -290,12 +316,21 @@ export default {
         this.listLoading = false
       }, 400)
     },
-
+    getStatusTag(status) {
+      const statusItem = this.machineStatus.find(item => String(item.value) === String(status))
+      // 在线是绿色 (success)，离线是红色 (danger)
+      return statusItem && statusItem.value === '1' ? 'success' : 'danger'
+    },
+    // 格式化显示状态
+    formatStatus(status) {
+      const statusItem = this.machineStatus.find(item => String(item.value) === String(status)) // 确保类型一致
+      return statusItem ? statusItem.label : status  // 返回标签文本或默认状态
+    },
     async handleSubmit(isEdit = false) {
       const valid = await this.$refs.ruleForm.validate();
       if (valid) {
         const action = isEdit ? updateExecMachine : createExecMachine;
-        await action(this.ruleForm);
+        await action(this.ruleForm)
         this.$message.success(isEdit ? '编辑成功' : '创建成功');
         this.dialogVisible = false;
         this.getMachineList();
