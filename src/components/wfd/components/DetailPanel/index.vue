@@ -10,8 +10,16 @@
           :roles="roles"
           :departments="departments"
           :tasks="tasks"
+          :execMachine="execMachine"
       />
-      <ScriptTaskDetail v-else-if="model.clazz === 'scriptTask'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
+      <ScriptTaskDetail
+        v-else-if="model.clazz === 'scriptTask'"
+        :model="model"
+        :onChange="onChange"
+        :readOnly="readOnly"
+        :tasks="tasks"
+        :execMachine="execMachine"
+      />
       <HandleNodeDetail
           v-else-if="model.clazz === 'receiveTask'"
           :model="model"
@@ -22,13 +30,41 @@
           :groups="groups"
           :departments="departments"
           :tasks="tasks"
+          :execMachine="execMachine"
           :categorys="categorys"
       />
-      <MessageEventDetail v-else-if="model.clazz === 'messageStart' || model.clazz === 'messageCatch'" :model="model" :onChange="onChange" :readOnly="readOnly" :messageDefs="messageDefs" />
-      <GatewayDetail v-else-if="model.clazz === 'gateway' || model.clazz === 'exclusiveGateway' || model.clazz === 'parallelGateway' || model.clazz === 'inclusiveGateway'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-      <FlowDetail v-else-if="model.clazz === 'flow'" :model="model" :onChange="onChange" :readOnly="readOnly" />
-      <StartEventDetail v-else-if="model.clazz === 'start'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
-      <EndEventDetail v-else-if="model.clazz === 'end'" :model="model" :onChange="onChange" :readOnly="readOnly" :tasks="tasks" />
+      <MessageEventDetail
+        v-else-if="model.clazz === 'messageStart' || model.clazz === 'messageCatch'"
+        :model="model" :onChange="onChange"
+        :readOnly="readOnly"
+        :messageDefs="messageDefs"
+      />
+      <GatewayDetail v-else-if="model.clazz === 'gateway' || model.clazz === 'exclusiveGateway' || model.clazz === 'parallelGateway' || model.clazz === 'inclusiveGateway'"
+                     :model="model"
+                     :onChange="onChange"
+                     :readOnly="readOnly"
+      />
+      <FlowDetail v-else-if="model.clazz === 'flow'"
+                  :model="model"
+                  :onChange="onChange"
+                  :readOnly="readOnly"
+      />
+      <StartEventDetail
+        v-else-if="model.clazz === 'start'"
+        :model="model"
+        :onChange="onChange"
+        :readOnly="readOnly"
+        :tasks="tasks"
+        :execMachine="execMachine"
+      />
+      <EndEventDetail
+        v-else-if="model.clazz === 'end'"
+        :model="model"
+        :onChange="onChange"
+        :readOnly="readOnly"
+        :tasks="tasks"
+        :execMachine="execMachine"
+      />
 <!--        <ReceiveTaskDetail v-else-if="model.clazz === 'receiveTask'" :model="model" :onChange="onChange" :tasks="tasks" :readOnly="readOnly" />-->
 <!--        <ProcessDetail v-else-if="model.clazz === 'process'" :model="model" :onChange="onChange" :readOnly="readOnly" :categorys="categorys" />-->
 <!--        <JavaTaskDetail v-else-if="model.clazz === 'javaTask'" :model="model" :onChange="onChange" :readOnly="readOnly" />-->
@@ -89,6 +125,10 @@
         type: Array,
         default: () => ([])
       },
+      execMachine: {
+        type: Array,
+        default: () => ([])
+      },
       groups: {
         type: Array,
         default: ()=>([]),
@@ -122,6 +162,9 @@
         default: false,
       }
     },
+    created() {
+      console.log('this.execMachine=====',this.execMachine)
+    }
   }
 </script>
 <style lang="scss">

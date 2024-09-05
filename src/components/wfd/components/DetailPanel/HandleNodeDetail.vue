@@ -4,21 +4,6 @@
     <div class="panelBody">
       <DefaultDetail :model="model" :on-change="onChange" :read-only="readOnly" />
       <div class="panelRow">
-        <div>之后任务：</div>
-        <el-select
-          size="small"
-          style="width:90%; font-size:12px"
-          placeholder="选择任务"
-          :disabled="readOnly"
-          :value="model.task"
-          :multiple="true"
-          :filterable="true"
-          @change="(e) => onChange('task', e)"
-        >
-          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.name" />
-        </el-select>
-      </div>
-      <div class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['handleNode.assignType'] }}：</div>
         <el-select
           size="small"
@@ -78,7 +63,6 @@
           <el-option v-for="department in departments" :key="department.deptId" :label="department.deptName" :value="department.deptId" />
         </el-select>
       </div>
-
       <div v-else-if="model.assignType === 'variable'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['handleNode.assignType.variable.title'] }}：</div>
         <el-select
@@ -92,6 +76,38 @@
           @change="(e) => { onChange('assignValue', e); getPersons(e) }"
         >
           <el-option v-for="(item, index) in variableOptions" :key="index" :label="item.label" :value="item.value" />
+        </el-select>
+      </div>
+      <!--选择任务-->
+      <div class="panelRow">
+        <div>之后任务：</div>
+        <el-select
+          size="small"
+          style="width:90%; font-size:12px"
+          placeholder="选择任务"
+          :disabled="readOnly"
+          :value="model.task"
+          :multiple="true"
+          :filterable="true"
+          @change="(e) => onChange('task', e)"
+        >
+          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.name" />
+        </el-select>
+      </div>
+      <!--选择执行节点-->
+      <div class="panelRow" v-if="model.task && model.task.length > 0">
+        <div><span style="color: red">*</span> 选择执行任务的节点：</div>
+        <el-select
+          size="small"
+          style="width:90%; font-size:12px"
+          placeholder="选择执行节点"
+          :disabled="readOnly"
+          :value="model.machine"
+          :multiple="true"
+          :filterable="true"
+          @change="(e) => onChange('machine', e)"
+        >
+          <el-option v-for="(machineValue, machineIndex) in execMachine" :key="machineIndex" :label="machineValue.hostName" :value="machineValue.hostName" />
         </el-select>
       </div>
       <div class="panelRow">
@@ -172,6 +188,10 @@ export default {
       type: Array,
       default: () => ([])
     },
+    execMachine: {
+      type: Array,
+      default: () => ([])
+    },
     onChange: {
       type: Function,
       default: () => {}
@@ -193,6 +213,7 @@ export default {
       roleList: []
     }
   },
+
   methods: {
     getPersons(e) {
       if (e === undefined || e === null || e.length <= 1) {

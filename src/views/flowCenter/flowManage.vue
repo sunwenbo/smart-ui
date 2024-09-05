@@ -145,6 +145,7 @@
                     :roles="roles"
                     :groups="groups"
                     :tasks="taskListData"
+                    :execMachine="execMachine"
                     :categorys="categoryLists"
                     :departments="departments"
                     :lang="lang"
@@ -197,7 +198,7 @@ import {parseTime} from "@/utils";
 import {createFlow, deleteFlow, flowDetails, getFlowList, updateFlow, cloneFlow } from "@/api/smart/flowManage";
 import {getDeptList} from "@/api/admin/sys-dept";
 import {getTaskList} from "@/api/smart/taskCenter";
-
+import {getExecMachine} from '@/api/smart/execMachine'
 export default {
   name: 'FlowManage',
   components: {
@@ -243,6 +244,7 @@ export default {
       lang: 'zh',
       departments: [],
       taskListData: [],
+      execMachine: [],
       wfdDesignRefresh: true,
       dialogFlowVisibleName: undefined,
       ruleForm: {},
@@ -290,11 +292,16 @@ export default {
     },
     // 获取任务列表
     getTaskList() {
-      getTaskList({
-        page: 1,
-        pageSize: 99999
-      }).then(response => {
-        this.taskListData = response.data
+      getTaskList().then(response => {
+        this.taskListData = response.data.list
+        console.log('this.taskListData =',this.taskListData )
+      })
+    },
+    // 获取执行节点
+    getMachineList() {
+      getExecMachine().then(response => {
+        this.execMachine = response.data.list
+        console.log('this.execMachine=',this.execMachine)
       })
     },
     // 获取部门
@@ -305,20 +312,14 @@ export default {
     },
     // 获取分类
     getCategoryList() {
-      categoryList({
-        page: 1,
-        pageSize: 99999
-      }).then(response => {
+      categoryList().then(response => {
         this.categoryLists = response.data.list
       })
     },
     // 获取模板
     getTemplatesList() {
-      flowTemplateList({
-        page: 1,
-        pageSize: 99999
-      }).then(response => {
-        this.flowTemplateLists = response.data
+      flowTemplateList().then(response => {
+        this.flowTemplateLists = response.data.list
       })
     },
     // 获取用户
@@ -348,6 +349,7 @@ export default {
       this.getRoles()
       this.getDepartments()
       this.getTaskList()
+      this.getMachineList()
     },
     createFlowDialog() {
       this.getFlowInitData()
@@ -419,12 +421,12 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const structureValue = this.$refs.wfd.graph.save()
-          // 校验流程属性
-          // const r = this.verifyProcess(structureValue)
-          // if (r !== '') {
-          //   this.$message.error(r)
-          //   return
-          // }
+          校验流程属性
+          const r = this.verifyProcess(structureValue)
+          if (r !== '') {
+            this.$message.error(r)
+            return
+          }
           if (structureValue.nodes.length > 0 && structureValue.edges.length > 0) {
             this.ruleForm.structure = structureValue
             createFlow(this.ruleForm).then(response => {

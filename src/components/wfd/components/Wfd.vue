@@ -18,6 +18,7 @@
          :categorys="categorys"
          :departments="departments"
          :tasks="tasks"
+         :execMachine="execMachine"
          :groups="groups"
          :signalDefs="processModel.signalDefs"
          :messageDefs="processModel.messageDefs"
@@ -39,6 +40,7 @@
   import {exportXML,exportImg} from "../util/bpmn"
   import registerShape from '../shape'
   import registerBehavior from '../behavior'
+
   registerShape(G6);
   registerBehavior(G6);
   export default {
@@ -87,6 +89,10 @@
         default: () => ([])
       },
       tasks: {
+        type: Array,
+        default: () => ([])
+      },
+      execMachine: {
         type: Array,
         default: () => ([])
       },
@@ -230,8 +236,6 @@
             this.graph.updateItem(item, {[key]: value});
           }
           this.selectedModel = {...item.getModel()};
-          console.log('this.selectedModel3=',this.selectedModel)
-
         } else {
           const canvasModel = { ...this.processModel, [key]: value};
           this.selectedModel = canvasModel;

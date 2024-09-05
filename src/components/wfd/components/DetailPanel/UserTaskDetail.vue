@@ -4,23 +4,6 @@
         <div class="panelBody">
           <!--全局默认组件页面，'标题' -->
           <DefaultDetail :model="model" :onChange="onChange" :readOnly="readOnly" />
-          <div class="panelRow">
-            <div>之后任务：</div>
-            <el-select
-                size="small"
-                style="width: 90%; font-size: 12px"
-                placeholder="选择任务"
-                :disabled="readOnly"
-                v-model="model.task"
-                :filterable="true"
-                @change="(value) => onChange('task', value)">
-              <el-option
-                  v-for="(taskValue, taskIndex) in tasks"
-                  :key="taskIndex"
-                  :label="taskValue.name"
-                  :value="taskValue.name" />
-            </el-select>
-          </div>
           <!--根据指定的不同类型，决定工单的流转  用户、角色、部门以及用户组-->
           <div class="panelRow">
               <div>{{i18n['userTask.assignType']}}：</div>
@@ -105,6 +88,38 @@
                               value-format="yyyy-MM-dd HH:mm:ss"
                               @input="(value) => onChange('dueDate', value)" />
           </div>
+          <!--选择任务-->
+          <div class="panelRow">
+            <div>之后任务：</div>
+            <el-select
+              size="small"
+              style="width:90%; font-size:12px"
+              placeholder="选择任务"
+              :disabled="readOnly"
+              :value="model.task"
+              :multiple="true"
+              :filterable="true"
+              @change="(e) => onChange('task', e)"
+            >
+              <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.name" />
+            </el-select>
+          </div>
+          <!--选择执行节点-->
+          <div class="panelRow" v-if="model.task && model.task.length > 0">
+            <div><span style="color: red">*</span> 选择执行任务的节点：</div>
+            <el-select
+              size="small"
+              style="width:90%; font-size:12px"
+              placeholder="选择执行节点"
+              :disabled="readOnly"
+              :value="model.machine"
+              :multiple="true"
+              :filterable="true"
+              @change="(e) => onChange('machine', e)"
+            >
+              <el-option v-for="(machineValue, machineIndex) in execMachine" :key="machineIndex" :label="machineValue.hostName" :value="machineValue.hostName" />
+            </el-select>
+          </div>
           <!--会签 + 主动接单 + 全员处理 -->
           <div class="panelRow">
             <el-checkbox
@@ -178,6 +193,10 @@
         default: () => ([])
       },
       tasks: {
+        type: Array,
+        default: () => ([])
+      },
+      execMachine: {
         type: Array,
         default: () => ([])
       },
