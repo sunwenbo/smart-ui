@@ -8,7 +8,7 @@
       <div class="custmo-steps">
         <span> 进度 </span>
         <hr class="divider">
-        <el-steps :space="200" :active="currentStepIndex" finish-status="success">
+        <el-steps :space="200"  align-center :active="currentStepIndex" finish-status="success">
           <el-step
             v-for="(node, index) in stepNodes"
             :key="node.id"
@@ -103,8 +103,8 @@ export default {
         widgetList: []
       },
       stepNodes: [],
-      currentStepIndex: 1,
-      matchedTemplate: [],
+      currentStepIndex: 0,
+      matchedTemplate: {},
       formData: {},
       currentFlowData: {
         structure: {
@@ -121,15 +121,7 @@ export default {
       orderDetail: {
         bindFlowData: undefined,
         currentHandlerID: undefined
-      },
-      listHistor: {
-        title: '',
-      },
-      handleData: {
-        id: '',
-        title: '',
-        currentHandler: '', // 当前操作人
-      },
+      }
     }
   },
   computed: {
@@ -142,7 +134,7 @@ export default {
     }
   },
 
-  async activated() {
+  async created() {
     try {
       // 先获取字典数据
       const [statusResponse, priorityResponse, priorityResponseStatus,flowResultResponse] = await Promise.all([
@@ -180,7 +172,7 @@ export default {
         this.stepNodes = nodes;
 
         // 找到当前步骤的索引
-        this.currentStepIndex = nodes.findIndex(node => node.label === currentNode) + 1
+        this.currentStepIndex = nodes.findIndex(node => node.label === currentNode)
         // 查询该工单关联的模板详细数据
         await this.getFlowTemplate().then(response => {
           const flowTemplatedata = response.data.list
@@ -220,9 +212,8 @@ export default {
       }
     },
     getOrderWorkHistory() {
-      this.listHistor.title = this.$route.params.title
       try {
-        orderWorkHistory(this.listHistor).then(response => {
+        orderWorkHistory({title: this.$route.params.title}).then(response => {
           this.histOperData = response.data
         })
       } catch (error) {
@@ -268,10 +259,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
-        this.handleData.id = this.orderDetail.id
-        this.handleData.actionType = '0'
         try {
-          const response = await handleOrderWork(this.handleData)
+          const response = await handleOrderWork(
+            {id: this.orderDetail.id,
+            actionType: '0' // 1 为同意  0 为拒绝
+          })
           if (response.code === 200) {
             this.$showSuccess('工单拒绝成功');
             await this.$router.push('/orderCenter/list')

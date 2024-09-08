@@ -70,6 +70,8 @@ export default {
   mounted() {
     const title = this.$route.params.title;
     document.title = title ? `${title}` : '工单信息';
+    this.initializeTitle()
+    this.loadData()
   },
   data() {
     return {

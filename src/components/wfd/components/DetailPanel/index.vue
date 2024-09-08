@@ -44,7 +44,8 @@
                      :onChange="onChange"
                      :readOnly="readOnly"
       />
-      <FlowDetail v-else-if="model.clazz === 'flow'"
+      <FlowDetail
+        v-else-if="model.clazz === 'flow'"
                   :model="model"
                   :onChange="onChange"
                   :readOnly="readOnly"
@@ -162,9 +163,9 @@
         default: false,
       }
     },
-    created() {
-      console.log('this.execMachine=====',this.execMachine)
-    }
+    // created() {
+    //   console.log('this.execMachine=====',this.execMachine)
+    // }
   }
 </script>
 <style lang="scss">

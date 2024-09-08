@@ -294,14 +294,12 @@ export default {
     getTaskList() {
       getTaskList().then(response => {
         this.taskListData = response.data.list
-        console.log('this.taskListData =',this.taskListData )
       })
     },
     // 获取执行节点
     getMachineList() {
       getExecMachine().then(response => {
         this.execMachine = response.data.list
-        console.log('this.execMachine=',this.execMachine)
       })
     },
     // 获取部门
@@ -421,7 +419,7 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const structureValue = this.$refs.wfd.graph.save()
-          校验流程属性
+          // 校验流程属性
           const r = this.verifyProcess(structureValue)
           if (r !== '') {
             this.$message.error(r)

@@ -315,7 +315,7 @@ export default {
         myBacklog: getMyBacklogWorks,
         createdByMe: getCreatedByMeWorks,
         relatedToMe: getRelatedToMeWorks,
-        allOrders: orderWorksList
+        allOrders: this.getOrderWorksList
       },
       statusTagMapping: {
         'under-way': '',

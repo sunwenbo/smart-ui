@@ -75,7 +75,6 @@
               <span v-if="scope.row.type=='SYS' && scope.row.title!=''"><el-tag type="success">{{ '['+scope.row.type +'] '+ scope.row.title }}</el-tag></span>
               <span v-if="scope.row.type!='SYS' && scope.row.title!=''"><el-tag type="">{{ '['+scope.row.type +'] '+scope.row.title }}</el-tag></span>
               <span v-if="scope.row.title==''"><el-tag type="danger">暂无</el-tag></span>
-
             </template>
           </el-table-column>
 
@@ -87,9 +86,9 @@
             sortable="custom"
             :show-overflow-tooltip="true"
           >
-            <!-- <template slot-scope="scope">
-              <span>{{ "["+scope.row.action +"] "+ scope.row.path }}</span>
-            </template> -->
+<!--            <template slot-scope="scope">-->
+<!--              <span>{{ "["+scope.row.action +"] "+ scope.row.path }}</span>-->
+<!--            </template>-->
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
                 <p><span v-if="scope.row.type=='SYS' && scope.row.title!=''"><el-tag type="success">{{ '['+scope.row.type +'] '+ scope.row.title }}</el-tag></span>
@@ -128,7 +127,7 @@
           <el-table-column
             label="操作"
             align="center"
-            width="80px"
+            width="150px"
             class-name="small-padding fixed-width"
           >
             <template slot-scope="scope">
@@ -139,6 +138,14 @@
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
               >修改
+              </el-button>
+              <el-button
+                v-permisaction="['admin:sysApi:remove']"
+                size="mini"
+                type="text"
+                icon="el-icon-remove"
+                @click="handleDelete(scope.row)"
+              >删除
               </el-button>
             </template>
           </el-table-column>
@@ -407,7 +414,6 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       var Ids = (row.id && [row.id]) || this.ids
-
       this.$confirm('是否确认删除编号为"' + Ids + '"的数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

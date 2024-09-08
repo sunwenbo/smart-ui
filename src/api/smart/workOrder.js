@@ -73,7 +73,7 @@ export async function deleteOrderWork(data) {
 // 获取工单变更历史记录
 export async function orderWorkHistory(params) {
   return request({
-    url: '/api/v1/order-works',
+    url: '/api/v1/order-works/history',
     method: 'get',
     params
   })

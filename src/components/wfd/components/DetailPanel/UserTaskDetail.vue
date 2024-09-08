@@ -215,9 +215,6 @@
         groupsCopy: this.groups,
       }
     },
-    created() {
-      console.log('tasks=', this.tasks);
-    },
     methods: {
       filterUsers(input) {
         if (input) {

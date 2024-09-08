@@ -153,7 +153,7 @@ export default {
       searchContent: '', // 搜索框内容默认为空
       getTempLateData: [], // 保存table数据
       filteredData: [], // 保存过滤后的数据
-      currentData: [],
+      currentData: {},
       flowListResponse: [], // 获取流程
       creTempLateQuery: {
         name: '',
@@ -293,11 +293,6 @@ export default {
       } catch (error) {
         console.error('Failed to update FlowTemplate:', error)
       }
-    },
-    getPaginatedData(data, page, pageSize) {
-      const start = (page - 1) * pageSize
-      const end = page * pageSize
-      return data.slice(start, end)
     },
     templateSearch() {
       this.listLoading = true
