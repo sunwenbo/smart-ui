@@ -256,10 +256,13 @@ export default {
     },
 
     updateContent() {
-      const { interpreter } = this.ruleForm
+      const { interpreter,content } = this.ruleForm
       const templateType = this.interpreterPaths[interpreter];
       const template = this.interpreterTemplates[templateType] || '';
-      this.ruleForm.content = `${template}\n\n${this.defaultContentTemplate}`
+      // 只有当 content 为空时才设置默认内容
+      if (!content) {
+        this.ruleForm.content = `${template}\n\n${this.defaultContentTemplate}`;
+      }
     },
 
     createTaskDialog() {
@@ -272,7 +275,13 @@ export default {
       this.dialogTaskVisibleName = 2
       this.dialogVisible = true
       this.ruleForm = {...row}
-      this.onTaskTypeChange(this.ruleForm.taskType)
+      // 更新任务类型时的解释器列表
+      this.onTaskTypeChange(this.ruleForm.taskType);
+      // 如果编辑任务时已有内容，不要覆盖它
+      console.log('this.ruleForm.content=',this.ruleForm.content)
+      if (!this.ruleForm.content) {
+        this.ruleForm.content = this.defaultContentTemplate;  // 仅在内容为空时设置默认模板
+      }
     },
 
     taskSearch() {

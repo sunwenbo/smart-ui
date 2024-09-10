@@ -31,9 +31,15 @@
             </el-tag>
           </template>
         </el-table-column>
+        <el-table-column :label="$t('table.authType')" min-width="40px" align="center" prop="authType">
+          <template slot-scope="scope">
+            <el-tag :type="getTagType(scope.row.authType)">
+              {{ formatAuthType(scope.row.authType) }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('table.heartbeat')" min-width="65px" align="center" prop="heartbeat" />
         <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
-        <el-table-column :label="$t('table.regenerator')" min-width="40px" align="center" prop="regenerator" />
         <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
         <el-table-column :label="$t('table.updatedAt')" min-width="60px" align="center" prop="updatedAt" />
         <el-table-column :label="$t('table.actions')" align="center" min-width="90px" >
@@ -258,13 +264,25 @@ export default {
     handleCommand(command) {
       this.searchType = command
     },
-
+    // 根据 authType 返回对应的显示文本
+    formatAuthType(authType) {
+      const authItem = this.machineAuth.find(item => item.value === authType);
+      return authItem ? authItem.label : authType; // 如果匹配到 label，显示 label，否则显示原值
+    },
     updateContent() {
       const { interpreter } = this.ruleForm
       const templateType = this.interpreterPaths[interpreter];
       const template = this.interpreterTemplates[templateType] || '';
     },
-
+    // 根据 authType 返回对应的标签类型
+    getTagType(authType) {
+      if (authType === "1") {
+        return "success"; // 例如: 密码为绿色
+      } else if (authType === "2") {
+        return "warning"; // 例如: 私钥为黄色
+      }
+      return "info"; // 默认类型
+    },
     createMachineDialog() {
       this.dialogMachineVisibleName = 1
       this.dialogVisible = true
