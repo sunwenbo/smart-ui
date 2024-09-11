@@ -6,9 +6,9 @@
     </div>
     <el-card>
       <div class="custmo-steps">
-        <span> 进度 </span>
+        <span> 工单进度 </span>
         <hr class="divider">
-        <el-steps :space="200"  align-center :active="currentStepIndex" finish-status="success">
+        <el-steps :space="200"  align-center :active="currentStepIndex" finish-status="success" >
           <el-step
             v-for="(node, index) in stepNodes"
             :key="node.id"
@@ -81,9 +81,13 @@
       </div>
     </el-card>
     <el-card v-if="isCurrentUserHandler">
-      <div class="action-buttons">
+      <div v-if="orderDetail.currentNode !== '工单结束'" class="action-buttons">
         <el-button type="primary" @click="handleApprove">同意</el-button>
         <el-button type="danger" @click="handleReject">拒绝</el-button>
+      </div>
+      <div v-else class="action-buttons">
+        <el-button type="default" @click="handleReject">返回上一层</el-button>
+        <el-button type="primary" @click="handleApprove">结束工单</el-button>
       </div>
     </el-card>
   </div>
@@ -91,8 +95,6 @@
 
 <script>
 import {handleOrderWork, orderWorkHistory, orderWorksSearch} from '@/api/smart/workOrder'
-import {getDeptList} from "@/api/admin/sys-dept";
-import {deleteFlow} from "@/api/smart/flowManage";
 
 export default {
   name: 'WorkOrderDetails',
@@ -126,10 +128,15 @@ export default {
   },
   computed: {
     isCurrentUserHandler() {
-      if (this.orderDetail.currentNode !== "结束") {
-        return this.$store.getters.userid ===  this.orderDetail.currentHandlerID
+      const { currentNode, currentHandlerID } = this.orderDetail;
+      const isInitiator = this.$store.getters.userid === this.orderDetail.currentHandlerID;
+
+      if (currentNode === "工单结束") {
+        // Check if the user is the initiator to allow seeing the finished order
+        return isInitiator;
       } else {
-        return false
+        // Check if the user is the current handler
+        return this.$store.getters.userid === currentHandlerID;
       }
     }
   },
@@ -165,20 +172,19 @@ export default {
   methods: {
     async processOrderWork() {
       try {
-        const nodes = this.orderDetail.bindFlowData.structure.nodes
-        const currentNode = this.orderDetail.currentNode
-
         // 提取步骤节点
-        this.stepNodes = nodes;
+        this.stepNodes= this.orderDetail.bindFlowData.structure.nodes
 
         // 找到当前步骤的索引
-        this.currentStepIndex = nodes.findIndex(node => node.label === currentNode)
+        this.currentStepIndex = this.stepNodes.findIndex(node => node.label === this.orderDetail.currentNode) + 1
+
         // 查询该工单关联的模板详细数据
         await this.getFlowTemplate().then(response => {
           const flowTemplatedata = response.data.list
           this.matchedTemplate = flowTemplatedata.find(template =>
               template.name === this.orderDetail.template
           )
+          console.log('this.matchedTemplat=',this.matchedTemplate)
           // 匹配到模板，获取模板的组件信息数据，然后渲染到vform
           if (this.matchedTemplate) {
             // 递归设置 disabled 属性为 true
@@ -190,6 +196,7 @@ export default {
                 if (widget.widgetList && widget.widgetList.length > 0) {
                   setDisabledTrue(widget.widgetList);
                 }
+
                 if (widget.rows && widget.rows.length > 0) {
                   widget.rows.forEach(row => {
                     if (row.cols && row.cols.length > 0) {
@@ -199,8 +206,15 @@ export default {
                     }
                   });
                 }
-              });
-            };
+                if (widget.cols && widget.cols.length > 0) {
+                  widget.cols.forEach(col => {
+                    if (col.widgetList && col.widgetList.length > 0) {
+                      setDisabledTrue(col.widgetList);
+                    }
+                  })
+                }
+              })
+            }
 
             setDisabledTrue(this.matchedTemplate.formData.widgetList)
             this.$refs.vFormRef.setFormJson(this.matchedTemplate.formData)

@@ -97,8 +97,8 @@
           <el-tab-pane name="allOrders" >
             <span slot="label"><i class="el-icon-document" /> 所有工单</span>
           </el-tab-pane>
-          <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-            <el-table-column :label="$t('table.id')" min-width="40px" align="center" prop="id">
+          <el-table :data="filteredData" v-loading="listLoading" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+            <el-table-column :label="$t('table.id')" fixed="left" min-width="60px" align="center" prop="id">
               <template #default="scope">
                 <el-link
                     type="primary"
@@ -107,21 +107,21 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.title')" min-width="130px" align="center" prop="title" />
-            <el-table-column :label="$t('table.department')" min-width="110px" align="center" prop="department">
+            <el-table-column :label="$t('table.title')" min-width="200px" align="center" prop="title" />
+            <el-table-column :label="$t('table.department')" min-width="150px" align="center" prop="department">
               <template slot-scope="scope">
                 {{ formatDepartment(scope.row) }}
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.process')" min-width="110px" align="center" prop="process" />
-            <el-table-column :label="$t('table.currentNode')" align="center" width="93" prop="currentNode">
+            <el-table-column :label="$t('table.process')" min-width="150px" align="center" prop="process" />
+            <el-table-column :label="$t('table.currentNode')" align="center" width="100px" prop="currentNode">
               <template slot-scope="scope">
                 <el-tag :type="scope.row.currentNode === '结束' ? 'success' : 'warning'">
                   {{ scope.row.currentNode }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.currentHandler')" width="88px" align="center" prop="currentHandler" />
+            <el-table-column :label="$t('table.currentHandler')" width="130px" align="center" prop="currentHandler" />
             <el-table-column :label="$t('table.priority')" width="95px" align="center">
               <template slot-scope="scope">
                 <el-tag :type="getTagType(scope.row.priority)">
@@ -136,16 +136,16 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.creator')" min-width="75px" align="center" prop="creator">
+            <el-table-column :label="$t('table.creator')" min-width="130px" align="center" prop="creator">
             </el-table-column>
-            <el-table-column :label="$t('table.description')" width="70" align="center" prop="description">
+            <el-table-column :label="$t('table.description')" width="70px" align="center" prop="description">
               <template slot-scope="scope">
                 <el-button type="text" icon="el-icon-more" @click="openDialog(scope.row.description)" />
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.createdAt')" min-width="90px" align="center" prop="createdAt" />
-            <el-table-column :label="$t('table.updatedAt')" min-width="90px" align="center" prop="updatedAt" />
-            <el-table-column :label="$t('table.actions')" align="center" width="70">
+            <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
+            <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
+            <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="90px">
               <template v-slot="{ row }">
                 <el-dropdown trigger="click" size="small" placement="bottom" @command="(command) => actionsHandle(command, row)">
                 <span class="el-dropdown-link">

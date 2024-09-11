@@ -86,25 +86,26 @@
     <el-card>
       <div class="form-window">
         <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-          <el-table-column :label="$t('table.id')" min-width="20px" align="center" prop="id" />
-          <el-table-column :label="$t('table.title')" min-width="50px" align="center" prop="title" />
-          <el-table-column :label="$t('table.bindTempLate')" min-width="60px" align="center" prop="bindTempLate" />
-          <el-table-column :label="$t('table.category')" min-width="40px" align="center">
+          <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
+          <el-table-column :label="$t('table.title')" min-width="150px" align="center" prop="title" />
+          <el-table-column :label="$t('table.bindTempLate')" min-width="130px" align="center" prop="bindTempLate" />
+          <el-table-column :label="$t('table.category')" min-width="130px" align="center">
             <template slot-scope="scope">
               {{ getCategoryName(scope.row.categoryId) }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.icon')" min-width="60px" align="center" prop="icon" />
-          <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
-          <el-table-column :label="$t('table.link')" min-width="75px" align="center" prop="link" />
-          <el-table-column :label="$t('table.favorite')" min-width="30px" align="center">
+          <el-table-column :label="$t('table.icon')" min-width="150px" align="center" prop="icon" />
+          <el-table-column :label="$t('table.link')" min-width="250px" align="center" prop="link" />
+          <el-table-column :label="$t('table.favorite')" min-width="80px" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.favorite ? '是' : '否' }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.createdAt')" min-width="45px" align="center" prop="createdAt" />
-          <el-table-column :label="$t('table.updatedAt')" min-width="45px" align="center" prop="updatedAt" />
-          <el-table-column :label="$t('table.actions')" align="center" min-width="30px">
+          <el-table-column :label="$t('table.creator')" min-width="110px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
+          <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
+          <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
+          <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="80px">
             <template v-slot="{ row }">
               <el-dropdown trigger="click" size="small" placement="bottom" @command="(command) => actionsHandle(command, row)">
               <span class="el-dropdown-link">

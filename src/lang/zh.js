@@ -133,6 +133,7 @@ export default {
     createTask: '新建任务',
     createMahcine: '添加主机',
     heartbeat: "最近心跳检查",
+    loginUser: "登陆用户",
     authType: "认证方式",
     hostname: "主机名",
     ip: "IP",

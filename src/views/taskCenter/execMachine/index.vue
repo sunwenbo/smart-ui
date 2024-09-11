@@ -21,28 +21,31 @@
     </el-card>
     <el-card>
       <el-table v-loading="listLoading" :data="execMachineList" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-        <el-table-column :label="$t('table.id')" min-width="20px" align="center" prop="id" />
-        <el-table-column :label="$t('table.hostname')" min-width="80px" align="center" prop="hostName" />
-        <el-table-column :label="$t('table.ip')" min-width="50px" align="center" prop="ip" />
-        <el-table-column :label="$t('table.status')" min-width="40px" align="center" prop="status">
+        <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
+        <el-table-column :label="$t('table.hostname')" min-width="150px" align="center" prop="hostName" />
+        <el-table-column :label="$t('table.ip')" min-width="100px" align="center" prop="ip" />
+        <el-table-column :label="$t('table.loginUser')" min-width="100px" align="center" prop="userName" />
+        <el-table-column :label="$t('table.port')" min-width="100px" align="center" prop="port" />
+        <el-table-column :label="$t('table.status')" min-width="80px" align="center" prop="status">
           <template slot-scope="scope">
             <el-tag :type="getStatusTag(scope.row.status)">
               {{ formatStatus(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('table.authType')" min-width="40px" align="center" prop="authType">
+        <el-table-column :label="$t('table.authType')" min-width="100px" align="center" prop="authType">
           <template slot-scope="scope">
             <el-tag :type="getTagType(scope.row.authType)">
               {{ formatAuthType(scope.row.authType) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('table.heartbeat')" min-width="65px" align="center" prop="heartbeat" />
-        <el-table-column :label="$t('table.creator')" min-width="40px" align="center" prop="creator" />
-        <el-table-column :label="$t('table.createdAt')" min-width="60px" align="center" prop="createdAt" />
-        <el-table-column :label="$t('table.updatedAt')" min-width="60px" align="center" prop="updatedAt" />
-        <el-table-column :label="$t('table.actions')" align="center" min-width="90px" >
+        <el-table-column :label="$t('table.heartbeat')" min-width="170px" align="center" prop="heartbeat" />
+        <el-table-column :label="$t('table.creator')" min-width="110px" align="center" prop="creator" />
+        <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
+        <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
+        <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
+        <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="220px" >
           <template slot-scope="scope">
             <el-button v-permisaction="['process:admin:manager:test']" type="text" icon="el-icon-mouse" @click="handleTestCon(scope.row)">
               连接测试
