@@ -2,6 +2,13 @@
     <div :data-clazz="model.clazz">
         <div class="panelTitle">{{i18n['sequenceFlow']}}</div>
         <div class="panelBody">
+          <div class="panelRow">
+            <div><span style="color: red">*</span> {{i18n['sequenceFlow.seq']}}：</div>
+            <el-input style="width:90%; font-size:12px"
+                      :disabled="readOnly"
+                      :value="model.seq"
+                      @input="(value) => {onChange('seq', value)}" />
+          </div>
             <DefaultDetail :model="model" :onChange="onChange" :readOnly="readOnly" />
             <div class="panelRow">
                 <div>{{i18n['sequenceFlow.expression']}}：</div>
@@ -12,13 +19,7 @@
                           :value="model.conditionExpression"
                           @input="(value) => {onChange('conditionExpression', value)}" />
             </div>
-            <div class="panelRow">
-                <div>{{i18n['sequenceFlow.seq']}}：</div>
-                <el-input style="width:90%; font-size:12px"
-                          :disabled="readOnly"
-                          :value="model.seq"
-                          @input="(value) => {onChange('seq', value)}" />
-            </div>
+
             <div class="panelRow">
                 <el-checkbox @change="(value) => onChange('reverse', value)"
                              :disabled="readOnly"

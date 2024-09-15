@@ -88,7 +88,7 @@
         <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
           <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
           <el-table-column :label="$t('table.title')" min-width="150px" align="center" prop="title" />
-          <el-table-column :label="$t('table.bindTempLate')" min-width="130px" align="center" prop="bindTempLate" />
+          <el-table-column :label="$t('table.bindTempLate')" min-width="200px" align="center" prop="bindTempLate" />
           <el-table-column :label="$t('table.category')" min-width="130px" align="center">
             <template slot-scope="scope">
               {{ getCategoryName(scope.row.categoryId) }}

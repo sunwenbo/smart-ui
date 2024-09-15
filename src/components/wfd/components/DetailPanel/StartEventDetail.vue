@@ -92,5 +92,8 @@
         default: false,
       }
     },
+    created() {
+      console.log("model=",this.model)
+    }
   }
 </script>

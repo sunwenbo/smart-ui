@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 获取所有任务
+// 获取所有执行节点
 export async function getExecMachine(params) {
   return request({
     url: '/api/v1/exec-machine',
@@ -9,7 +9,7 @@ export async function getExecMachine(params) {
   })
 }
 
-// 根据id获取指定的任务
+// 根据id获取指定的执行节点
 export async function getExecMachineId(id) {
   return request({
     url: `/api/v1/exec-machine/${id}`,
@@ -18,7 +18,7 @@ export async function getExecMachineId(id) {
 }
 
 
-// 创建任务
+// 创建执行节点
 export function createExecMachine(data) {
   return request({
     url: '/api/v1/exec-machine',
@@ -28,7 +28,7 @@ export function createExecMachine(data) {
 }
 
 
-// 更新任务
+// 更新主机信息
 export function updateExecMachine(data) {
   return request({
     url: '/api/v1/exec-machine',
@@ -56,3 +56,12 @@ export function testConnExecMachine(data) {
   })
 }
 
+
+// 获取所有历史执行任务
+export async function getTaskHistory(params) {
+  return request({
+    url: '/api/v1/exec-machine/history',
+    method: 'get',
+    params
+  })
+}

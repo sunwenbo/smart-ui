@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="panelRow">
-            <div>{{i18n['label']}}：</div>
-            <el-input style="width:90%; font-size:12px"
+          <div><span style="color: red">*</span> {{i18n['label']}}：</div>
+           <el-input style="width:90%; font-size:12px"
                       :disabled="readOnly"
                       :value="model.label"
                       @input="(value) => {onChange('label', value)}" />
@@ -29,6 +29,15 @@
       readOnly:{
         type: Boolean,
         default: false,
+      }
+    },
+    mounted() {
+      // Check if it's a startEvent and label is empty
+      if (this.model.clazz === 'start' && !this.model.label) {
+        this.onChange('label', '发起申请');
+      }
+      if (this.model.clazz === 'end' && !this.model.label) {
+        this.onChange('label', '工单结束');
       }
     },
   }

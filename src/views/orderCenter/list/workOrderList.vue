@@ -260,6 +260,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
+<!--              <el-autocomplete-->
+<!--                v-model="state"-->
+<!--                :fetch-suggestions="querySearchAsync"-->
+<!--                placeholder="请输入内容"-->
+<!--                @select="handleSelect"-->
+<!--              ></el-autocomplete>-->
               <el-form-item label="工单转交:" prop="priority">
                 <el-select
                   v-model="selectedUsers"
@@ -304,6 +310,9 @@ export default {
   directives: { waves },
   data() {
     return {
+      restaurants: [],
+      state: '',
+      timeout:  null,
       selectedUsers: null, // 默认选择的用户
       allUsers: [], // 存储所有用户
       userOptions: [], // 处理后的下拉选项
@@ -321,7 +330,7 @@ export default {
         'under-way': '',
         'termination': 'success',
         'manual-termination': 'warning',
-        'reopen': 'info',
+        'reopened': '',
         'reject': 'danger'
       },
       activeTab: 'allOrders',
@@ -438,7 +447,7 @@ export default {
       this.listLoading = true
       try {
         await orderWorksList(this.queryParams).then(response => {
-          this.orderWorks = response.data.list.filter(order => order.status !== 'reopened' && order.status !== 'closed')
+          this.orderWorks = response.data.list.filter(order => order.status !== 'closed')
           this.total = response.data.count
           this.currentHandler = [...new Set(this.orderWorks.map(order => order.currentHandler))];
           this.filteredData = this.orderWorks // 确保初始显示所有数据
@@ -851,17 +860,12 @@ export default {
     },
     handleReopen(row) {
       // 实现重新打开操作
-      if (this.judgeTermination(row)) {
-        return
-      }
       this.$confirm('是否确认重新开启该工单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.reopenOrderWorks(row)
-      }).catch(() => {
-        this.$showInfo('转交已取消')
+      }).then(() => {this.reopenOrderWorks(row)}).catch(() => {
+        this.$showInfo('重新已取消')
       })
     },
     handleClose(row) {
