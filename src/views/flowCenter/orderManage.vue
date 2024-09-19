@@ -94,7 +94,11 @@
               {{ getCategoryName(scope.row.categoryId) }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.icon')" min-width="150px" align="center" prop="icon" />
+          <el-table-column :label="$t('table.icon')" min-width="100px" align="center" >
+            <template slot-scope="scope">
+              <i :class="scope.row.icon"></i>
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('table.link')" min-width="250px" align="center" prop="link" />
           <el-table-column :label="$t('table.favorite')" min-width="80px" align="center">
             <template slot-scope="scope">
@@ -133,7 +137,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-dialog :visible.sync="createItemsDialog" :title="dialogTitle" width="800px">
+        <el-dialog :visible.sync="createItemsDialog" :title="dialogTitle" width="1000px">
           <el-form ref="createForm" :model="createItems" :rules="createItemsRules" style="margin-right: 70px;" label-width="120px">
             <el-row :gutter="20">
               <el-col :span="12">

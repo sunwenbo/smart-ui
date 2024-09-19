@@ -81,25 +81,20 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="图标" prop="icon">
-                  <e-icon-picker v-model="ruleForm.icon" style="width: 100%" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
                 <el-form-item label="类别:" prop="categoryId">
                   <el-select v-model="ruleForm.categoryId" filterable placeholder="请选择流程分类" style="width: 100%">
                     <el-option
-                        v-for="item in categoryLists"
-                        :key="item.id"
-                        :label="item.chineseName"
-                        :value="item.id"
+                      v-for="item in categoryLists"
+                      :key="item.id"
+                      :label="item.chineseName"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="8">
                 <el-form-item label="通知:">
                   <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
                     <el-option label="邮件" :value="1" />
@@ -108,14 +103,12 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
+              <el-col :span="8">
                 <el-form-item label="开启留言:">
                   <el-switch v-model="ruleForm.comments" />
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="8">
                 <el-form-item label="开启评分:">
                   <el-switch v-model="ruleForm.ratings" />
                 </el-form-item>
@@ -252,9 +245,6 @@ export default {
         name: [
           {required: true, message: '请输入流程名称', trigger: 'blur'}
         ],
-        icon: [
-          {required: true, message: '请输入流程图标', trigger: 'blur'}
-        ],
         categoryId: [
           {required: true, message: '请选择流程类别', trigger: 'blur, change'}
         ],
@@ -357,7 +347,6 @@ export default {
         structure: {nodes: [], edges: [] },
         categoryId: undefined,
         notice: [],
-        icon: '',
         description: ''
       }
       this.dialogFlowVisibleName = 1
@@ -376,7 +365,6 @@ export default {
         this.ruleForm = {
           id: response.data.id,
           name: response.data.name,
-          icon: response.data.icon,
           categoryId: response.data.categoryId,
           comments: response.data.comments,
           ratings: response.data.ratings,
@@ -457,7 +445,6 @@ export default {
             updateFlow({
               id: this.ruleForm.id,
               name: this.ruleForm.name,
-              icon: this.ruleForm.icon,
               categoryId: this.ruleForm.categoryId,
               comments: this.ruleForm.comments,
               raings: this.ruleForm.ratings,

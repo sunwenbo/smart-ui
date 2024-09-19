@@ -178,7 +178,12 @@ export default {
         pageSize: 10
       },
       tempLateRules: {
-        name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        name: [          { required: true, message: '请输入模板名称', trigger: 'blur' },
+          {
+            pattern: /^[a-zA-Z0-9]+$/,
+            message: '模板名称只能包含英文大写和小写字母以及数字组成',
+            trigger: 'blur'
+          } ],
         category:  [{ required: false, message: '请选择类别', trigger: 'blur' }],
         description: [{ required: true, message: '请输入描述信息', trigger: 'blur' }]
       }, // 表单审核
