@@ -447,7 +447,7 @@ export default {
               name: this.ruleForm.name,
               categoryId: this.ruleForm.categoryId,
               comments: this.ruleForm.comments,
-              raings: this.ruleForm.ratings,
+              ratings: this.ruleForm.ratings,
               notice: this.ruleForm.notice,
               structure: structureValue,
               description: this.ruleForm.description

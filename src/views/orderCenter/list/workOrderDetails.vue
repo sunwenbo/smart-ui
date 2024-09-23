@@ -60,6 +60,17 @@
         <v-form-render ref="vFormRef" :form-json="formJson" :form-data="formData" :option-data="optionData"  />
       </div>
     </el-card>
+    <!-- 留言组件 -->
+    <el-card v-if="orderDetail.bindFlowData && orderDetail.bindFlowData.comments">
+      <div class="comments-section">
+        <span>留言</span>
+        <hr class="divider">
+        <!-- 这里可以放留言相关的组件或逻辑 -->
+        <el-input type="textarea" v-model="commentsContent" placeholder="请输入您的留言" />
+        <el-button type="primary" @click="submitComment">提交留言</el-button>
+      </div>
+    </el-card>
+
     <el-card>
       <div class="oper-window">
         <span> 操作历史 </span>
@@ -90,16 +101,36 @@
         <el-button type="primary" @click="handleApprove">结束工单</el-button>
       </div>
     </el-card>
+    <!-- 评分弹窗 -->
+    <el-dialog title="请给工单评分:" :visible.sync="ratingDialogVisible" width="30%">
+      <div class="ratings-section" style="display: flex; margin-top: 25px; justify-content: center; align-items: center;">
+        <el-rate
+          v-model="ratingsScore"
+          :colors="colors">
+        </el-rate>
+      </div>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="ratingDialogVisible = false">取消</el-button>
+    <el-button type="primary" @click="submitRating">提交评分</el-button>
+  </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import {handleOrderWork, orderWorkHistory, orderWorksSearch} from '@/api/smart/workOrder'
+import {createOrderRating} from "@/api/smart/comment";
 
 export default {
   name: 'WorkOrderDetails',
   data() {
     return {
+      ratingSubmitted: false,
+      colors: ['#99A9BF', '#F7BA2A', '#FF9900'], // 等同于 { 2: '#99A9BF', 4: { value: '#F7BA2A', excluded: true }, 5: '#FF9900' }
+      commentsContent: '',  // 用于存储留言内容
+      ratingDialogVisible: false, // 控制评分弹窗的显示
+      ratingsScore: 0,            // 评分值
       formJson: {
         formConfig: {},
         widgetList: []
@@ -162,6 +193,7 @@ export default {
       // 根据id查询该工单的详细数据
       await orderWorksSearch(this.$route.params.id).then(response => {
         this.orderDetail = response.data
+        console.log('this.orderDetail=',this.orderDetail)
       })
       await this.getOrderWorkHistory()
       await this.processOrderWork();
@@ -184,7 +216,6 @@ export default {
           this.matchedTemplate = flowTemplatedata.find(template =>
               template.name === this.orderDetail.template
           )
-          console.log('this.matchedTemplat=',this.matchedTemplate)
           // 匹配到模板，获取模板的组件信息数据，然后渲染到vform
           if (this.matchedTemplate) {
             // 递归设置 disabled 属性为 true
@@ -251,20 +282,75 @@ export default {
     },
     async handleApprove() {
       try {
+        // 检查当前节点是否是 "工单结束" 并且当前用户是工单发起人
+        const isInitiator = this.$store.getters.userid === this.orderDetail.currentHandlerID; // 当前处理人是发起人
+        this.ratingSubmitted = false; // 标志位，判断是否提交评分
+
+        if (this.orderDetail.currentNode === '工单结束' && isInitiator) {
+          // 显示评分弹窗
+          this.ratingDialogVisible = true;
+
+          // 等待评分提交或取消
+          const ratingSubmitted = await new Promise((resolve) => {
+            const checkRatingSubmission = () => {
+              if (!this.ratingDialogVisible) {
+                resolve(this.ratingSubmitted); // 当评分弹窗关闭时，传递标志位
+              } else {
+                setTimeout(checkRatingSubmission, 100); // 每隔100ms检查一次
+              }
+            };
+            checkRatingSubmission();
+          });
+
+          // 如果未提交评分，直接返回，停止后续操作
+          if (!ratingSubmitted) {
+            return;
+          }
+        }
+
+        // 评分完成，执行工单操作
         const response = await handleOrderWork({
           id: this.orderDetail.id,
-          actionType: '1' // 1 为同意  0 为拒绝
-        })
+          actionType: '1' // 1 为同意 0 为拒绝
+        });
 
         if (response.code === 200) {
+          // 显示审核通过的提示并跳转
           this.$showSuccess('工单审核通过');
-          await this.$router.push('/orderCenter/list')
+          await this.$router.push('/orderCenter/list');
         } else {
-          this.$showError('工单拒绝失败，请重试1')
+          this.$showError('工单操作失败，请重试');
         }
       } catch (error) {
-        console.error('Failed to approve order:', error)
-        this.$showError('工单拒绝失败，请重试2')
+        console.error('Failed to approve order:', error);
+        this.$showError('工单操作失败，请重试');
+      }
+    },
+    async submitRating() {
+      if (this.ratingsScore > 0) {
+        try {
+          // 通过调用后端接口提交评分
+          await createOrderRating({
+            orderID: this.orderDetail.id, // 传递工单ID
+            ratings: this.ratingsScore    // 传递评分值
+          });
+
+          // 显示评分提交成功的提示
+          this.$showSuccess(`评分提交成功: ${this.ratingsScore}`);
+
+          // 关闭弹窗
+          this.ratingDialogVisible = false;
+
+          // 更新标志位，表示评分已成功提交
+          this.ratingSubmitted = true;
+
+        } catch (error) {
+          // 错误处理
+          console.error('评分提交失败', error);
+          this.$message.error('评分提交失败，请重试');
+        }
+      } else {
+        this.$message.error('评分不能为空');
       }
     },
     async handleReject() {
@@ -289,7 +375,17 @@ export default {
           this.$showError('工单拒绝失败，请重试')
         }
       })
-    }
+    },
+    submitComment() {
+      if (this.commentsContent) {
+        // 提交留言的逻辑
+        console.log('提交留言:', this.commentsContent);
+        // 清空留言内容
+        this.commentsContent = '';
+      } else {
+        this.$message.error('留言内容不能为空');
+      }
+    },
   }
 }
 </script>
@@ -332,6 +428,14 @@ export default {
   border: 2px solid #eeeeee;
   padding: 10px;
   height: auto;
+}
+
+/deep/ .el-rate__icon {
+  font-size: 30px; /* 控制星星大小 */
+  margin-right: 6px;
+  color: #C0C4CC;
+  -webkit-transition: .3s;
+  transition: .3s;
 }
 
 /deep/ .el-table th {
