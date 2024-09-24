@@ -107,7 +107,7 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.title')" min-width="200px" align="center" prop="title" />
+            <el-table-column :label="$t('table.title')" min-width="300px" align="center" prop="title" />
             <el-table-column :label="$t('table.department')" min-width="150px" align="center" prop="department">
               <template slot-scope="scope">
                 {{ formatDepartment(scope.row) }}

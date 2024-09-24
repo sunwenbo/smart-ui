@@ -61,15 +61,31 @@
       </div>
     </el-card>
     <!-- 留言组件 -->
-    <el-card v-if="orderDetail.bindFlowData && orderDetail.bindFlowData.comments">
+    <el-card class="oper-window" v-if="orderDetail.bindFlowData && orderDetail.bindFlowData.comments">
       <div class="comments-section">
         <span>留言</span>
         <hr class="divider">
-        <!-- 这里可以放留言相关的组件或逻辑 -->
-        <el-input type="textarea" v-model="commentsContent" placeholder="请输入您的留言" />
-        <el-button type="primary" @click="submitComment">提交留言</el-button>
+        <div v-if="commentsList.length > 0">
+          <div class="comments-list">
+            <div v-for="(comment, index) in commentsList" :key="index" :class="['comment-item', { 'my-comment': comment.username === currentUsername }]">
+              <el-avatar :src="comment.avatarUrl" alt="头像" class="avatar" />
+              <div class="comment-content">
+                <strong>{{ comment.username }}:</strong>
+                <p>{{ comment.comments }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input">
+          <el-avatar :src="userAvatar" alt="我的头像" class="my-avatar" />
+          <el-input type="textarea" v-model="commentsContent" style="width: 95%" placeholder="请输入您的留言" />
+          <div class="submit-button">
+            <el-button type="primary" style="margin-right: 10px" @click="submitComment">提交留言</el-button>
+          </div>
+        </div>
       </div>
     </el-card>
+
 
     <el-card>
       <div class="oper-window">
@@ -114,21 +130,25 @@
     <el-button type="primary" @click="submitRating">提交评分</el-button>
   </span>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
 import {handleOrderWork, orderWorkHistory, orderWorksSearch} from '@/api/smart/workOrder'
-import {createOrderRating} from "@/api/smart/comment";
+import {createOrderRating, getOrderComment, getOrderRating, createOrderComment } from "@/api/smart/comment";
+import {listUser} from "@/api/admin/sys-user";
 
 export default {
   name: 'WorkOrderDetails',
   data() {
     return {
+      currentUsername: this.$store.getters.name, // 获取当前用户名
+      userAvatar: this.$store.getters.avatar,
+      orderRating: null, // 用于存储评分
       ratingSubmitted: false,
       colors: ['#99A9BF', '#F7BA2A', '#FF9900'], // 等同于 { 2: '#99A9BF', 4: { value: '#F7BA2A', excluded: true }, 5: '#FF9900' }
       commentsContent: '',  // 用于存储留言内容
+      commentsList: [], // 用于存储留言列表
       ratingDialogVisible: false, // 控制评分弹窗的显示
       ratingsScore: 0,            // 评分值
       formJson: {
@@ -136,6 +156,7 @@ export default {
         widgetList: []
       },
       stepNodes: [],
+      users: [], // 存储所有用户的信息
       currentStepIndex: 0,
       matchedTemplate: {},
       formData: {},
@@ -159,17 +180,25 @@ export default {
   },
   computed: {
     isCurrentUserHandler() {
-      const { currentNode, currentHandlerID } = this.orderDetail;
-      const isInitiator = this.$store.getters.userid === this.orderDetail.currentHandlerID;
+      const {currentNode, currentHandlerID} = this.orderDetail;
+      const userId = this.$store.getters.userid;
 
       if (currentNode === "工单结束") {
-        // Check if the user is the initiator to allow seeing the finished order
-        return isInitiator;
-      } else {
-        // Check if the user is the current handler
-        return this.$store.getters.userid === currentHandlerID;
+        const hasRating = this.orderRating && this.orderRating.ratings !== undefined;
+        return !hasRating && userId === currentHandlerID; // 只有在未评分且为当前处理人时才返回 true
       }
+
+      return userId === currentHandlerID; // 在其他情况下直接返回
     }
+  },
+  mounted() {
+    // 获取用户
+    // 根据id查询该工单的留言信息
+    // 获取指定工单的评分
+    this.getUsers().then(() => {
+      this.fetchComments();
+      this.fetchRating();
+    });
   },
 
   async created() {
@@ -193,10 +222,11 @@ export default {
       // 根据id查询该工单的详细数据
       await orderWorksSearch(this.$route.params.id).then(response => {
         this.orderDetail = response.data
-        console.log('this.orderDetail=',this.orderDetail)
       })
+
       await this.getOrderWorkHistory()
-      await this.processOrderWork();
+      await this.processOrderWork()
+
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -279,6 +309,28 @@ export default {
     getResultText(value) {
       const option = this.flowResultResponse.find(option => option.value === value)
       return option ? option.label : '';
+    },
+    fetchRating() {
+      getOrderRating(this.$route.params.id).then(response => {
+        this.orderRating = response.data
+      })
+    },
+    fetchComments() {
+      getOrderComment(this.$route.params.id).then(response => {
+        this.commentsList = response.data.map(comment => {
+          const user = this.users.find(u => u.userId === comment.createBy);
+          return {
+            ...comment,
+            username: user ? user.nickName : '未知用户', // 用户名称
+            avatarUrl: user && user.avatar ? user.avatar : 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80' // 用户头像，替换为默认头像链接
+          }
+        })
+      })
+    },
+    getUsers() {
+      return listUser({pageSize: 999999}).then(response => {
+        this.users = response.data.list;
+      });
     },
     async handleApprove() {
       try {
@@ -376,12 +428,40 @@ export default {
         }
       })
     },
-    submitComment() {
+    async submitComment() {
       if (this.commentsContent) {
-        // 提交留言的逻辑
-        console.log('提交留言:', this.commentsContent);
-        // 清空留言内容
-        this.commentsContent = '';
+        try {
+          const response = await createOrderComment({
+            orderID: this.orderDetail.id, // 传递工单ID
+            comments: this.commentsContent // 传递留言内容
+          });
+
+          if (response.code === 200) {
+            // 获取当前用户的信息
+            const currentUser = {
+              username: this.currentUsername, // 从 Vuex 获取当前用户姓名
+              avatarUrl: this.userAvatar || 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80' // 默认头像
+            };
+
+            // 添加新的留言到列表
+            this.commentsList.push({
+              comments: this.commentsContent,
+              // 你可能需要从响应中获取留言者的信息，例如姓名
+              username: currentUser.username,
+              avatarUrl: currentUser.avatarUrl
+
+            })
+            this.$showSuccess('留言提交成功');
+
+            // 清空留言内容
+            this.commentsContent = '';
+          } else {
+            this.$showError('留言提交失败，请重试');
+          }
+        } catch (error) {
+          console.error('留言提交失败', error);
+          this.$message.error('留言提交失败，请重试');
+        }
       } else {
         this.$message.error('留言内容不能为空');
       }
@@ -395,11 +475,9 @@ export default {
 .action-buttons {
   display: flex;
   justify-content: center;
-}
-
-.action-buttons .el-button {
   margin: 0 30px; /* 按钮之间的间距 */
 }
+
 .custmo-steps {
   border: 1px solid #eeeeee;
   padding: 20px;
@@ -437,7 +515,6 @@ export default {
   -webkit-transition: .3s;
   transition: .3s;
 }
-
 /deep/ .el-table th {
   background-color: #f5f7fa; /* 你想要的背景颜色 */
   color: #333; /* 字体颜色 */
@@ -455,4 +532,27 @@ export default {
   margin-bottom: 10px;
 }
 
+.comment-item {
+  display: flex;
+  align-items: flex-start; /* 垂直对齐 */
+  margin-bottom: 20px;
+  padding: 10px; /* 内边距 */
+  background-color: #ffffff; /* 背景颜色 */
+  border-radius: 15px; /* 圆角 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+}
+
+.my-avatar {
+  margin-right: 10px; /* 头像与留言框之间的间距 */
+}
+
+.comment-content {
+  margin-left: 15px; /* 头像和留言之间的间距 */
+}
+
+.submit-button {
+  display: flex;
+  justify-content: flex-end; /* 右对齐 */
+  margin-top: 10px; /* 输入框与按钮之间的间距 */
+}
 </style>
