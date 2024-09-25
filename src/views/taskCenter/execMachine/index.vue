@@ -45,7 +45,7 @@
         <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
         <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
         <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
-        <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="220px" >
+        <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="250px" >
           <template slot-scope="scope">
             <el-button v-permisaction="['process:admin:manager:test']" type="text" icon="el-icon-mouse" @click="handleTestCon(scope.row)">
               连接测试
