@@ -10,7 +10,7 @@
     <el-row :gutter="12">
       <el-col :sm="24" :xs="24" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card class="chart-card" title="总工单数" :total="totalOrders">
-          <el-tooltip slot="action" class="item" effect="dark" content="指标说明" placement="top-start">
+          <el-tooltip slot="action" class="item" effect="dark" content="所有工单" placement="top-start">
             <i class="el-icon-warning-outline" />
           </el-tooltip>
           <div>
@@ -27,7 +27,7 @@
 
       <el-col :sm="24" :xs="24" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card class="chart-card" title="已完结工单" :total="completedOrders">
-          <el-tooltip slot="action" class="item" effect="dark" content="指标说明" placement="top-start">
+          <el-tooltip slot="action" class="item" effect="dark" content="状态为已结束或者手动结束" placement="top-start">
             <i class="el-icon-warning-outline" />
           </el-tooltip>
           <div>
@@ -39,7 +39,7 @@
 
       <el-col :sm="24" :xs="24" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card class="chart-card" title="待办工单" :total="pendingTasks">
-          <el-tooltip slot="action" class="item" effect="dark" content="指标说明" placement="top-start">
+          <el-tooltip slot="action" class="item" effect="dark" content="非结束的工单" placement="top-start">
             <i class="el-icon-warning-outline" />
           </el-tooltip>
           <div>
@@ -51,7 +51,7 @@
 
       <el-col :sm="24" :xs="24" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card class="chart-card" title="当前处理中的工单数" :total="currentProcessingOrders">
-          <el-tooltip slot="action" class="item" effect="dark" content="指标说明" placement="top-start">
+          <el-tooltip slot="action" class="item" effect="dark" content="正在处理的工单" placement="top-start">
             <i class="el-icon-warning-outline" />
           </el-tooltip>
           <div>
@@ -72,7 +72,23 @@
     <el-card :bordered="false" :body-style="{padding: '0'}">
       <div class="salesCard">
         <el-tabs>
-          <el-tab-pane label="工单统计">
+          <el-tab-pane label="工单统计" lazy>
+            <div>
+              <el-select v-model="timeFrame" placeholder="选择时间范围" @change="fetchOrderCountByPeriod">
+                <el-option label="按月" value="month"></el-option>
+                <el-option label="按周" value="week"></el-option>
+              </el-select>
+            </div>
+            <el-row>
+              <el-col :span="16">
+                <div ref="lineChart" style="width: 100%; height: 400px;"></div>
+              </el-col>
+              <el-col :span="8">
+                <rank-list title="提交排行榜" :list="orderSubmitList" />
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="工单评分统计" lazy>
             <div>
               <el-select v-model="timeFrame" placeholder="选择时间范围" @change="updateBarData">
                 <el-option label="按月" value="month"></el-option>
@@ -80,21 +96,11 @@
               </el-select>
             </div>
             <el-row>
-              <el-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar :list="orderCount" title="工单数趋势" />
-              </el-col>
-              <el-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="个人提交排行榜" :list="orderSubmitList" />
-              </el-col>
-            </el-row>
-          </el-tab-pane>
-          <el-tab-pane label="工单评分统计">
-            <el-row>
-              <el-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
+              <el-col :span="16">
                 <bar :list="orderRatingCount" title="评分趋势" />
               </el-col>
-              <el-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="个人评分排行榜" :list="orderRatingList" />
+              <el-col :span="8">
+                <rank-list title="评分排行榜" :list="orderRatingList" />
               </el-col>
             </el-row>
           </el-tab-pane>
@@ -113,6 +119,8 @@ import MiniProgress from '@/components/MiniProgress'
 import RankList from '@/components/RankList/index'
 import Bar from '@/components/Bar.vue'
 import { getOrderStatistics, getOrderCountByPeriod, getOrderRatingsByPeriod } from '@/api/smart/dashboard'
+import * as echarts from 'echarts';
+
 
 export default {
   name: 'DashboardSmart',
@@ -127,7 +135,8 @@ export default {
   },
   data() {
     return {
-      timeFrame: 'month',
+      // 模拟从后端获取的数据，实际可以通过 API 获取
+      timeFrame: 'month',  // 默认按月统计， month 、 week
       totalOrders: 0,
       completedOrders: 0,
       pendingTasks: 0,
@@ -138,7 +147,7 @@ export default {
       dailyRate: '0',
       weeklyOperationRate: '0',
       dailyOperationRate: '0',
-      orderCount: [],
+      orderData: [],
       orderRatingCount: [],
       orderSubmitList: [],
       orderRatingList: [],
@@ -151,7 +160,9 @@ export default {
     await this.fetchOrderStatistics()
     await this.fetchOrderCountByPeriod()
     await this.fetchOrderRatingsByPeriod()
+    this.initChart()
   },
+
   methods: {
     async fetchOrderStatistics() {
       const response = await getOrderStatistics()
@@ -166,30 +177,103 @@ export default {
         this.dailyRate = response.data.currentHandlerOrdersDayOverDay
       }
     },
+    // 初始化折线图
+    initChart() {
+      const chart = echarts.init(this.$refs.lineChart);
+      const option = {
+        // title: { text: '最近 7 天内工单的工单提交统计' },
+        tooltip: { trigger: 'axis' },
+        legend: {
+          data: ['所有', '已结束', '进行中'],
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.orderData.map(item => item.date),
+        },
+        yAxis: {
+          type: 'value',
+          name: '工单数量',
+        },
+        series: [
+          {
+            name: '所有',
+            type: 'line',
+            data: this.orderData.map(item => item.total),
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: {
+              width: 2,
+              color: '#5470C6',
+            },
+            itemStyle: {
+              color: '#5470C6',
+            },
+          },
+          {
+            name: '已结束',
+            type: 'line',
+            data: this.orderData.map(item => item.completed),
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: {
+              width: 2,
+              color: '#91CC75',
+            },
+            itemStyle: {
+              color: '#91CC75',
+            },
+          },
+          {
+            name: '进行中',
+            type: 'line',
+            data: this.orderData.map(item => item.underWay),
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: {
+              width: 2,
+              color: '#FAC858',
+            },
+            itemStyle: {
+              color: '#FAC858',
+            },
+          },
+        ],
+      };
+      chart.setOption(option);
+    },
     async fetchOrderCountByPeriod() {
       const response = await getOrderCountByPeriod({ period: this.timeFrame === 'month' ? 'month' : 'week' })
       if (response.code === 200) {
-        this.orderCount = response.data.orderStats.map(stat => ({ x: stat.date, y: stat.count }))
-
+        this.orderData = response.data.orderStats.map(stat => ({
+          date: stat.date,
+          total: stat.total,
+          completed: stat.completed,
+          underWay: stat.underWay
+        }));
         this.orderSubmitList = response.data.submissionRanking.map((item, index) => ({
           name: item.name,
           total: item.total
         }))
+        // 获取数据后重新初始化图表
+        this.initChart()
       }
     },
     async fetchOrderRatingsByPeriod() {
       const response = await getOrderRatingsByPeriod({ period: this.timeFrame === 'month' ? 'month' : 'week' })
       if (response.code === 200) {
         this.orderRatingCount = response.data.ratingsStats.map(stat => ({ x: stat.date, y: stat.average }))
-
-        console.log('this.orderRatingCount=',this.orderRatingCount)
-        this.orderRatingList = response.data.ratingRanking
-        console.log('this.orderRatingList=',this.orderRatingList)
-
+        this.orderRatingList = response.data.ratingRanking.map(item => {
+          return {
+            name: item.name,   // 保留 name 字段
+            total: item.score  // 将 score 的值赋给 total
+          };
+        });        // 获取数据后重新初始化图表
+        console.log("this.orderRatingCount",this.orderRatingCount)
+        console.log("this.orderRatingList",this.orderRatingList)
       }
     },
     updateBarData() {
-      this.fetchOrderCountByPeriod()
       this.fetchOrderRatingsByPeriod()
     }
   }
@@ -201,6 +285,10 @@ export default {
 <style lang="scss" scoped>
 .chart-card {
   height: 190px; /* 设置统一高度 */
+}
+
+.rank {
+  padding: 0 32px 32px 10px;
 }
 
 .notification-title {

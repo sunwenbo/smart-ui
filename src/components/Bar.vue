@@ -58,6 +58,14 @@ export default {
       arr: []
     }
   },
+  watch: {
+    list: {
+      handler(newVal) {
+        this.arr = newVal;
+      },
+      immediate: true // 立即更新一次
+    }
+  },
   mounted() {
     setTimeout(_ => {
       this.arr = this.list

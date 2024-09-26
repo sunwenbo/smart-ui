@@ -60,7 +60,7 @@
     "driver.js": "0.9.8",
     "dropzone": "5.7.2",
     "e-icon-picker": "1.0.7",
-    "echarts": "4.8.0",
+    "echarts": "^4.8.0",
     "element-ui": "2.15.6",
     "file-saver": "2.0.2",
     "font-awesome": "^4.7.0",

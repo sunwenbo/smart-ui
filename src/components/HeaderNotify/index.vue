@@ -96,6 +96,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .header-notify {
   font-size: 0 !important;
 
@@ -127,8 +128,8 @@ export default {
   .notification-list {
     border: 1px solid #ccc;
     border-radius: 8px; /* Increased border radius */
-    margin-top: -20px; /* Increased margin top */
-    padding: 15px; /* Increased padding */
+    margin-top: 20px; /* Increased margin top */
+    padding: 10px; /* Increased padding */
   }
 
   .notification-index {
@@ -150,10 +151,10 @@ export default {
     display: flex;
     align-items: center;
   }
-
   .custom-dialog {
     font-family: 'Arial', sans-serif;
   }
+
 
 }
 
