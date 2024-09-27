@@ -72,85 +72,83 @@
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getFlowList" />
       <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  ref="ruleForm" :fullscreen="true">
-        <div>
-          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="名称" prop="name">
-                  <el-input v-model="ruleForm.name" placeholder="请输入流程名称" style="width: 100%" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="类别:" prop="categoryId">
-                  <el-select v-model="ruleForm.categoryId" filterable placeholder="请选择流程分类" style="width: 100%">
-                    <el-option
-                      v-for="item in categoryLists"
-                      :key="item.id"
-                      :label="item.chineseName"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <el-form-item label="通知:">
-                  <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
-                    <el-option label="邮件" :value="1" />
-                    <el-option label="飞书" :value="2" />
-                    <el-option label="电话" :value="3" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="开启留言:">
-                  <el-switch v-model="ruleForm.comments" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="开启评分:">
-                  <el-switch v-model="ruleForm.ratings" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item label="描述" prop="description">
-              <el-input
-                  v-model="ruleForm.description"
-                  placeholder="请输入流程描述"
-                  type="textarea"
-                  :autosize="{ minRows: 2, maxRows: 4}"
-                  style="width: 100%"
+        <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="名称" prop="name">
+                <el-input v-model="ruleForm.name" placeholder="请输入流程名称" style="width: 100%" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="类别:" prop="categoryId">
+                <el-select v-model="ruleForm.categoryId" filterable placeholder="请选择流程分类" style="width: 100%">
+                  <el-option
+                    v-for="item in categoryLists"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="通知:">
+                <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
+                  <el-option label="邮件" :value="1" />
+                  <el-option label="飞书" :value="2" />
+                  <el-option label="电话" :value="3" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开启留言:">
+                <el-switch v-model="ruleForm.comments" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开启评分:">
+                <el-switch v-model="ruleForm.ratings" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="描述" prop="description">
+            <el-input
+                v-model="ruleForm.description"
+                placeholder="请输入流程描述"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                style="width: 100%"
+            />
+          </el-form-item>
+          <el-form-item label="流程" prop="structure">
+            <div style="border-radius: 4px; overflow:hidden">
+              <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveXML()}">导出XML</el-button>
+              <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveImg()}">导出图片</el-button>
+              <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.modalVisible=true}">查看流程图</el-button>
+              <WfdDesign
+                  ref="wfd"
+                  v-if="wfdDesignRefresh"
+                  :isView=false
+                  :data="ruleForm.structure"
+                  :height="600"
+                  :users="users"
+                  :roles="roles"
+                  :groups="groups"
+                  :tasks="taskListData"
+                  :execMachine="execMachine"
+                  :categorys="categoryLists"
+                  :departments="departments"
+                  :lang="lang"
               />
-            </el-form-item>
-            <el-form-item label="流程" prop="structure">
-              <div style="border-radius: 4px; overflow:hidden">
-                <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveXML()}">导出XML</el-button>
-                <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveImg()}">导出图片</el-button>
-                <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.modalVisible=true}">查看流程图</el-button>
-                <WfdDesign
-                    ref="wfd"
-                    v-if="wfdDesignRefresh"
-                    :isView=false
-                    :data="ruleForm.structure"
-                    :height="600"
-                    :users="users"
-                    :roles="roles"
-                    :groups="groups"
-                    :tasks="taskListData"
-                    :execMachine="execMachine"
-                    :categorys="categoryLists"
-                    :departments="departments"
-                    :lang="lang"
-                />
-              </div>
-            </el-form-item>
-          </el-form>
-          <div class="el-dialog__footer">
-            <el-button type="primary" @click="dialogFlowVisibleName===1?submitForm('ruleForm'):editForm('ruleForm')">提交</el-button>
-            <el-button type="warning" @click="dialogVisible = false">取 消</el-button>
-          </div>
-        </div>
+            </div>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" >
+          <el-button type="primary" @click="dialogFlowVisibleName===1?submitForm('ruleForm'):editForm('ruleForm')">提交</el-button>
+          <el-button type="warning" @click="dialogVisible = false">取 消</el-button>
+        </span>
       </el-dialog>
       <el-dialog title="查看流程图" :visible.sync="modalVisible" width="60%">
         <WfdDesign ref="wfd" :data="ruleForm.structure" :height="300" isView />
@@ -172,7 +170,7 @@
       </el-dialog>
       <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="() => toggleDownloadDialog(false)">
         <span>确认要导出数据吗？</span>
-        <span slot="footer">
+        <span slot="footer" class="dialog-footer">
         <el-button type="warning" @click="toggleDownloadDialog(false)">取 消</el-button>
         <el-button type="primary" @click="handleDownload">确 定</el-button>
       </span>
@@ -572,7 +570,7 @@ export default {
           }
         })
       }
-      this.listLoading = false // 停止加载状态
+      this.listLoang = false // 停止加载状态
     },
     flowSearch() {
       this.listLoading = true;
@@ -622,39 +620,3 @@ export default {
   }
 }
 </script>
-<style scoped lang="scss">
-::v-deep .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
-
-::v-deep .el-dialog{
-  .el-dialog__header{
-    position:sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    padding: 15px;
-    background: #f5f7fa;
-  }
-  .el-dialog__body {
-    padding-top: 20px;
-    padding-bottom: 60px; /* 调整为按钮的高度 */
-  }
-
-  .el-dialog__footer {
-    position: absolute;
-    right: 0;
-    left: 0;
-    padding: 15px;
-    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
-    border-top: 1px solid #e4e7ed;
-    text-align: right;
-  }
-
-  .el-dialog__footer .el-button {
-    margin-left: 10px; /* 按钮之间的间距 */
-  }
-}
-
-</style>

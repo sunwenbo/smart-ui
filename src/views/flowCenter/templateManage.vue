@@ -109,13 +109,13 @@
     </el-dialog>
     <el-dialog :visible.sync="descDialogVisible" title="描述信息" width="30%" :before-close="closeDescDiglog">
       <span>{{ descriptionDialogContent }}</span>
-      <span slot="footer">
+      <span slot="footer" class="dialog-footer">
         <el-button type="warning" @click="descDialogVisible = false">关闭</el-button>
       </span>
     </el-dialog>
     <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="closeDownloadDiglog">
       <span>确认要导出数据吗？</span>
-      <span slot="footer">
+      <span slot="footer" class="dialog-footer">
         <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleDownload">确 定</el-button>
       </span>
@@ -461,10 +461,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
 
 ::v-deep .el-container.main-container {
   margin-left: 0!important;
@@ -478,19 +474,6 @@ export default {
 }
 ::v-deep label {
   font-weight: normal;
-}
-::v-deep .el-dialog{
-  .el-dialog__header{
-    position:sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    padding: 15px;
-    background: #f5f7fa;
-  }
-  .el-dialog__body {
-    padding-top: 20px;
-  }
 }
 
 .baseInfo-window {

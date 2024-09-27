@@ -59,7 +59,7 @@
               </el-col>
             </el-row>
           </el-form>
-          <div class="el-dialog__footer">
+          <div slot="footer">
             <el-button type="primary" @click="validateForm">创建</el-button>
             <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
           </div>
@@ -84,7 +84,7 @@
             <el-button type="primary" @click="updateCateGory(currentCateGory)">保存</el-button>
           </div>
         </el-dialog>
-        <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="closeDownloadDiglog">
+        <el-dialog :visible.sync="downloadDialogVisible" title="下载提示" width="30%" :before-close="closeDownloadDiglog">
           <span>确认要导出数据吗？</span>
           <span slot="footer">
           <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
@@ -351,10 +351,6 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
 
 .baseInfo-window {
   border: 2px solid #eeeeee;
@@ -399,32 +395,5 @@ export default {
 ::v-deep label {
   font-weight: normal;
 }
-::v-deep .el-dialog{
-  .el-dialog__header{
-    position:sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    padding: 15px;
-    background: #f5f7fa;
-  }
-  .el-dialog__body  {
-    padding-top: 30px;
-    padding-bottom: 20px; /* 调整为按钮的高度 */
-  }
 
-  .el-dialog__footer {
-    position: absolute;
-    right: 0;
-    left: 0;
-    padding: 15px;
-    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
-    border-top: 1px solid #e4e7ed;
-    text-align: right;
-  }
-
-  .el-dialog__footer .el-button {
-    margin-left: 20px; /* 按钮之间的间距 */
-  }
-}
 </style>

@@ -194,45 +194,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
-
 /* 自定义终端样式 */
 .terminal {
   font-family: monospace;
   padding: 10px;
   overflow: hidden;
-}
-
-::v-deep .el-dialog{
-  .el-dialog__header{
-    position:sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    padding: 15px;
-    background: #f5f7fa;
-  }
-  .el-dialog__body {
-    padding-top: 20px;
-    padding-bottom: 60px; /* 调整为按钮的高度 */
-  }
-
-  .el-dialog__footer {
-    position: absolute;
-    right: 0;
-    left: 0;
-    padding: 15px;
-    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
-    border-top: 1px solid #e4e7ed;
-    text-align: right;
-  }
-
-  .el-dialog__footer .el-button {
-    margin-left: 10px; /* 按钮之间的间距 */
-  }
 }
 
 /* 自定义样式 */

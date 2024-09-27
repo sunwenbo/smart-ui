@@ -4,8 +4,7 @@
       <i class="fa fa-bell notify-icon" />
       <span v-if="unreadNotifications.length > 0" class="notification-dot" />
     </div>
-    <el-dialog :visible.sync="show" width="650px" class="custom-dialog" :modal="false">
-      <div slot="title" class="custom-title">消息通知</div>
+    <el-dialog :visible.sync="show" :title="dialogTitle" width="650px" :modal="false" top="30vh">
       <div class="notification-list">
         <div v-if="unreadNotifications.length === 0" class="no-notifications">暂无通知</div>
         <div v-else>
@@ -18,7 +17,9 @@
           </div>
         </div>
       </div>
-      <el-button style="margin-left: 550px; margin-top: 15px;" type="primary" @click="show = false">关闭</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button  type="primary" @click="show = false">关闭</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -30,6 +31,7 @@ export default {
   name: 'HeaderNotify',
   data() {
     return {
+      dialogTitle: '消息通知',
       show: false,
       notifications: [],
     }
@@ -96,66 +98,69 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .header-notify {
-  font-size: 0 !important;
+  line-height: 35px;
 
   .icon-wrapper {
     position: relative;
     display: inline-block;
+
     .notify-icon {
       cursor: pointer;
-      font-size: 20px; /* Enlarged the icon */
+      font-size: 22px; /* 增大图标 */
       vertical-align: middle;
-    }
-    .notification-dot {
-      position: absolute;
-      top: 12px; /* Adjusted the top position */
-      right: -6px; /* Adjusted the right position */
-      width: 8px; /* Enlarged the dot */
-      height: 8px; /* Enlarged the dot */
-      background-color: red;
-      border-radius: 50%;
+      margin-top: 10px;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #da8787; /* 添加悬停效果 */
+      }
     }
   }
 
-  .custom-title {
-    font-weight: bold;
-    font-size: 18px; /* Enlarged the title */
-    color: #333; /* Darkened the color */
+  .notification-dot {
+    position: absolute;
+    top: 5px; /* 调整位置 */
+    right: -8px;
+    width: 10px; /* 增大圆点 */
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
   }
 
   .notification-list {
     border: 1px solid #ccc;
-    border-radius: 8px; /* Increased border radius */
-    margin-top: 20px; /* Increased margin top */
-    padding: 10px; /* Increased padding */
+    border-radius: 8px; /* 增加圆角 */
+    margin-top: 15px; /* 调整顶部边距 */
+    padding: 15px; /* 调整内边距 */
+    max-height: 400px; /* 设置最大高度 */
+    overflow-y: auto; /* 添加滚动条 */
   }
 
-  .notification-index {
-    font-size: 15px; /* Enlarged the index */
-    color: #666; /* Darkened the color */
-  }
-
-  .notification-message {
-    font-size: 14px; /* Enlarged the message */
-    color: #333; /* Darkened the color */
-  }
   .notification-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 0; /* 添加上下内边距 */
+    border-bottom: 1px solid #e4e7ed; /* 添加分隔线 */
+
+    &:last-child {
+      border-bottom: none; /* 最后一项不显示分隔线 */
+    }
   }
 
-  .notification-content {
-    display: flex;
-    align-items: center;
-  }
-  .custom-dialog {
-    font-family: 'Arial', sans-serif;
+  .notification-index {
+    font-size: 16px; /* 增大索引 */
+    color: #666; /* 深化颜色 */
   }
 
+  .notification-message {
+    font-size: 15px; /* 增大消息 */
+    color: #333; /* 深化颜色 */
+  }
 
 }
 
 </style>
+
+

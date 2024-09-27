@@ -145,9 +145,9 @@ module.exports = {
   },
   css: {
     loaderOptions: {
-      scss: {
-        additionalData: `@import "@/styles/custmo.scss";`
-      },
+      // scss: {
+      //   additionalData: `@import "@/styles/custmo.scss";`
+      // },
       less: {
         modifyVars: {
           // less vars，customize ant design theme

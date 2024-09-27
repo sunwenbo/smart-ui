@@ -189,10 +189,10 @@
               </el-col>
             </el-row>
           </el-form>
-          <div class="el-dialog__footer">
+          <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="validateForm">创建</el-button>
             <el-button type="warning" @click="createItemsDialog = false">取消</el-button>
-          </div>
+          </span>
         </el-dialog>
         <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
           <el-form :model="currentItem" label-width="90px">
@@ -270,17 +270,17 @@
               </el-col>
             </el-row>
           </el-form>
-          <div slot="footer" class="dialog-footer">
+          <span slot="footer" class="dialog-footer">
             <el-button type="warning" @click="updateDialog = false">关闭</el-button>
             <el-button v-if="isEditable" type="primary" @click="updateOrderItems(currentItem)">保存</el-button>
-          </div>
+          </span>
         </el-dialog>
         <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="closeDownloadDiglog">
           <span>确认要导出数据吗？</span>
-          <span slot="footer">
-          <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleDownload">确 定</el-button>
-        </span>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleDownload">确 定</el-button>
+          </span>
         </el-dialog>
         <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getItemsList" />
       </div>
@@ -741,34 +741,7 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .el-dialog{
-  .el-dialog__header{
-    position:sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    padding: 15px;
-    background: #f5f7fa;
-  }
-  .el-dialog__body {
-    padding-top: 20px;
-    padding-bottom: 60px; /* 调整为按钮的高度 */
-  }
 
-  .el-dialog__footer {
-    position: absolute;
-    right: 0;
-    left: 0;
-    padding: 15px;
-    background: #f5f7fa; /* 设置按钮行背景色为灰色 */
-    border-top: 1px solid #e4e7ed;
-    text-align: right;
-  }
-
-  .el-dialog__footer .el-button {
-    margin-left: 10px; /* 按钮之间的间距 */
-  }
-}
 .baseInfo-window {
   border: 2px solid #eeeeee;
   padding: 20px;

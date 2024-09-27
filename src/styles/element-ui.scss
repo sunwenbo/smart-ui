@@ -82,3 +82,18 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+.el-dialog{
+  div.el-dialog__header {
+    background-color: #f5f7fa;
+  }
+  div.el-dialog__footer {
+    background-color: #f5f7fa;
+    border-top: 1px solid #e4e7ed;
+  }
+}
+
+.el-table th {
+  background-color: #f5f7fa; /* 你想要的背景颜色 */
+  color: #333; /* 字体颜色 */
+}
