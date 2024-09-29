@@ -113,7 +113,6 @@
                 {{ formatDepartment(scope.row) }}
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.process')" min-width="150px" align="center" prop="process" />
             <el-table-column :label="$t('table.currentNode')" align="center" width="100px" prop="currentNode">
               <template slot-scope="scope">
                 <el-tag :type="scope.row.currentNode === '结束' ? 'success' : 'warning'">
@@ -136,6 +135,7 @@
                 </el-tag>
               </template>
             </el-table-column>
+            <el-table-column :label="$t('table.process')" min-width="150px" align="center" prop="process" />
             <el-table-column :label="$t('table.creator')" min-width="130px" align="center" prop="creator">
             </el-table-column>
             <el-table-column :label="$t('table.description')" width="70px" align="center" prop="description">
@@ -521,7 +521,6 @@ export default {
         this.userOptions = this.allUsers // 如果没有输入内容，则显示所有用户
       }
     },
-
     async sendUrgeMessage(row) {
       this.listLoading = true;
       try {
@@ -552,8 +551,6 @@ export default {
         this.listLoading = false;
       }
     },
-
-
     async reopenOrderWorks(row) {
       this.listLoading = true
       try {
@@ -887,15 +884,12 @@ export default {
 </script>
 
 <style scoped>
-
-
 .fixed-dropdown-menu {
   width: 80px; /* 设置下拉菜单的固定宽度 */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 
 </style>
 
