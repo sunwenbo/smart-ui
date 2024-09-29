@@ -1,52 +1,56 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-button v-waves style="margin-right: 10px;" type="primary" icon="el-icon-circle-plus-outline" @click="createTaskDialog">
-        {{ $t('table.createTask') }}
-      </el-button>
-      <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native="taskSearch">
-        <el-dropdown slot="prepend" @command="handleCommand">
+      <div class="baseInfo-window">
+        <el-button v-waves style="margin-right: 10px;" type="primary" icon="el-icon-circle-plus-outline" @click="createTaskDialog">
+          {{ $t('table.createTask') }}
+        </el-button>
+        <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native="taskSearch">
+          <el-dropdown slot="prepend" @command="handleCommand">
           <span class="el-dropdown-link">
             {{ searchType === 'name' ? '名称' : 'ID' }}
             <i class="el-icon-arrow-down el-icon--right" />
           </span>
-          <el-dropdown-menu slot="dropdown" class="fixed-dropdown-menu">
-            <el-dropdown-item command="name">名称</el-dropdown-item>
-            <el-dropdown-item command="id">ID</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-button slot="append" icon="el-icon-search" @click="taskSearch" />
-      </el-input>
-      <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset"/>
-      <el-button v-waves :loading="downloadDialogVisible" style="margin-left: 10px;" icon="el-icon-download" @click="toggleDownloadDialog(true)">
-        {{ $t('table.export') }}
-      </el-button>
+            <el-dropdown-menu slot="dropdown" class="fixed-dropdown-menu">
+              <el-dropdown-item command="name">名称</el-dropdown-item>
+              <el-dropdown-item command="id">ID</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button slot="append" icon="el-icon-search" @click="taskSearch" />
+        </el-input>
+        <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset"/>
+        <el-button v-waves :loading="downloadDialogVisible" style="margin-left: 10px;" icon="el-icon-download" @click="toggleDownloadDialog(true)">
+          {{ $t('table.export') }}
+        </el-button>
+      </div>
     </el-card>
     <el-card>
-      <el-table v-loading="listLoading" :data="taskDataList" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-        <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
-        <el-table-column :label="$t('table.name')" min-width="130px" align="center" prop="name" />
-        <el-table-column :label="$t('table.taskType')" min-width="120px" align="center" prop="taskType" >
-          <template slot-scope="scope">
-            {{ getTaskTypeName(scope.row.taskType) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('table.interpreter')" min-width="200px" align="center" prop="interpreter" />
-        <el-table-column :label="$t('table.creator')" min-width="110px" align="center" prop="creator" />
-        <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
-        <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
-        <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
-        <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="200px">
-          <template slot-scope="scope">
-            <el-button v-permisaction="['process:admin:manager:edit']" size="mini" type="text" icon="el-icon-edit" @click="handleEdit(scope.row)">
-              编辑
-            </el-button>
-            <el-button v-permisaction="['process:admin:manager:delete']" size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="form-window">
+        <el-table v-loading="listLoading" :data="taskDataList" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+          <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
+          <el-table-column :label="$t('table.name')" min-width="130px" align="center" prop="name" />
+          <el-table-column :label="$t('table.taskType')" min-width="120px" align="center" prop="taskType" >
+            <template slot-scope="scope">
+              {{ getTaskTypeName(scope.row.taskType) }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('table.interpreter')" min-width="200px" align="center" prop="interpreter" />
+          <el-table-column :label="$t('table.creator')" min-width="110px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
+          <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
+          <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
+          <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="200px">
+            <template slot-scope="scope">
+              <el-button v-permisaction="['process:admin:manager:edit']" size="mini" type="text" icon="el-icon-edit" @click="handleEdit(scope.row)">
+                编辑
+              </el-button>
+              <el-button v-permisaction="['process:admin:manager:delete']" size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getTaskList" />
       <el-dialog :title="dialogTaskVisibleName === 1 ? '新建任务' : '编辑任务'" :visible.sync="dialogVisible" width="70%" style="margin-top: 0">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">

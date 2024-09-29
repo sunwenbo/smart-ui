@@ -1,9 +1,9 @@
 <template>
   <div class="app-container" style="width: 100%;">
-    <div>
+    <el-card>
       <el-alert title="工单申请过程中，有任何问题请联系【孙文波（ swb956721830@163.com ）】协助处理" type="info" show-icon />
       <el-alert :title="'当前工单状态：' + getStatusText(orderDetail.status)" type="warning" show-icon />
-    </div>
+    </el-card>
     <el-card>
       <div class="custmo-steps">
         <span> 工单进度 </span>
@@ -76,8 +76,8 @@
             </div>
           </div>
         </div>
-        <div class="comment-input">
-          <el-avatar :src="userAvatar" alt="我的头像" class="my-avatar" />
+        <div>
+          <el-avatar :src="userAvatar" alt="我的头像" style="margin-right: 10px" />
           <el-input type="textarea" v-model="commentsContent" style="width: 95%" placeholder="请输入您的留言" />
           <div class="submit-button">
             <el-button type="primary" style="margin-right: 10px" @click="submitComment">提交留言</el-button>
@@ -483,53 +483,11 @@ export default {
   padding: 20px;
   margin-bottom: 10px;
 }
-.baseInfo-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.divider {
-  border: 0;
-  height: 1px;
-  background: #eeeeee;
-  margin-top: 5px;
-  margin-bottom: 20px;
-}
-
-.form-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-}
 
 .oper-window {
   border: 2px solid #eeeeee;
   padding: 10px;
   height: auto;
-}
-
-/deep/ .el-rate__icon {
-  font-size: 30px; /* 控制星星大小 */
-  margin-right: 6px;
-  color: #C0C4CC;
-  -webkit-transition: .3s;
-  transition: .3s;
-}
-/deep/ .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
-.el-alert--info.is-light {
-  background-color: #ecf1fd;
-  color: #303133;
-  border: 1px solid #e4e7ed;
-  margin-bottom: 10px;
-}
-.el-alert--warning.is-light {
-  background-color: #fdf6ec;
-  color: #E6A23C;
-  border: 1px solid #e4e7ed;
-  margin-bottom: 10px;
 }
 
 .comment-item {
@@ -538,16 +496,12 @@ export default {
   margin-bottom: 20px;
   padding: 10px; /* 内边距 */
   background-color: #ffffff; /* 背景颜色 */
-  border-radius: 15px; /* 圆角 */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* 阴影效果 */
-}
-
-.my-avatar {
-  margin-right: 10px; /* 头像与留言框之间的间距 */
+  border-radius: 13px; /* 圆角 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* 阴影效果 */
 }
 
 .comment-content {
-  margin-left: 15px; /* 头像和留言之间的间距 */
+  margin-left: 20px; /* 头像和留言之间的间距 */
 }
 
 .submit-button {

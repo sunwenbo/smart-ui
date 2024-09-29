@@ -226,24 +226,5 @@ export default {
   }
 }
 
-.baseInfo-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.base-info {
-  font-weight: bold;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.divider {
-  border: 0;
-  height: 1px;
-  background: #eeeeee;
-  margin-top: 5px;
-  margin-bottom: 20px;
-}
 
 </style>

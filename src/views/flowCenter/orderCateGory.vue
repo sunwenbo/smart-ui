@@ -44,55 +44,55 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-dialog :visible.sync="createcateGoryDialog" :title="dialogTitle" width="800px">
-          <el-form ref="createForm" :model="createCateGory" :rules="createCateGoryRules" style="margin-right: 70px;" label-width="120px">
-            <el-row :gutter="20">
-              <el-col :span="24">
-                <el-form-item label="中文名称:" prop="chineseName">
-                  <el-input v-model="createCateGory.chineseName"  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
-                <el-form-item label="英文名称:" prop="name">
-                  <el-input v-model="createCateGory.name" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-          <div slot="footer">
-            <el-button type="primary" @click="validateForm">创建</el-button>
-            <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
-          </div>
-        </el-dialog>
-        <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
-          <el-form :model="currentCateGory" label-width="90px">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="中文名称:">
-                  <el-input v-model="currentCateGory.chineseName" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="英文名称:">
-                  <el-input v-model="currentCateGory.name" :disabled="true" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button type="warning" @click="updateDialog = false">关闭</el-button>
-            <el-button type="primary" @click="updateCateGory(currentCateGory)">保存</el-button>
-          </div>
-        </el-dialog>
-        <el-dialog :visible.sync="downloadDialogVisible" title="下载提示" width="30%" :before-close="closeDownloadDiglog">
-          <span>确认要导出数据吗？</span>
-          <span slot="footer">
+      </div>
+      <el-dialog :visible.sync="createcateGoryDialog" :title="dialogTitle" width="800px">
+        <el-form ref="createForm" :model="createCateGory" :rules="createCateGoryRules" style="margin-right: 70px;" label-width="120px">
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="中文名称:" prop="chineseName">
+                <el-input v-model="createCateGory.chineseName"  />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="英文名称:" prop="name">
+                <el-input v-model="createCateGory.name" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div slot="footer">
+          <el-button type="primary" @click="validateForm">创建</el-button>
+          <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
+        <el-form :model="currentCateGory" label-width="90px">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="中文名称:">
+                <el-input v-model="currentCateGory.chineseName" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="英文名称:">
+                <el-input v-model="currentCateGory.name" :disabled="true" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="warning" @click="updateDialog = false">关闭</el-button>
+          <el-button type="primary" @click="updateCateGory(currentCateGory)">保存</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog :visible.sync="downloadDialogVisible" title="下载提示" width="30%" :before-close="closeDownloadDiglog">
+        <span>确认要导出数据吗？</span>
+        <span slot="footer">
           <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="handleDownload">确 定</el-button>
         </span>
-        </el-dialog>
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getCategoryList" />
-      </div>
+      </el-dialog>
+      <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getCategoryList" />
     </el-card>
   </div>
 </template>
@@ -349,51 +349,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-.baseInfo-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.baseInfo-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-window {
-  border: 2px solid #eeeeee;
-  padding: 10px;
-  height: auto;
-  transition: box-shadow 0.3s ease-in-out;
-  .pagination-container   {
-    background: #fff;
-    padding: 1px 10px;
-    margin-top: 10px;
-  }
-}
-.form-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.blue-text i {
-  color: #4A9FF9;
-}
-
-::v-deep .el-container.main-container {
-  margin-left: 0!important;
-  .main-header {
-    display:none;
-  }
-  .right-toolbar {
-    width: 480px !important;
-    text-align: left;
-  }
-}
-::v-deep label {
-  font-weight: normal;
-}
-
-</style>

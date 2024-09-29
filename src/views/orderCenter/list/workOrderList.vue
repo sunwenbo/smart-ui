@@ -2,12 +2,12 @@
   <div class="app-container" style="width: 100%;">
     <el-card>
       <div class="baseInfo-window">
-        <el-button v-waves class="filter-item" style="margin-right: 3px;" type="primary" icon="el-icon-s-promotion" @click="handleOrderCreate">
+        <el-button v-waves class="filter-item" style="margin-right: 10px;font-size: 14px" type="primary" icon="el-icon-s-promotion" @click="handleOrderCreate">
           {{ $t('table.createOrder') }}
         </el-button>
         <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native=" handleSearch">
           <el-dropdown slot="prepend" @command="handleCommand">
-          <span class="el-dropdown-link">
+          <span>
             {{ searchType === 'title' ? '标题' : '工单ID' }}
             <i class="el-icon-arrow-down el-icon--right" />
           </span>
@@ -148,7 +148,7 @@
             <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="90px">
               <template v-slot="{ row }">
                 <el-dropdown trigger="click" size="small" placement="bottom" @command="(command) => actionsHandle(command, row)">
-                <span class="el-dropdown-link">
+                <span>
                   <el-button type="text" icon="el-icon-more" />
                 </span>
                   <el-dropdown-menu slot="dropdown" style="width: 80px" class="blue-text">
@@ -229,7 +229,7 @@
             </el-col>
           </el-row>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer">
           <el-button @click="updateDialogVisible = false">取消</el-button>
           <el-button type="primary" @click="handleUpdate">更新</el-button>
         </div>
@@ -286,7 +286,7 @@
             </el-col>
           </el-row>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer">
           <el-button @click="shiftDialogVisible = false">取消</el-button>
           <el-button type="primary" @click="handleShift">转交</el-button>
         </div>
@@ -888,41 +888,14 @@ export default {
 
 <style scoped>
 
-.el-dropdown-link {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.baseInfo-window {
-  border: 1px solid #eeeeee;
-  padding: 10px;
-  transition: box-shadow 0.3s ease-in-out;
-}
-.baseInfo-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-/deep/ .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
-}
 
 .fixed-dropdown-menu {
-  width: 100px; /* 设置下拉菜单的固定宽度 */
+  width: 80px; /* 设置下拉菜单的固定宽度 */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.blue-text i {
-  color: #4A9FF9;
-}
-
-.dialog-footer {
-  text-align: right;
-}
 
 </style>
 

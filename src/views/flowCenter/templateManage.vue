@@ -63,8 +63,8 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getFlowTemplateList" />
       </div>
+      <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getFlowTemplateList" />
     </el-card>
     <el-dialog :visible.sync="templateDialogVisible" title="模板管理" :fullscreen="true">
       <el-form ref="vFormRef" :model="currentData" :rules="tempLateRules" label-width="100px">
@@ -459,46 +459,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-
-::v-deep .el-container.main-container {
-  margin-left: 0!important;
-  .main-header {
-    display:none;
-  }
-  .right-toolbar {
-    width: 480px !important;
-    text-align: left;
-  }
-}
-::v-deep label {
-  font-weight: normal;
-}
-
-.baseInfo-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.3s ease-in-out;
-}
-.baseInfo-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-window {
-  border: 2px solid #eeeeee;
-  padding: 10px;
-  height: auto;
-  transition: box-shadow 0.3s ease-in-out;
-  .pagination-container {
-    background: #fff;
-    padding: 1px 10px;
-    margin-top: 10px;
-  }
-}
-.form-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-</style>

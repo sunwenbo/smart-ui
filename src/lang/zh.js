@@ -126,7 +126,7 @@ export default {
     priority: '优先级',
     type: '工单类型',
     remark: '点评',
-    createOrder: '创建工单',
+    createOrder: '新建工单',
     createTemplate: '新建模板',
     create: '新建',
     createFlow: '新建流程',

@@ -137,153 +137,153 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-dialog :visible.sync="createItemsDialog" :title="dialogTitle" width="1000px">
-          <el-form ref="createForm" :model="createItems" :rules="createItemsRules" style="margin-right: 70px;" label-width="120px">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="标题:" prop="title">
-                  <el-input v-model="createItems.title" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="图标:" prop="icon">
-                  <e-icon-picker v-model="createItems.icon" style="width: 100%" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="类别:" prop="categoryId">
-                  <el-select v-model="createItems.categoryId" style="width: 100%" placeholder="请选择类别" @change="handleCategoryChange">
-                    <el-option v-for="(category, index) in filteredCategory" :key="index" :label="category.chineseName" :value="category.id" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="绑定模板:" prop="bindTempLate">
-                  <el-select v-model="createItems.bindTempLate" style="width: 100%" placeholder="请选择绑定模板">
-                    <el-option v-for="(template, index) in filteredTemplates" :key="index" :label="template" :value="template" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="收藏:" prop="favorite">
-                  <el-select v-model="createItems.favorite" style="width: 100%" placeholder="请选择收藏状态">
-                    <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="跳转链接:" prop="link">
-                  <el-input v-model="createItems.link" :disabled="true" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="24">
-                <el-form-item label="描述:">
-                  <el-input v-model="createItems.description" type="textarea" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-          <span slot="footer" class="dialog-footer">
+      </div>
+      <el-dialog :visible.sync="createItemsDialog" :title="dialogTitle" width="1000px">
+        <el-form ref="createForm" :model="createItems" :rules="createItemsRules" style="margin-right: 70px;" label-width="120px">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="标题:" prop="title">
+                <el-input v-model="createItems.title" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="图标:" prop="icon">
+                <e-icon-picker v-model="createItems.icon" style="width: 100%" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="类别:" prop="categoryId">
+                <el-select v-model="createItems.categoryId" style="width: 100%" placeholder="请选择类别" @change="handleCategoryChange">
+                  <el-option v-for="(category, index) in filteredCategory" :key="index" :label="category.chineseName" :value="category.id" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="绑定模板:" prop="bindTempLate">
+                <el-select v-model="createItems.bindTempLate" style="width: 100%" placeholder="请选择绑定模板">
+                  <el-option v-for="(template, index) in filteredTemplates" :key="index" :label="template" :value="template" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="收藏:" prop="favorite">
+                <el-select v-model="createItems.favorite" style="width: 100%" placeholder="请选择收藏状态">
+                  <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="跳转链接:" prop="link">
+                <el-input v-model="createItems.link" :disabled="true" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="描述:">
+                <el-input v-model="createItems.description" type="textarea" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="validateForm">创建</el-button>
             <el-button type="warning" @click="createItemsDialog = false">取消</el-button>
           </span>
-        </el-dialog>
-        <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
-          <el-form :model="currentItem" label-width="90px">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="ID:">
-                  <el-input v-model="currentItem.id" :disabled="true" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="创建人:">
-                  <el-input v-model="currentItem.creator" :disabled="true" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="标题:">
-                  <el-input v-model="currentItem.title" :disabled="!isEditable" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="图标:">
-                  <el-input v-model="currentItem.icon" :disabled="!isEditable" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="类别:" prop="categoryId">
-                  <el-select v-model="currentItem.categoryId" style="width: 100%" placeholder="请选择类别" @change="handleCategoryChange" :disabled="!isEditable">
-                    <el-option v-for="(category, index) in filteredCategory" :key="index" :label="category.chineseName" :value="category.id" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="绑定模板:" prop="bindTempLate">
-                  <el-select v-model="currentItem.bindTempLate" style="width: 100%" placeholder="请选择绑定模板" :disabled="!isEditable">
-                    <el-option v-for="(template, index) in filteredTemplates" :key="index" :label="template" :value="template" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="收藏:">
-                  <el-select v-model="currentItem.favorite" style="width: 100%" :disabled="!isEditable" placeholder="请选择收藏状态">
-                    <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="跳转路经:">
-                  <el-input v-model="currentItem.link" :disabled="true" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="创建时间:">
-                  <el-input v-model="currentItem.createdAt" :disabled="true" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="更新时间:">
-                  <el-input v-model="currentItem.updatedAt" :disabled="true" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="24">
-                <el-form-item label="描述信息:">
-                  <el-input v-model="currentItem.description" type="textarea" :disabled="!isEditable" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-          <span slot="footer" class="dialog-footer">
+      </el-dialog>
+      <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
+        <el-form :model="currentItem" label-width="90px">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="ID:">
+                <el-input v-model="currentItem.id" :disabled="true" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="创建人:">
+                <el-input v-model="currentItem.creator" :disabled="true" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="标题:">
+                <el-input v-model="currentItem.title" :disabled="!isEditable" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="图标:">
+                <el-input v-model="currentItem.icon" :disabled="!isEditable" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="类别:" prop="categoryId">
+                <el-select v-model="currentItem.categoryId" style="width: 100%" placeholder="请选择类别" @change="handleCategoryChange" :disabled="!isEditable">
+                  <el-option v-for="(category, index) in filteredCategory" :key="index" :label="category.chineseName" :value="category.id" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="绑定模板:" prop="bindTempLate">
+                <el-select v-model="currentItem.bindTempLate" style="width: 100%" placeholder="请选择绑定模板" :disabled="!isEditable">
+                  <el-option v-for="(template, index) in filteredTemplates" :key="index" :label="template" :value="template" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="收藏:">
+                <el-select v-model="currentItem.favorite" style="width: 100%" :disabled="!isEditable" placeholder="请选择收藏状态">
+                  <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="跳转路经:">
+                <el-input v-model="currentItem.link" :disabled="true" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="创建时间:">
+                <el-input v-model="currentItem.createdAt" :disabled="true" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="更新时间:">
+                <el-input v-model="currentItem.updatedAt" :disabled="true" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="描述信息:">
+                <el-input v-model="currentItem.description" type="textarea" :disabled="!isEditable" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
             <el-button type="warning" @click="updateDialog = false">关闭</el-button>
             <el-button v-if="isEditable" type="primary" @click="updateOrderItems(currentItem)">保存</el-button>
           </span>
-        </el-dialog>
-        <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="closeDownloadDiglog">
-          <span>确认要导出数据吗？</span>
-          <span slot="footer" class="dialog-footer">
+      </el-dialog>
+      <el-dialog title="下载提示" :visible.sync="downloadDialogVisible" width="30%" :before-close="closeDownloadDiglog">
+        <span>确认要导出数据吗？</span>
+        <span slot="footer" class="dialog-footer">
             <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleDownload">确 定</el-button>
           </span>
-        </el-dialog>
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getItemsList" />
-      </div>
+      </el-dialog>
+      <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getItemsList" />
     </el-card>
   </div>
 </template>
@@ -739,50 +739,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-.baseInfo-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.baseInfo-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-window {
-  border: 2px solid #eeeeee;
-  padding: 10px;
-  height: auto;
-  transition: box-shadow 0.3s ease-in-out;
-  .pagination-container   {
-    background: #fff;
-    padding: 1px 10px;
-    margin-top: 10px;
-  }
-}
-.form-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.blue-text i {
-  color: #4A9FF9;
-}
-
-::v-deep .el-container.main-container {
-  margin-left: 0!important;
-  .main-header {
-    display:none;
-  }
-  .right-toolbar {
-    width: 480px !important;
-    text-align: left;
-  }
-}
-::v-deep label {
-  font-weight: normal;
-}
-</style>

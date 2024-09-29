@@ -94,6 +94,52 @@
 }
 
 .el-table th {
-  background-color: #f5f7fa; /* 你想要的背景颜色 */
-  color: #333; /* 字体颜色 */
+  background-color: #f5f7fa  !important;; /* 你想要的背景颜色 */
+  color: #333  !important; /* 字体颜色 */
+}
+
+.el-alert--info.is-light {
+  background-color: #ecf1fd !important;
+  color: #303133 !important;
+  border: 1px solid #e4e7ed !important;
+  margin-bottom: 10px !important;
+}
+.el-alert--warning.is-light {
+  background-color: #fdf6ec  !important;
+  color: #E6A23C !important;
+  border: 1px solid #e4e7ed !important;
+  margin-bottom: 10px !important;
+}
+
+.form-window {
+  border: 2px solid #eeeeee;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.baseInfo-window {
+  border: 2px solid #eeeeee;
+  padding: 10px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.blue-text i {
+  color: #4A9FF9;
+}
+
+.base-info {
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.baseInfo-window:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.divider {
+  border: 0;
+  height: 1px;
+  background: #eeeeee;
+  margin-top: 5px;
+  margin-bottom: 20px;
 }

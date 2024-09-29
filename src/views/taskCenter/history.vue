@@ -1,46 +1,50 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native="taskHistorySearch">
-        <el-dropdown slot="prepend" @command="handleCommand">
+      <div class="baseInfo-window">
+        <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native="taskHistorySearch">
+          <el-dropdown slot="prepend" @command="handleCommand">
           <span class="el-dropdown-link">
             {{ searchType === 'taskname' ? '任务名称' : '任务id' }}
             <i class="el-icon-arrow-down el-icon--right" />
           </span>
-          <el-dropdown-menu slot="dropdown" class="fixed-dropdown-menu">
-            <el-dropdown-item command="taskname">任务名称</el-dropdown-item>
-            <el-dropdown-item command="taskid">任务ID</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-button slot="append" icon="el-icon-search" @click="taskHistorySearch" />
-      </el-input>
-      <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset"/>
+            <el-dropdown-menu slot="dropdown" class="fixed-dropdown-menu">
+              <el-dropdown-item command="taskname">任务名称</el-dropdown-item>
+              <el-dropdown-item command="taskid">任务ID</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button slot="append" icon="el-icon-search" @click="taskHistorySearch" />
+        </el-input>
+        <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset"/>
+      </div>
     </el-card>
     <el-card>
-      <el-table v-loading="listLoading" :data="taskHistory" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-        <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
-        <el-table-column :label="$t('table.taskID')" min-width="100px" align="center" prop="taskID" />
-        <el-table-column :label="$t('table.taskName')" min-width="150px" align="center" prop="taskName" />
-        <el-table-column :label="$t('table.machine')" min-width="150px" align="center" prop="hostName" />
-        <el-table-column :label="$t('table.executionTime')" min-width="80px" align="center" prop="executionTime" />
-        <el-table-column :label="$t('table.executedAt')" min-width="170px" align="center" prop="executedAt" />
-        <el-table-column :label="$t('table.status')" min-width="100px" align="center" prop="status">
-          <template slot-scope="scope">
-            <el-tag :type="getStatusTag(scope.row.status)">
-              {{ formatStatus(scope.row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('table.execHandler')" min-width="110px" align="center" prop="creator" />
-        <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
-        <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="150px" >
-          <template slot-scope="scope">
-            <el-button type="text" icon="el-icon-view" @click="handleOpenTerminal(scope.row)">
-              查看详情
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="form-window">
+        <el-table v-loading="listLoading" :data="taskHistory" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+          <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
+          <el-table-column :label="$t('table.taskID')" min-width="100px" align="center" prop="taskID" />
+          <el-table-column :label="$t('table.taskName')" min-width="150px" align="center" prop="taskName" />
+          <el-table-column :label="$t('table.machine')" min-width="150px" align="center" prop="hostName" />
+          <el-table-column :label="$t('table.executionTime')" min-width="80px" align="center" prop="executionTime" />
+          <el-table-column :label="$t('table.executedAt')" min-width="170px" align="center" prop="executedAt" />
+          <el-table-column :label="$t('table.status')" min-width="100px" align="center" prop="status">
+            <template slot-scope="scope">
+              <el-tag :type="getStatusTag(scope.row.status)">
+                {{ formatStatus(scope.row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('table.execHandler')" min-width="110px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
+          <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="150px" >
+            <template slot-scope="scope">
+              <el-button type="text" icon="el-icon-view" @click="handleOpenTerminal(scope.row)">
+                查看详情
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getTaskHistoryList" />
     </el-card>
     <!-- 终端模态弹窗 -->
@@ -201,15 +205,5 @@ export default {
   overflow: hidden;
 }
 
-/* 自定义样式 */
-.code-editor {
-  height: 303px;              /* 设置容器高度 */
-  border: 1px solid #dcdfe6;  /* 增加边框 */
-  border-radius: 2px;         /* 可选：圆角 */
-  padding: 1px;               /* 可选：内边距 */
-  box-sizing: border-box;     /* 确保内边距不会影响整体尺寸 */
-  line-height: 20px;          /* 设置行高 */
-  font-size: 14px;            /* 字体大小 */
-}
 
 </style>

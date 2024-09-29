@@ -8,7 +8,8 @@
             show-icon
         />
       </div>
-      <div class="baseInfo-window">
+
+      <div class="baseInfo-window" style="padding: 20px; margin-bottom: 20px;">
         <div class="base-info">基础信息</div>
         <hr class="divider">
         <el-form ref="baseForm" :model="applyQuery" :rules="rules" label-width="100px">
@@ -210,37 +211,6 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-}
-
-.el-alert--info.is-light {
-  background-color: #ecf1fd;
-  color: #303133;
-  border: 1px solid #e4e7ed;
-  margin-bottom: 10px;
-}
-
-.baseInfo-window {
-  border: 2px solid #eeeeee;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.3s ease-in-out;
-}
-.base-info {
-  font-weight: bold;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.baseInfo-window:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.divider {
-  border: 0;
-  height: 1px;
-  background: #eeeeee;
-  margin-top: 5px;
-  margin-bottom: 20px;
 }
 
 .form-custom {

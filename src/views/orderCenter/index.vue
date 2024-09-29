@@ -1,5 +1,5 @@
 <template>
-  <div class="work-order-apply" style="margin: 15px;">
+  <div style="margin: 15px;">
     <el-card shadow="hover">
       <el-alert type="info" show-icon :title="$t('order.description')" />
       <el-alert type="warning" show-icon>
@@ -201,9 +201,7 @@ export default {
 <style lang="scss" scoped>
 
 .order-class {
-  position: relative;
   padding: 10px;
-  margin-bottom: 0;
   margin-top: 15px;
   width: 32%;
   .workflow-apply-common-row {
@@ -211,7 +209,6 @@ export default {
     border: 2px solid #eeeeee;
     border-radius: 10px;
     background-color: #f9fbfd;
-    display: flex;
     width: 330%;
     align-items: center; /* 确保图标和文字垂直居中 */
     .custom-star {
@@ -231,7 +228,6 @@ export default {
   .work-order-apply-title {
     margin-left: 5px;
     padding-right: 5px;
-    cursor: pointer;
     flex-grow: 1;
   }
   .workflow-apply {
@@ -296,7 +292,6 @@ export default {
   border: 1px solid #eeeeee;
   box-shadow: 1px 4px 4px rgba(0, 0, 0, 0.3);
   padding: 10px;
-  margin-bottom: 20px;
   .selectframe {
     margin-top: 15px;
     margin-bottom: 20px;
@@ -309,6 +304,7 @@ export default {
 .workflow-apply:hover .star-tip {
   display: block; /* 鼠标悬停时显示提示框 */
 }
+
 .flow-group-div {
   .flow-group {
     margin-bottom: 25px;
@@ -333,12 +329,5 @@ export default {
   }
 }
 
-
-.el-alert--info.is-light {
-  background-color: #ecf1fd;
-  color: #303133;
-  border: 1px solid #e4e7ed;
-  margin-bottom: 10px;
-}
 
 </style>

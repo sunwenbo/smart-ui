@@ -1,75 +1,79 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-button v-waves style="margin-right: 10px;" type="primary" icon="el-icon-circle-plus-outline" @click="createFlowDialog">
-        {{ $t('table.createFlow') }}
-      </el-button>
-      <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native="flowSearch">
-        <el-dropdown slot="prepend" @command="handleCommand">
+      <div class="baseInfo-window">
+        <el-button v-waves style="margin-right: 10px;" type="primary" icon="el-icon-circle-plus-outline" @click="createFlowDialog">
+          {{ $t('table.createFlow') }}
+        </el-button>
+        <el-input v-model="searchContent" :placeholder="inputPlaceholder" style="width: 400px;" @keyup.enter.native="flowSearch">
+          <el-dropdown slot="prepend" @command="handleCommand">
         <span class="el-dropdown-link">
           {{ searchType === 'name' ? '名称' : 'ID' }}
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
-          <el-dropdown-menu slot="dropdown" class="fixed-dropdown-menu">
-            <el-dropdown-item command="name">名称</el-dropdown-item>
-            <el-dropdown-item command="id">ID</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-button slot="append" icon="el-icon-search" @click="flowSearch" />
-      </el-input>
-      <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset"/>
-      <el-button v-waves :loading="downloadDialogVisible" style="margin-left: 10px;" icon="el-icon-download" @click="toggleDownloadDialog(true)">
-        {{ $t('table.export') }}
-      </el-button>
+            <el-dropdown-menu slot="dropdown" class="fixed-dropdown-menu">
+              <el-dropdown-item command="name">名称</el-dropdown-item>
+              <el-dropdown-item command="id">ID</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button slot="append" icon="el-icon-search" @click="flowSearch" />
+        </el-input>
+        <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset"/>
+        <el-button v-waves :loading="downloadDialogVisible" style="margin-left: 10px;" icon="el-icon-download" @click="toggleDownloadDialog(true)">
+          {{ $t('table.export') }}
+        </el-button>
+      </div>
     </el-card>
     <el-card>
-      <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
-        <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
-        <el-table-column :label="$t('table.name')" min-width="150px" align="center" prop="name" />
-        <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
-          <template slot-scope="scope">
-            <el-button type="text" icon="el-icon-more" @click="toggleDescDialog(scope.row.description)" />
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('table.category')" min-width="130px" align="center" prop="categoryId" :formatter="categoryFormatter" />
-        <el-table-column :label="$t('table.creator')" min-width="130px" align="center" prop="creator" />
-        <el-table-column :label="$t('table.regenerator')" min-width="130px" align="center" prop="regenerator" />
-        <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
-        <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
-        <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="240px">
-          <template slot-scope="scope">
-            <el-button
+      <div class="form-window">
+        <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+          <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
+          <el-table-column :label="$t('table.name')" min-width="150px" align="center" prop="name" />
+          <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
+            <template slot-scope="scope">
+              <el-button type="text" icon="el-icon-more" @click="toggleDescDialog(scope.row.description)" />
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('table.category')" min-width="130px" align="center" prop="categoryId" :formatter="categoryFormatter" />
+          <el-table-column :label="$t('table.creator')" min-width="130px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.regenerator')" min-width="130px" align="center" prop="regenerator" />
+          <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
+          <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
+          <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="240px">
+            <template slot-scope="scope">
+              <el-button
                 v-permisaction="['process:admin:manager:unbind']"
                 size="mini"
                 type="text"
                 icon="fa fa-unlink"
                 @click="handleUnbind(scope.row)"
-            >解绑</el-button>
-            <el-button
+              >解绑</el-button>
+              <el-button
                 v-permisaction="['process:admin:manager:clone']"
                 size="mini"
                 type="text"
                 icon="el-icon-receiving"
                 @click="handleClone(scope.row)"
-            >克隆</el-button>
-            <el-button
+              >克隆</el-button>
+              <el-button
                 v-permisaction="['process:admin:manager:edit']"
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
                 @click="handleEdit(scope.row)"
-            >编辑</el-button>
-            <el-button
+              >编辑</el-button>
+              <el-button
                 v-permisaction="['process:admin:manager:delete']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-            >删除</el-button>
+              >删除</el-button>
 
-          </template>
-        </el-table-column>
-      </el-table>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getFlowList" />
       <el-dialog :title="dialogFlowVisibleName===1?'新建流程':'编辑流程'" :visible.sync="dialogVisible"  ref="ruleForm" :fullscreen="true">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
@@ -115,11 +119,11 @@
           </el-row>
           <el-form-item label="描述" prop="description">
             <el-input
-                v-model="ruleForm.description"
-                placeholder="请输入流程描述"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                style="width: 100%"
+              v-model="ruleForm.description"
+              placeholder="请输入流程描述"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              style="width: 100%"
             />
           </el-form-item>
           <el-form-item label="流程" prop="structure">
@@ -128,19 +132,19 @@
               <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.$refs['wfd'].graph.saveImg()}">导出图片</el-button>
               <el-button size="small" style="float:right;margin-top:6px;margin-right:6px;" @click="()=>{this.modalVisible=true}">查看流程图</el-button>
               <WfdDesign
-                  ref="wfd"
-                  v-if="wfdDesignRefresh"
-                  :isView=false
-                  :data="ruleForm.structure"
-                  :height="600"
-                  :users="users"
-                  :roles="roles"
-                  :groups="groups"
-                  :tasks="taskListData"
-                  :execMachine="execMachine"
-                  :categorys="categoryLists"
-                  :departments="departments"
-                  :lang="lang"
+                ref="wfd"
+                v-if="wfdDesignRefresh"
+                :isView=false
+                :data="ruleForm.structure"
+                :height="600"
+                :users="users"
+                :roles="roles"
+                :groups="groups"
+                :tasks="taskListData"
+                :execMachine="execMachine"
+                :categorys="categoryLists"
+                :departments="departments"
+                :lang="lang"
               />
             </div>
           </el-form-item>
