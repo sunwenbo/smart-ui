@@ -19,7 +19,7 @@
           <el-button slot="append" icon="el-icon-search" @click="cateGorySearch" />
         </el-input>
         <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="handleReset" />
-        <el-button v-waves :loading="downloadLoading" style="margin-left: 10px;" icon="el-icon-download" @click="openDownloadDialog">
+        <el-button v-waves :loading="downloadLoading" style="margin-left: 10px;" icon="el-icon-download" @click="downloadDialogVisible = true">
           {{ $t('table.export') }}
         </el-button>
       </div>
@@ -45,55 +45,55 @@
           </el-table-column>
         </el-table>
       </div>
-      <el-dialog :visible.sync="createcateGoryDialog" :title="dialogTitle" width="800px">
-        <el-form ref="createForm" :model="createCateGory" :rules="createCateGoryRules" style="margin-right: 70px;" label-width="120px">
-          <el-row :gutter="20">
-            <el-col :span="24">
-              <el-form-item label="中文名称:" prop="chineseName">
-                <el-input v-model="createCateGory.chineseName"  />
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="英文名称:" prop="name">
-                <el-input v-model="createCateGory.name" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <div slot="footer">
-          <el-button type="primary" @click="validateForm">创建</el-button>
-          <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
-        </div>
-      </el-dialog>
-      <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
-        <el-form :model="currentCateGory" label-width="90px">
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="中文名称:">
-                <el-input v-model="currentCateGory.chineseName" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="英文名称:">
-                <el-input v-model="currentCateGory.name" :disabled="true" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="warning" @click="updateDialog = false">关闭</el-button>
-          <el-button type="primary" @click="updateCateGory(currentCateGory)">保存</el-button>
-        </div>
-      </el-dialog>
-      <el-dialog :visible.sync="downloadDialogVisible" title="下载提示" width="30%" :before-close="closeDownloadDiglog">
-        <span>确认要导出数据吗？</span>
-        <span slot="footer">
-          <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleDownload">确 定</el-button>
-        </span>
-      </el-dialog>
       <pagination v-show="total>0" :total="total" :page.sync="queryParams.page" :limit.sync="queryParams.pageSize" @pagination="getCategoryList" />
     </el-card>
+    <el-dialog :visible.sync="createcateGoryDialog" :title="dialogTitle" width="800px">
+      <el-form ref="createForm" :model="createCateGory" :rules="createCateGoryRules" style="margin-right: 70px;" label-width="120px">
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="中文名称:" prop="chineseName">
+              <el-input v-model="createCateGory.chineseName"  />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="英文名称:" prop="name">
+              <el-input v-model="createCateGory.name" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer">
+        <el-button type="primary" @click="validateForm">创建</el-button>
+        <el-button type=warning @click="createcateGoryDialog = false">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="updateDialog" :title="dialogTitle">
+      <el-form :model="currentCateGory" label-width="90px">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="中文名称:">
+              <el-input v-model="currentCateGory.chineseName" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="英文名称:">
+              <el-input v-model="currentCateGory.name" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="warning" @click="updateDialog = false">关闭</el-button>
+        <el-button type="primary" @click="updateCateGory(currentCateGory)">保存</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="downloadDialogVisible" title="下载提示" width="30%">
+      <span>确认要导出数据吗？</span>
+      <span slot="footer">
+        <el-button type="warning" @click="downloadDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleDownload">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -144,14 +144,6 @@ export default {
   computed: {
     inputPlaceholder() {
       return this.searchType === 'title' ? '请输入标题信息' : '请输入ID'
-    }
-  },
-  watch: {
-    getCateGoryData: {
-      deep: true,
-      handler() {
-        this.cateGorySearch()
-      }
     }
   },
   created() {
@@ -291,17 +283,20 @@ export default {
       this.listLoading = false // 停止加载状态
     },
     cateGorySearch() {
-      this.listLoading = true
+      this.listLoading = true;
       setTimeout(() => {
-        if (this.searchContent) {
+        if (!this.searchContent) {
+          // 如果搜索内容为空，则显示所有数据
+          this.filteredData = this.getCateGoryData;
+        } else {
           if (this.searchType === 'title') {
             this.filteredData = this.getCateGoryData.filter(item => item.chineseName.includes(this.searchContent))
           } else if (this.searchType === 'id') {
             this.filteredData = this.getCateGoryData.filter(item => item.id.toString() === this.searchContent)
           }
         }
-        this.listLoading = false
-      }, 500)
+        this.listLoading = false;
+      }, 500);
     },
     handleCommand(command) {
       this.searchType = command
@@ -310,15 +305,8 @@ export default {
       this.listLoading = true
       setTimeout(() => {
         this.searchContent = ''
-        this.cateGorySearch()
-        this.listLoading = false
-      }, 400)
-    },
-    openDownloadDialog() {
-      this.downloadDialogVisible = true
-    },
-    closeDownloadDiglog() {
-      this.downloadDialogVisible = false
+        this.getCategoryList()
+      }, 500)
     },
     formatJson(filterVal) {
       return this.getCateGoryData.map(v => filterVal.map(j => {
@@ -332,18 +320,20 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '标题', '创建人', '图标', '类别', '跳转路经', '收藏', '描述信息', '绑定模板', '创建时间', '更新时间']
-        const filterVal = ['id', 'title', 'creator', 'icon', 'category', 'link', 'favorite', 'description', 'bindTempLate', 'createdAt', 'updatedAt']
+        const tHeader = ['ID', '中文名称', '名称', '创建人', '更新人','创建时间', '更新时间']
+        const filterVal = ['id', 'chineseName', 'name', 'creator', 'regenerator','createdAt', 'updatedAt']
         const data = this.formatJson(filterVal)
         // 获取当前日期并格式化为 YYYY-MM-DD
         const currentDate = new Date().toISOString().slice(0, 10)
-        const filename = `items-list-${currentDate}`
+        const filename = `order-category-list-${currentDate}`
         excel.export_json_to_excel({
           header: tHeader,
           data,
           filename: filename
         })
         this.downloadLoading = false
+        // 关闭对话框
+        this.downloadDialogVisible = false
       })
     }
   }

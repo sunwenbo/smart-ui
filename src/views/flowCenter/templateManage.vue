@@ -459,3 +459,18 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+
+::v-deep .el-container.main-container {
+  margin-left: 0!important;
+  .main-header {
+    display:none;
+  }
+  .right-toolbar {
+    width: 480px !important;
+    text-align: left;
+  }
+}
+
+</style>

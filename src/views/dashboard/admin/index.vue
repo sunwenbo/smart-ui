@@ -269,8 +269,6 @@ export default {
             total: item.score  // 将 score 的值赋给 total
           };
         });        // 获取数据后重新初始化图表
-        console.log("this.orderRatingCount",this.orderRatingCount)
-        console.log("this.orderRatingList",this.orderRatingList)
       }
     },
     updateBarData() {

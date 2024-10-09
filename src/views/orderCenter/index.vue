@@ -38,7 +38,16 @@
                     </div>
                     <div v-if="showStar && currentHovered === item.id" class="star-container">
                       <i class="fa fa-star custom-star" :class="{ 'favorited': item.favorite }" @click.stop="toggleFavorite(item)" />
-                      <div v-if="showStarTip" class="star-tip">{{ item.favorite ? '取消收藏' : '点击收藏' }}</div>
+                      <div v-if="showStar && currentHovered === item.id" class="star-container">
+                        <i class="fa fa-star custom-star"
+                           :class="{ 'favorited': item.favorite }"
+                           @click.stop="toggleFavorite(item)"
+                           @mouseenter="showTip(true)"
+                           @mouseleave="showTip(false)" />
+                        <div v-if="showStarTip" class="star-tip">
+                          {{ item.favorite ? '取消收藏' : '点击收藏' }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -64,8 +73,9 @@
                       <div class="order-heading">{{ item.title }}</div>
                       <div class="order-description">{{ item.description }}</div>
                     </div>
+
                     <div v-if="showStar && currentHovered === item.id" class="star-container">
-                      <i class="fa fa-star custom-star" :class="{ 'favorited': item.favorite }" @click.stop="toggleFavorite(item)" />
+                      <i class="fa fa-star custom-star" :class="{ 'favorited': item.favorite }" @click.stop="toggleFavorite(item)" @mouseenter="showTip(true)" @mouseleave="showTip(false)" />
                       <div v-if="showStarTip" class="star-tip">{{ item.favorite ? '取消收藏' : '点击收藏' }}</div>
                     </div>
                   </div>
@@ -128,10 +138,6 @@ export default {
       this.$router.push({ name: 'FormRender', params: { bindTempLate: item.bindTempLate, title: item.title, link: item.link }})
     },
 
-    // 鼠标事件，当鼠标停留显示图标
-    showTip(value) {
-      this.showStarTip = value
-    },
     // 收藏和取消收藏  调用后端接口，更改数据库收藏字段状态
     async toggleFavorite(item) {
       item.favorite = !item.favorite; // 切换收藏状态
@@ -144,11 +150,21 @@ export default {
       }
       // 更新用户收藏列表
       this.getUserFavorites();
+
+      // 显示提示信息
+      this.showStarTip = true; // 显示提示
+      setTimeout(() => {
+        this.showStarTip = false; // 2秒后自动隐藏提示
+      }, 2000);
     },
     getUserFavorites() {
       getUserFavoriteList().then(response => {
         this.userFavorites = response.data || [];
       });
+    },
+    // 鼠标事件，当鼠标停留显示图标
+    showTip(value) {
+      this.showStarTip = value
     },
     // 调用后端接口，取回工单页面的数据
     getItemsList() {
