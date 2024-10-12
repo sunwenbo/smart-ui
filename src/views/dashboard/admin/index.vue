@@ -27,11 +27,11 @@
 
       <el-col :sm="24" :xs="24" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card class="chart-card" title="已完结工单" :total="completedOrders">
-          <el-tooltip slot="action" class="item" effect="dark" content="状态为已结束或者手动结束" placement="top-start">
+          <el-tooltip slot="action" class="item" effect="dark" content="状态为已结束或者手动结束(近10天)" placement="top-start">
             <i class="el-icon-warning-outline" />
           </el-tooltip>
           <div>
-            <mini-bar />
+            <mini-bar :chart-data="completedOrdersLast10Days" />
           </div>
           <template slot="footer">完成率 <span>{{ conversionRate }}%</span></template>
         </chart-card>
@@ -39,11 +39,11 @@
 
       <el-col :sm="24" :xs="24" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card class="chart-card" title="待办工单" :total="pendingTasks">
-          <el-tooltip slot="action" class="item" effect="dark" content="非结束的工单" placement="top-start">
+          <el-tooltip slot="action" class="item" effect="dark" content="非结束的工单(近10天)" placement="top-start">
             <i class="el-icon-warning-outline" />
           </el-tooltip>
           <div>
-            <mini-area />
+            <mini-area :chart-data="pendingOrdersLast10Days" />
           </div>
           <template slot="footer">待处理工单:<span>{{ pendingTasks }}</span></template>
         </chart-card>
@@ -151,6 +151,8 @@ export default {
       orderRatingCount: [],
       orderSubmitList: [],
       orderRatingList: [],
+      completedOrdersLast10Days: [],
+      pendingOrdersLast10Days: [],
       notifications: [
         { id: 1, title: "工单申请过程中，有任何问题请联系【孙文波（ swb956721830@163.com ）】协助处理" }
       ],
@@ -175,6 +177,8 @@ export default {
         this.currentProcessingOrders = response.data.currentProcessingOrders
         this.weeklyRate = response.data.currentHandlerOrdersWeekOverWeek
         this.dailyRate = response.data.currentHandlerOrdersDayOverDay
+        this.completedOrdersLast10Days = response.data.completedOrdersLast10Days
+        this.pendingOrdersLast10Days = response.data.pendingOrdersLast10Days
       }
     },
     // 初始化折线图

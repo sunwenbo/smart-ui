@@ -30,7 +30,8 @@
           <el-table-column :label="$t('table.id')" min-width="40px" align="center" prop="id" />
           <el-table-column :label="$t('table.chineseName')" min-width="100px" align="center" prop="chineseName" />
           <el-table-column :label="$t('table.name')" min-width="100px" align="center" prop="name" />
-          <el-table-column :label="$t('table.creator')" min-width="50px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.creator')" min-width="80px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.regenerator')" min-width="80px" align="center" prop="regenerator" />
           <el-table-column :label="$t('table.createdAt')" min-width="100px" align="center" prop="createdAt" />
           <el-table-column :label="$t('table.updatedAt')" min-width="100px" align="center" prop="updatedAt" />
           <el-table-column :label="$t('table.actions')" align="center" min-width="140px">

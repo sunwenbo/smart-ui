@@ -28,25 +28,25 @@
       <div class="form-window">
         <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
           <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
-          <el-table-column :label="$t('table.name')" min-width="150px" align="center" prop="name" />
-          <el-table-column :label="$t('table.creator')" min-width="100px" align="center" prop="creator" />
-          <el-table-column :label="$t('table.regenerator')" min-width="100px" align="center" prop="regenerator" />
+          <el-table-column :label="$t('table.name')" min-width="180px" align="center" prop="name" />
           <el-table-column :label="$t('table.category')" min-width="130px" align="center">
             <template slot-scope="scope">
               {{ getCategoryName(scope.row.categoryId) }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.bindFlow')" min-width="100px" align="center">
+          <el-table-column :label="$t('table.bindFlow')" min-width="150px" align="center">
             <template slot-scope="scope">
               {{ getFlowNameById(scope.row.bindFlow) }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.description')" width="80px" align="center" prop="description">
+          <el-table-column :label="$t('table.bindCount')" min-width="80px" align="center" prop="bindCount" />
+          <el-table-column :label="$t('table.description')" width="100px" align="center" prop="description">
             <template slot-scope="scope">
               <el-button type="text" icon="el-icon-more" @click="openDialog(scope.row.description)" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('table.bindCount')" min-width="100px" align="center" prop="bindCount" />
+          <el-table-column :label="$t('table.creator')" min-width="100px" align="center" prop="creator" />
+          <el-table-column :label="$t('table.regenerator')" min-width="100px" align="center" prop="regenerator" />
           <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
           <el-table-column :label="$t('table.updatedAt')" min-width="170px" align="center" prop="updatedAt" />
           <el-table-column :label="$t('table.actions')" fixed="right" align="center" width="200px">

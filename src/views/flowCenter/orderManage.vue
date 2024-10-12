@@ -96,15 +96,18 @@
           </el-table-column>
           <el-table-column :label="$t('table.icon')" min-width="100px" align="center" >
             <template slot-scope="scope">
-              <i :class="scope.row.icon"></i>
+              <i :class="scope.row.icon" style="font-size: 18px;"></i>
             </template>
           </el-table-column>
           <el-table-column :label="$t('table.link')" min-width="250px" align="center" prop="link" />
           <el-table-column :label="$t('table.favorite')" min-width="80px" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.favorite ? '是' : '否' }}</span>
+              <el-tag :type="scope.row.favorite ? '' : 'warning'">
+                {{ scope.row.favorite ? '是' : '否' }}
+              </el-tag>
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('table.creator')" min-width="110px" align="center" prop="creator" />
           <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
           <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
