@@ -186,7 +186,6 @@
 
 <script>
 import { getCodeImg } from '@/api/login'
-import { ldapLogin } from '@/api/user'
 import moment from 'moment'
 import SocialSign from './components/SocialSignin'
 import store from "@/store";
@@ -197,15 +196,15 @@ export default {
   data() {
     return {
       // logo: require('@/views/login/logo.png'),
-      useLdap: true, // 初始为 true，表示使用LDAP用户登陆
+      useLdap: false, // 初始为 true，表示使用LDAP用户登陆
       codeUrl: '',
       cookiePassword: '',
       refreshParticles: true,
       loginForm: {
-        username: 'caopengcheng',
+        username: 'admin',
         password: '123456',
         rememberMe: false,
-        source: 'LDAP',
+        source: 'SYSTEM',
         code: '1111',
         uuid: ''
       },
@@ -262,7 +261,6 @@ export default {
   destroyed() {
     clearInterval(this.timer)
     window.removeEventListener('resize', () => {})
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     toggleLoginMethod() {
