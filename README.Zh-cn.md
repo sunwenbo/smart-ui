@@ -1,12 +1,12 @@
 
-# Smart-API 工单系统
+# Smart 工单系统
 
 Smart-API 工单系统是基于 Go 语言开发的后台管理系统，前后端分离，采用 Gin 框架作为后端，Vue.js 和 Element UI 作为前端。系统旨在实现对工单管理的高效处理，支持任务分配、执行监控、实时更新等功能。
 
 <img align="right" width="320" src="https://github.com/sunwenbo/golang/raw/master/logo.png">
 
 [![Build Status](https://github.com/sunwenbo/smart/workflows/build/badge.svg)](https://github.com/sunwenbo/smart-api)
-[![Release](https://img.shields.io/github/release/go-admin-team/go-admin.svg?style=flat-square)](https://github.com/sunwenbo/smart-api/releases)
+[![Static Badge](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/sunwenbo/smart-api/releases)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/sunwenbo/smart-api)
 
 English|[简体中文](https://github.com/sunwenbo/smart-api/blob/main/README.Zh-cn.md)

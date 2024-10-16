@@ -1,11 +1,11 @@
-# Smart-API Work Order System
+# Smart Work Order System
 
 The Smart-API Work Order System is a backend management system developed in Go, featuring a front-end and back-end separation. The back-end uses the Gin framework, while the front-end uses Vue.js and Element UI. This system aims to efficiently handle work order management, including task allocation, execution monitoring, and real-time updates.
 
-![Smart-API Logo](https://github.com/sunwenbo/golang/raw/master/logo.png)
+<img align="right" width="320" src="https://github.com/sunwenbo/golang/raw/master/logo.png">
 
 [![Build Status](https://github.com/sunwenbo/smart/workflows/build/badge.svg)](https://github.com/sunwenbo/smart-api)
-[![Release](https://img.shields.io/github/release/go-admin-team/go-admin.svg?style=flat-square)](https://github.com/sunwenbo/smart-api/releases)
+[![Static Badge](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/sunwenbo/smart-api/releases)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/sunwenbo/smart-api)
 
 English | [简体中文](https://github.com/sunwenbo/smart-api/blob/main/README.Zh-cn.md)
