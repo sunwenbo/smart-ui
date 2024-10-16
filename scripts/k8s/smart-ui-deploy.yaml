@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-ui-v1
+  labels:
+    app: smart-ui
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-ui
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: smart-ui
+        version: v1
+    spec:
+      containers:
+        - name: smart-ui
+          image: registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-ui
+  labels:
+    app: smart-ui
+    service: smart-ui
+spec:
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+  selector:
+    app: smart-ui
+---
+kind: Ingress
+metadata:
+  name: smart-ingress
+  namespace: sre
+spec:
+  ingressClassName: ingress-xxx-ext-nginx1
+  rules:
+    - host: smart.xxx.xxx
+      http:
+        paths:
+          - backend:
+              service:
+                name: smart-ui
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - smart.xxx.xxx
+      secretName: xxx-tls

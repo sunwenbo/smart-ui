@@ -1,0 +1,11 @@
+# Ignore node_modules
+node_modules
+
+# Ignore build output
+dist
+
+# Ignore other files that are not needed for the build
+.DS_Store
+.git
+.gitignore
+.env
