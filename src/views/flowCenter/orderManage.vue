@@ -85,7 +85,7 @@
     </el-card>
     <el-card>
       <div class="form-window">
-        <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+        <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe>
           <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
           <el-table-column :label="$t('table.title')" min-width="150px" align="center" prop="title" />
           <el-table-column :label="$t('table.bindTempLate')" min-width="200px" align="center" prop="bindTempLate" />
@@ -555,22 +555,6 @@ export default {
       } finally {
         this.listLoading = false // 停止加载状态
       }
-    },
-    sortChange({ prop, order }) {
-      this.listLoading = true // 开始加载状态
-      // 判断排序的字段是 id
-      if (prop === 'id') {
-        // 根据排序的顺序对数据进行排序
-        this.getItemsData.sort((a, b) => {
-          // 如果是升序，返回比较结果
-          if (order === 'ascending') {
-            return a.id - b.id
-          } else { // 否则是降序，返回比较结果的负值
-            return b.id - a.id
-          }
-        })
-      }
-      this.listLoading = false // 停止加载状态
     },
     itemsSearch() {
       this.listLoading = true

@@ -26,7 +26,7 @@
     </el-card>
     <el-card>
       <div class="form-window">
-        <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+        <el-table v-loading="listLoading" :data="filteredData" border fit style="width: 100%;position: relative; height: 100%;" stripe>
           <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
           <el-table-column :label="$t('table.name')" min-width="150px" align="center" prop="name" />
           <el-table-column :label="$t('table.category')" min-width="130px" align="center" prop="categoryId" :formatter="categoryFormatter" />
@@ -272,7 +272,11 @@ export default {
   created() {
     // 先获取字典数据
     Promise.all([this.getDicts('order_message_notice'),]).then(([noticeResponse]) => {
-        this.messageNoticeType = noticeResponse.data;
+        this.messageNoticeType = noticeResponse.data.map(item => ({
+          ...item,
+          value: parseInt(item.value)
+        }));
+
         // 继续获取其他数据
         this.getFlowList();
         this.getCategoryList();
@@ -555,22 +559,6 @@ export default {
       this.descriptionDialogContent = description;
       this.descDialogVisible = !this.descDialogVisible;
     },
-    sortChange({ prop, order }) {
-      this.listLoading = true // 开始加载状态
-      // 判断排序的字段是 id
-      if (prop === 'id') {
-        // 根据排序的顺序对数据进行排序
-        this.orderWorks.sort((a, b) => {
-          // 如果是升序，返回比较结果
-          if (order === 'ascending') {
-            return a.id - b.id
-          } else { // 否则是降序，返回比较结果的负值
-            return b.id - a.id
-          }
-        })
-      }
-      this.listLoading = false // 停止加载状态
-    },
     flowSearch() {
       this.listLoading = true;
       setTimeout(() => {
@@ -610,8 +598,8 @@ export default {
     getNoticeLabels(noticeArray) {
       return noticeArray
         .map(value => {
-          // 将 value 转为字符串进行比较
-          const item = this.messageNoticeType.find(type => type.value === String(value));
+          // 直接比较整数
+          const item = this.messageNoticeType.find(type => type.value === value);
           return item ? item.label : '';
         }).filter(label => label) // 过滤掉空字符串
         .join(', '); // 用逗号分隔

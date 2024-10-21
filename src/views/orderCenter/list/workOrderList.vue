@@ -97,7 +97,7 @@
           <el-tab-pane name="allOrders" >
             <span slot="label"><i class="el-icon-document" /> 所有工单</span>
           </el-tab-pane>
-          <el-table :data="filteredData" v-loading="listLoading" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+          <el-table :data="filteredData" v-loading="listLoading" border fit style="width: 100%;position: relative; height: 100%;" stripe>
             <el-table-column :label="$t('table.id')" fixed="left" min-width="60px" align="center" prop="id">
               <template #default="scope">
                 <el-link
@@ -734,22 +734,6 @@ export default {
       this.$router.push('/orderCenter/apply')
       // window.open(this.$router.resolve({ path: '/orderCenter/apply' }).href, '_blank')
 
-    },
-    sortChange({ prop, order }) {
-      this.listLoading = true // 开始加载状态
-      // 判断排序的字段是 id
-      if (prop === 'id') {
-        // 根据排序的顺序对数据进行排序
-        this.orderWorks.sort((a, b) => {
-          // 如果是升序，返回比较结果
-          if (order === 'ascending') {
-            return a.id - b.id
-          } else { // 否则是降序，返回比较结果的负值
-            return b.id - a.id
-          }
-        })
-      }
-      this.listLoading = false // 停止加载状态
     },
     handleDownload() {
       this.downloadLoading = true

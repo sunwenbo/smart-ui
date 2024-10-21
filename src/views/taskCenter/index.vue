@@ -26,7 +26,7 @@
     </el-card>
     <el-card>
       <div class="form-window">
-        <el-table v-loading="listLoading" :data="taskDataList" border fit style="width: 100%;position: relative; height: 100%;" stripe @sort-change="sortChange">
+        <el-table v-loading="listLoading" :data="taskDataList" border fit style="width: 100%;position: relative; height: 100%;" stripe >
           <el-table-column :label="$t('table.id')" fixed="left" min-width="50px" align="center" prop="id" />
           <el-table-column :label="$t('table.name')" min-width="130px" align="center" prop="name" />
           <el-table-column :label="$t('table.taskType')" min-width="120px" align="center" prop="taskType" >
@@ -357,13 +357,6 @@ export default {
         })
       })
     },
-
-    sortChange({prop, order}) {
-      this.queryParams.sort = prop
-      this.queryParams.order = order
-      this.getTaskList()
-    },
-
     resetForm() {
       this.ruleForm = {
         name: '',
