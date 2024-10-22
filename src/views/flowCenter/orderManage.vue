@@ -30,24 +30,18 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="收藏:">
-                  <el-select v-model="screenQuery.favorite" placeholder="请选择收藏状态" @change="searchData">
-                    <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
                 <el-form-item label="类别:">
                   <el-select v-model="screenQuery.categoryId" placeholder="请选择类别" @change="searchData">
                     <el-option v-for="(category, index) in filteredCategory" :key="index" :label="category.chineseName" :value="category.id" />
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="18">
                 <el-form-item label="绑定模板:">
-                  <el-select v-model="screenQuery.bindTempLate" placeholder="请选择绑定模板" @change="searchData">
+                  <el-select v-model="screenQuery.bindTempLate" placeholder="请选择绑定模板" style="width: 70%" @change="searchData">
                     <el-option v-for="(name, index) in tempLateList" :key="index" :label="name" :value="name" />
                   </el-select>
                 </el-form-item>
@@ -72,7 +66,7 @@
               </el-col>
             </el-row>
           </el-form>
-          <div style="text-align: right; margin-top: 10px;">
+          <div style="text-align: right; margin-right: 40px">
             <el-button type="primary" @click="filterReset">重置</el-button>
             <el-button type="warning" @click="screenDialog = false">关闭</el-button>
           </div>
@@ -100,14 +94,6 @@
             </template>
           </el-table-column>
           <el-table-column :label="$t('table.link')" min-width="250px" align="center" prop="link" />
-          <el-table-column :label="$t('table.favorite')" min-width="80px" align="center">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.favorite ? '' : 'warning'">
-                {{ scope.row.favorite ? '是' : '否' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-
           <el-table-column :label="$t('table.creator')" min-width="110px" align="center" prop="creator" />
           <el-table-column :label="$t('table.regenerator')" min-width="110px" align="center" prop="regenerator" />
           <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
@@ -173,13 +159,6 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item label="收藏:" prop="favorite">
-                <el-select v-model="createItems.favorite" style="width: 100%" placeholder="请选择收藏状态">
-                  <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
               <el-form-item label="跳转链接:" prop="link">
                 <el-input v-model="createItems.link" :disabled="true" />
               </el-form-item>
@@ -241,13 +220,6 @@
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="收藏:">
-                <el-select v-model="currentItem.favorite" style="width: 100%" :disabled="!isEditable" placeholder="请选择收藏状态">
-                  <el-option v-for="option in favoriteOptions" :key="option.value" :label="option.label" :value="option.value" />
-                </el-select>
-              </el-form-item>
-            </el-col>
             <el-col :span="12">
               <el-form-item label="跳转路经:">
                 <el-input v-model="currentItem.link" :disabled="true" />
@@ -315,21 +287,15 @@ export default {
         title: '',
         description: '',
         bindTempLate: '',
-        favorite: null,
         creator: this.$store.getters.name, // 获取当前系统登录用户
         icon: '',
         categoryId: null,
         link: ''
       },
-      favoriteOptions: [
-        { value: true, label: '是' },
-        { value: false, label: '否' }
-      ],
       screenQuery: {
         categoryId: null, // 类别
         bindTempLate: '', // 绑定模板
         creator: '', // 创建人
-        favorite: null,
         createdAt: [] // 创建时间范围筛选条件，以数组形式存储开始时间和结束时间
       },
       total: 0,
@@ -363,9 +329,6 @@ export default {
         ],
         bindTempLate: [
           { required: true, message: '请选择绑定模板', trigger: 'change' }
-        ],
-        favorite: [
-          { required: true, message: '请选择收藏状态', trigger: 'change' }
         ],
         creator: [
           { required: true, message: '创建人不能为空', trigger: 'blur' }
@@ -651,9 +614,6 @@ export default {
         if (this.screenQuery.creator) {
           filteredData = filteredData.filter(item => item.creator === this.screenQuery.creator)
         }
-        if (this.screenQuery.favorite !== null) {
-          filteredData = filteredData.filter(item => item.favorite === Boolean(this.screenQuery.favorite))
-        }
         if (this.screenQuery.categoryId) {
           filteredData = filteredData.filter(item => item.categoryId === this.screenQuery.categoryId)
         }
@@ -709,8 +669,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '标题', '创建人', '图标', '类别', '跳转路经', '收藏', '描述信息', '绑定模板', '创建时间', '更新时间']
-        const filterVal = ['id', 'title', 'creator', 'icon', 'category', 'link', 'favorite', 'description', 'bindTempLate', 'createdAt', 'updatedAt']
+        const tHeader = ['ID', '标题', '创建人', '图标', '类别', '跳转路经', '描述信息', '绑定模板', '创建时间', '更新时间']
+        const filterVal = ['id', 'title', 'creator', 'icon', 'category', 'link', 'description', 'bindTempLate', 'createdAt', 'updatedAt']
         const data = this.formatJson(filterVal)
         // 获取当前日期并格式化为 YYYY-MM-DD
         const currentDate = new Date().toISOString().slice(0, 10)
