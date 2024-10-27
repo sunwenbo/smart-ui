@@ -36,9 +36,12 @@
           </el-table-column>
           <el-table-column :label="$t('table.execHandler')" min-width="110px" align="center" prop="creator" />
           <el-table-column :label="$t('table.createdAt')" min-width="170px" align="center" prop="createdAt" />
-          <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="150px" >
+          <el-table-column :label="$t('table.actions')" fixed="right" align="center" min-width="200px" >
             <template slot-scope="scope">
-              <el-button type="text" icon="el-icon-view" @click="handleOpenTerminal(scope.row)">
+              <el-button type="text" icon="el-icon-loading" @click="handleOpenTerminal(scope.row)">
+                实时日志
+              </el-button>
+              <el-button type="text" icon="el-icon-view" @click="handleOpenHisTaskTerminal(scope.row)">
                 查看详情
               </el-button>
             </template>
@@ -48,10 +51,10 @@
       <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getTaskHistoryList" />
     </el-card>
     <!-- 终端模态弹窗 -->
-    <el-dialog title="终端输出" :visible.sync="isTerminalVisible" width="60%">
-      <div id="terminal" style="height: 400px; background-color: black; color: white;"></div>
+    <el-dialog title="终端输出" :visible.sync="isTerminalVisible" width="70%">
+      <div id="terminal" style="height: 500px; padding: 15px;background-color: black; color: white;"></div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCloseTerminal">关闭</el-button>
+         <el-button @click="handleCloseTerminal">关闭</el-button>
       </span>
     </el-dialog>
   </div>
@@ -61,8 +64,9 @@
 import waves from '@/directive/waves'
 import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
-import { getTaskHistory } from '@/api/smart/execMachine'
+import { getTaskHistory, getTaskHistoryLog } from '@/api/smart/taskCenter'
 import WebSocketClient from '@/api/smart/websocket';  // 引入 WebSocket 逻辑文件
+import { FitAddon } from 'xterm-addon-fit'; // 引入 fit-addon
 
 export default {
   name: 'TaskHistory',
@@ -72,6 +76,7 @@ export default {
       searchType: 'taskname',
       isTerminalVisible: false,
       terminal: null,
+      fitAddon: null, // 用于动态调整尺寸的插件
       taskStatus: [],
       taskHistory: [],
       searchContent: '',
@@ -118,32 +123,99 @@ export default {
     handleCommand(command) {
       this.searchType = command
     },
-    // 处理点击事件，显示终端
+    // 显示实时日志终端
     handleOpenTerminal(row) {
       this.isTerminalVisible = true;
       this.$nextTick(() => {
         if (!this.terminal) {
           this.terminal = new Terminal({ cursorBlink: true });
           this.terminal.open(document.getElementById('terminal'));
+        } else {
+          // 每次打开新日志前清理终端
+          this.terminal.clear();
         }
 
         // 动态生成 WebSocket URL，将工单 ID 传入
         const taskId = row.taskID;
-        const webSocketUrl = `ws://localhost:8000/api/v1/ws/task/${taskId}`;
-
-        // 获取 token，传入 WebSocketClient
-        const token = this.$store.state.user.token;
+        const webSocketUrl = `ws://localhost:8000/api/v1/ws/task/${taskId}`
 
         // 创建并连接 WebSocket
-        this.webSocketClient = new WebSocketClient(webSocketUrl, this.terminal, token);
+        this.webSocketClient = new WebSocketClient(webSocketUrl, this.terminal, this.$store.state.user.token);
         this.webSocketClient.connect();
       });
     },
+
+    // 显示历史任务日志终端
+    handleOpenHisTaskTerminal(row) {
+      this.isTerminalVisible = true;
+      this.$nextTick(() => {
+        const terminalContainer = document.getElementById('terminal');
+        if (!this.terminal) {
+          this.terminal = new Terminal({ cursorBlink: true });
+          this.fitAddon = new FitAddon();
+          this.terminal.loadAddon(this.fitAddon); // 加载 fit-addon
+          this.terminal.open(terminalContainer);
+        } else {
+          // 每次打开新日志前清理终端
+          this.terminal.clear();
+        }
+
+        // 调整终端尺寸
+        this.fitAddon.fit();
+        // 动态监听终端大小变化
+        const resizeObserver = new ResizeObserver(() => {
+          this.fitAddon.fit(); // 自适应终端大小
+        });
+        resizeObserver.observe(terminalContainer); // 监听容器大小变化
+
+        getTaskHistoryLog(row.id).then(response => {
+          // 格式化日志内容
+          const logData = response.data.split("\n").map(line => {
+            // 高亮时间戳
+            line = line.replace(/^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6})/, (match) => {
+              return `\x1b[36m${match}\x1b[0m`; // 青色显示时间戳
+            });
+
+            // 高亮关键字
+            line = line.replace(/(任务开始|任务结束|错误|成功|失败)/g, (match) => {
+              let color;
+              switch (match) {
+                case "任务开始":
+                case "成功":
+                  color = "\x1b[34m"; // 绿色
+                  break;
+                case "任务结束":
+                  color = "\x1b[32m"; // 蓝色
+                  break;
+                case "错误":
+                case "失败":
+                  color = "\x1b[31m"; // 红色
+                  break;
+                default:
+                  color = "\x1b[0m";
+              }
+              return `${color}${match}\x1b[0m`;
+            });
+
+            return line;
+          });
+
+          // 将格式化后的日志内容逐行写入终端
+          logData.forEach(line => {
+            this.terminal.writeln(line);
+          });
+        }).catch(error => {
+          this.terminal.write(`\x1b[31m错误: 无法获取日志 - ${error.message}\x1b[0m`);
+          console.error("获取任务日志失败:", error);
+        });
+      })
+    },
     handleCloseTerminal() {
       this.isTerminalVisible = false;
-      if (this.webSocketClient) {
-        this.webSocketClient.disconnect();
-        this.webSocketClient = null;
+      if (this.terminal) {
+        this.terminal.dispose(); // 关闭时清理终端实例
+        this.terminal = null;
+        this.fitAddon = null;
       }
     },
     taskHistorySearch() {
@@ -191,14 +263,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-/* 自定义终端样式 */
-.terminal {
-  font-family: monospace;
-  padding: 10px;
-  overflow: hidden;
-}
-
-
-</style>

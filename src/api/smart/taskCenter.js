@@ -46,3 +46,21 @@ export function deleteTask(data) {
   })
 }
 
+
+// 获取所有历史执行任务
+export async function getTaskHistory(params) {
+  return request({
+    url: '/api/v1/order-task/history',
+    method: 'get',
+    params
+  })
+}
+
+// 获取所有历史执行任务
+export async function getTaskHistoryLog(id) {
+  return request({
+    url: `/api/v1/order-task/history/${id}/logs`,
+    method: 'get',
+    id
+  })
+}

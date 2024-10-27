@@ -57,11 +57,3 @@ export function testConnExecMachine(data) {
 }
 
 
-// 获取所有历史执行任务
-export async function getTaskHistory(params) {
-  return request({
-    url: '/api/v1/exec-machine/history',
-    method: 'get',
-    params
-  })
-}

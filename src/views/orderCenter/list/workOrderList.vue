@@ -260,12 +260,6 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-<!--              <el-autocomplete-->
-<!--                v-model="state"-->
-<!--                :fetch-suggestions="querySearchAsync"-->
-<!--                placeholder="请输入内容"-->
-<!--                @select="handleSelect"-->
-<!--              ></el-autocomplete>-->
               <el-form-item label="工单转交:" prop="priority">
                 <el-select
                   v-model="selectedUsers"
@@ -732,8 +726,6 @@ export default {
     handleOrderCreate() {
       // 在这里进行页面跳转
       this.$router.push('/orderCenter/apply')
-      // window.open(this.$router.resolve({ path: '/orderCenter/apply' }).href, '_blank')
-
     },
     handleDownload() {
       this.downloadLoading = true
