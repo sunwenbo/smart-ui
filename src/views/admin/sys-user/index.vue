@@ -112,7 +112,7 @@
               @sort-change="handleSortChang"
             >
               <el-table-column type="selection" width="45" align="center" />
-              <el-table-column label="编号" align="center" width="75" prop="userId" sortable="custom" />
+              <el-table-column label="编号" fixed="left" align="center" width="75" prop="userId" sortable="custom" />
               <el-table-column label="登录名" align="center" width="105" prop="username" sortable="custom" :show-overflow-tooltip="true" />
               <el-table-column label="昵称" align="center" prop="nickName" :show-overflow-tooltip="true" />
               <el-table-column label="部门" align="center" :show-overflow-tooltip="true">
@@ -120,12 +120,12 @@
                   {{ getDeptNameById(scope.row.deptId) }}
                 </template>
               </el-table-column>
-              <el-table-column label="岗位" align="center"  prop="postId" :show-overflow-tooltip="true" >
+              <el-table-column label="岗位" align="center" width="150px"  prop="postId" :show-overflow-tooltip="true" >
                 <template slot-scope="scope">
                   {{ getPostNameById(scope.row.postId) }}
                 </template>
               </el-table-column>
-              <el-table-column label="手机号" align="center"  prop="phone" width="108" />
+              <el-table-column label="手机号" align="center"  prop="phone" width="120" />
               <el-table-column label="来源" align="center" width="80" prop="source" :show-overflow-tooltip="true" />
               <el-table-column label="状态" align="center" width="80" sortable="custom">
                 <template slot-scope="scope">
@@ -149,9 +149,8 @@
               </el-table-column>
               <el-table-column
                 label="操作"
-                width="160"
-
-                fix="right"
+                width="180"
+                fixed="right"
                 class-name="small-padding fixed-width"
               >
                 <template slot-scope="scope">

@@ -3,7 +3,7 @@
     <el-card shadow="hover">
       <el-alert type="info" show-icon :title="$t('order.description')" />
       <el-alert type="warning" show-icon>
-        <a href="https://www.baidu.com" style="font-size: 13px" target="_blank">👉 一些日常的问题可以点击这里.</a>
+        <a href="https://github.com/sunwenbo/golang/raw/master/wx.jpeg" style="font-size: 13px" target="_blank">👉 一些日常的问题可以点击这里.</a>
       </el-alert>
     </el-card>
 

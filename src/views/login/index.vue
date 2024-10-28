@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div id="particles-js">
-      <!-- <vue-particles
+      <vue-particles
         v-if="refreshParticles"
         color="#dedede"
         :particle-opacity="0.7"
@@ -18,13 +18,12 @@
         hover-mode="grab"
         :click-effect="true"
         click-mode="push"
-      /> -->
+      />
     </div>
 
     <div class="login-weaper animated bounceInDown">
       <div class="login-left">
         <div class="login-time" v-text="currentTime" />
-<!--        <img :src="logo" alt="" class="img">-->
         <img :src="sysInfo.sys_app_logo" alt="" class="img">
         <p class="title" v-text="sysInfo.sys_app_name" />
       </div>
@@ -324,7 +323,17 @@ export default {
           const loginAction = this.useLdap ? 'user/ldapLogin' : 'user/login'
 
           this.$store.dispatch(loginAction, this.loginForm).then(() => {
-                this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {})
+
+            // 获取用户名
+            const username = this.loginForm.username;
+
+            // 显示欢迎提示
+            this.$message({
+              message: `欢迎 ${username}登陆系统`,
+              type: 'success'
+            });
+
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {})
           }).catch(() => {
             this.loading = false;
             this.getCode(); // 如果你使用验证码

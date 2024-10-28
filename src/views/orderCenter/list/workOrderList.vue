@@ -293,7 +293,14 @@
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
-import { orderWorksList, updateOrderWork, getRelatedToMeWorks,getMyBacklogWorks,getCreatedByMeWorks } from '@/api/smart/workOrder'
+import {
+  orderWorksList,
+  updateOrderWork,
+  getRelatedToMeWorks,
+  getMyBacklogWorks,
+  getCreatedByMeWorks,
+  handleOrderWork
+} from '@/api/smart/workOrder'
 import { listUser } from '@/api/admin/sys-user'
 import {createOrderWorkNotify, sendFeishuNotify} from "@/api/smart/common";
 import {mapGetters} from "vuex";
@@ -548,39 +555,46 @@ export default {
     async reopenOrderWorks(row) {
       this.listLoading = true
       try {
-        this.updateQuery = row
-        this.updateQuery.status = 'reopened'
-        await updateOrderWork(this.updateQuery).then(response => {
-          if (response.code === 200) {
-            this.getOrderWorksList()
-            this.$showSuccess(`${this.updateQuery.title} 重新开启成功`)
-          } else {
-            this.$showError('重开出错，请重试或者联系管理员', response.data)
-          }
-        })
+        const response = await handleOrderWork({
+          id: row.id,
+          actionType: '2' // 1 为同意, 0 为拒绝 , 2 为重开 , 3为关闭
+        });
+
+        if (response.code === 200) {
+          // 显示审核通过的提示并跳转
+          this.$showSuccess('工单重开通过');
+          this.listLoading = false
+        }
       } catch (error) {
-        console.error('Failed to fetch order works:', error)
+        console.error('Failed to approve order:', error);
+        this.$showError('工单重开失败，请重试');
       } finally {
-        this.listLoading = false // 停止加载状态
+        // 请求完成后，无论成功失败，刷新页面数据
+        this.getOrderWorksList();
+        this.listLoading = false;
       }
     },
     async closeOrderWorks(row) {
       this.listLoading = true
       try {
-        this.updateQuery = row
-        this.updateQuery.status = 'closed'
-        await updateOrderWork(this.updateQuery).then(response => {
-          if (response.code === 200) {
-            this.getOrderWorksList()
-            this.$showSuccess(`${this.updateQuery.title} 工单结单成功`)
-          } else {
-            this.$showError('结单出错，请重试或者联系管理员', response.data)
-          }
-        })
+        const response = await handleOrderWork({
+          id: row.id,
+          actionType: '3' // 1 为同意, 0 为拒绝 , 2 为重开 , 3为关闭
+        });
+
+        if (response.code === 200) {
+          // 显示审核通过的提示并跳转
+          this.$showSuccess('工单结单通过');
+          this.listLoading = false
+
+        }
       } catch (error) {
-        console.error('Failed to fetch order works:', error)
+        console.error('Failed to approve order:', error);
+        this.$showError('手动关闭失败，请重试');
       } finally {
-        this.listLoading = false // 停止加载状态
+        // 请求完成后，无论成功失败，刷新页面数据
+        this.getOrderWorksList();
+        this.listLoading = false;
       }
     },
     handleResponse(response) {
@@ -846,9 +860,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.closeOrderWorks(row)
-      }).catch(() => {
+      }).then(() => {this.closeOrderWorks(row)}).catch(() => {
         this.$showInfo('已关闭')
       })
     },

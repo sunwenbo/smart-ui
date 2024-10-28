@@ -363,7 +363,7 @@ export default {
         // 评分完成，执行工单操作
         const response = await handleOrderWork({
           id: this.orderDetail.id,
-          actionType: '1' // 1 为同意 0 为拒绝
+          actionType: '1' // 1 为同意, 0 为拒绝 , 2 为重开 , 3为关闭
         });
 
         if (response.code === 200) {

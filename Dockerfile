@@ -16,3 +16,5 @@ CMD ["nginx", "-g", "daemon off;"]
 
 # 本地如果是arm架构，但是想构建为x86架构的镜像
 # docker buildx build --platform linux/amd64 -t registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui:latest . --load
+# docker push registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui:latest
+
