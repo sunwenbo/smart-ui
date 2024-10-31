@@ -648,7 +648,6 @@ export default {
       this.$router.go(-1)
     },
     hapEnableChange(newValue) {
-      console.log(newValue)
       this.k8sInfoForm.formData.configuration.deployment_conf.hpa.enable = newValue
     },
     lifeEnableChange(newValue) {

@@ -317,7 +317,6 @@ export default {
                 item.hostName.toLowerCase().includes(searchLower)
             );
           } else if (this.searchType === 'ip') {
-            console.log('this.originalExecMachineList=',this.originalExecMachineList)
             this.execMachineList = this.originalExecMachineList.filter(item =>
                 item.ip.toString().includes(this.searchContent)
             )

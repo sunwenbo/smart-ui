@@ -115,7 +115,14 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="通知:">
-              <el-select v-model="ruleForm.notice" multiple filterable clearable placeholder="请选择通知方式" style="width: 100%">
+              <el-select
+                v-model="ruleForm.notice"
+                multiple
+                filterable
+                clearable
+                placeholder="请选择通知方式"
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in messageNoticeType"
                   :key="item.value"
@@ -270,20 +277,19 @@ export default {
     }
   },
   created() {
-    // 先获取字典数据
-    Promise.all([this.getDicts('order_message_notice'),]).then(([noticeResponse]) => {
-        this.messageNoticeType = noticeResponse.data.map(item => ({
+    this.getDicts('order_message_notice')
+      .then(response => {
+        this.messageNoticeType = response.data.map(item => ({
           ...item,
-          value: parseInt(item.value)
+          value: item.value.toString() // 确保 value 为字符串格式
         }));
-
         // 继续获取其他数据
         this.getFlowList();
         this.getCategoryList();
       })
       .catch(error => {
         console.error('Failed to fetch data:', error);
-      });
+      })
   },
   computed: {
     inputPlaceholder() {
@@ -596,12 +602,13 @@ export default {
       })
     },
     getNoticeLabels(noticeArray) {
-      return noticeArray
+      return (noticeArray || [])
         .map(value => {
-          // 直接比较整数
-          const item = this.messageNoticeType.find(type => type.value === value);
+          // 转换为字符串进行比较
+          const item = this.messageNoticeType.find(type => type.value.toString() === value.toString());
           return item ? item.label : '';
-        }).filter(label => label) // 过滤掉空字符串
+        })
+        .filter(label => label) // 过滤掉空字符串
         .join(', '); // 用逗号分隔
     },
     formatJson(filterVal, jsonData) {

@@ -279,7 +279,6 @@ export default {
       // 更新任务类型时的解释器列表
       this.onTaskTypeChange(this.ruleForm.taskType);
       // 如果编辑任务时已有内容，不要覆盖它
-      console.log('this.ruleForm.content=',this.ruleForm.content)
       if (!this.ruleForm.content) {
         this.ruleForm.content = this.defaultContentTemplate;  // 仅在内容为空时设置默认模板
       }
@@ -342,7 +341,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log({id: row.id})
         deleteTask({id: row.id}).then(() => {
           this.$message({
             type: 'success',

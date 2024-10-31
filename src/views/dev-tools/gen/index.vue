@@ -28,12 +28,12 @@
         </el-form>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-          <!-- <el-button
-              type="primary"
-              icon="el-icon-download"
-              size="mini"
-              @click="handleGenTable"
-            >生成</el-button> -->
+            <!-- <el-button
+                type="primary"
+                icon="el-icon-download"
+                size="mini"
+                @click="handleGenTable"
+              >生成</el-button> -->
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -157,7 +157,7 @@
         <div class="el-dialog-container">
           <div class="tag-group">
             <!-- eslint-disable-next-line vue/valid-v-for -->
-            <el-tag v-for="(value, key) in preview.data" @click="codeChange(key)">
+            <el-tag v-for="(value, key) in preview.data" :key="key" @click="codeChange(key)">
               <template>
                 {{ key.substring(key.lastIndexOf('/')+1,key.indexOf('.go.template')) }}
               </template>
@@ -261,10 +261,10 @@ export default {
     getList() {
       this.loading = true
       listTable(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-        this.tableList = response.data.list
-        this.total = response.data.count
-        this.loading = false
-      }
+          this.tableList = response.data.list
+          this.total = response.data.count
+          this.loading = false
+        }
       )
     },
     codeChange(e) {
@@ -374,46 +374,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- .el-dialog-container ::v-deep{
-   overflow: hidden;
-   .el-scrollbar__view{
-     height: 100%;
-   }
-   .pre{
-     height: 546px;
-      overflow: hidden;
-      .el-scrollbar{
-        height: 100%;
-      }
-   }
-   .el-scrollbar__wrap::-webkit-scrollbar{
-     display: none;
-   }
- }
- ::v-deep .el-dialog__body{
-    padding: 0 20px;
-    margin:0;
+.el-dialog-container ::v-deep{
+  overflow: hidden;
+  .el-scrollbar__view{
+    height: 100%;
   }
-  .tag-group {
-    margin: 0 0 10px -10px;
+  .pre{
+    height: 546px;
+    overflow: hidden;
+    .el-scrollbar{
+      height: 100%;
+    }
   }
-  .tag-group .el-tag{
-    margin-left: 10px;
+  .el-scrollbar__wrap::-webkit-scrollbar{
+    display: none;
   }
+}
+::v-deep .el-dialog__body{
+  padding: 0 20px;
+  margin:0;
+}
+.tag-group {
+  margin: 0 0 10px -10px;
+}
+.tag-group .el-tag{
+  margin-left: 10px;
+}
 
-  .el-tag {
-    cursor: pointer;
-  }
+.el-tag {
+  cursor: pointer;
+}
 </style>
 
 <style lang="scss">
-  #codemirror {
-      height: auto;
-      margin: 0;
-      overflow: auto;
-    }
-  .CodeMirror {
-      border: 1px solid #eee;
-      height: 600px;
-    }
+#codemirror {
+  height: auto;
+  margin: 0;
+  overflow: auto;
+}
+.CodeMirror {
+  border: 1px solid #eee;
+  height: 600px;
+}
 </style>

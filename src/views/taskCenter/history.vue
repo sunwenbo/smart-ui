@@ -229,7 +229,6 @@ export default {
               item.hostName.toLowerCase().includes(searchLower)
             );
           } else if (this.searchType === 'taskid') {
-            console.log('this.originaltaskHistory=',this.originaltaskHistory)
             this.taskHistory = this.originaltaskHistory.filter(item =>
               item.ip.toString().includes(this.searchContent)
             )
