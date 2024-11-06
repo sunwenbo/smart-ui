@@ -22,3 +22,6 @@ CMD ["nginx", "-g", "daemon off;"]
 #  docker build -t registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui-arm:latest .
 # cd ~/Desktop/docker/
 # docker run -itd -p 80:80 -v ./default.conf:/etc/nginx/conf.d/default.conf --name smart-ui  registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui-arm:latest
+
+# 3. ubuntu服务器
+# docker run -itd    -p 80:80   -v /data/smart/default.conf:/etc/nginx/conf.d/default.conf   --name smart-ui   registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui:latest

@@ -204,7 +204,7 @@ export default {
         password: '123456',
         rememberMe: false,
         source: 'SYSTEM',
-        code: '1111',
+        code: '',
         uuid: ''
       },
       loginRules: {

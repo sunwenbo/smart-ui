@@ -20,7 +20,7 @@ Smart-API 工单系统是基于 Go 语言开发的后台管理系统，前后端
 
 ## 🎬 在线体验
 
-[点击访问在线演示](https://smart-api.example.com)
+[点击访问在线演示](http://180.76.135.68/login)
 
 > 默认登录账户: `admin` / `123456`
 
@@ -140,6 +140,7 @@ Smart-API 工单系统是基于 Go 语言开发的后台管理系统，前后端
    cp config/settings.full.yml config/settings.yml
    ```
    ⚠️：修改 `config/settings.yml` 中的数据库连接信息确保数据库配置正确，在执行初始化数据库前要先手动创建数据库。
+
   1. 配置文件中修改数据库信息
   2. 注意: settings.database 下对应的配置数据
   3. 确认log路径
@@ -260,19 +261,19 @@ env GOOS=linux GOARCH=amd64 go build main.go
 ### 使用docker启动
 非本地部署时要先初始化数据库的数据，可以使用本地编译后的二进制文件执行如下命令
 
-⚠️⚠️⚠️要修改settings.yml 文件中的数据库信息
+⚠️⚠️⚠️要修改settings.yml 文件中的数据库信息，同样需要手动创建smart-api库
    ```bash 
    ./smart-api migrate -c config/settings.yml 
    ```
 
 #### 后端
-本地如果是arm架构，但是想构建为x86架构的镜像
+本地如果是arm架构，但是想构建为x86架构的镜像，mac为例
    ```bash
    # 构建镜像
    docker buildx build --platform linux/amd64 -t registry.cn-beijing.aliyuncs.com/sunwenbo/smart-api:latest . --load    
    # 推向镜像仓库
    docker push registry.cn-beijing.aliyuncs.com/sunwenbo/smart-api:latest
-   # 启动后端服务，挂载settings.yml文件
+   # 启动后端服务，挂载settings.yml文件， 我将配置文件放在了"/data/config/" 目录下
    docker run -itd  \
      -p 8000:8000 \
      -v /data/config/:/home/service/config/ \
@@ -294,6 +295,7 @@ env GOOS=linux GOARCH=amd64 go build main.go
    ```
 ####  查看部署后状态
 ![img.png](static%2Fimage%2Fimg.png)
+
 ### 使用kubernetes部署
 初始化数据方法如上☝️
 

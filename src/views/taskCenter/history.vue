@@ -137,7 +137,7 @@ export default {
 
         // 动态生成 WebSocket URL，将工单 ID 传入
         const taskId = row.taskID;
-        const webSocketUrl = `ws://localhost:8000/api/v1/ws/task/${taskId}`
+        const webSocketUrl = `${process.env.VUE_APP_WEBSOCKET_HOST}/api/v1/ws/task/${taskId}`;
 
         // 创建并连接 WebSocket
         this.webSocketClient = new WebSocketClient(webSocketUrl, this.terminal, this.$store.state.user.token);

@@ -18,7 +18,7 @@ Based on Gin + Vue + Element UI (or Arco Design/Ant Design), the Smart-API syste
 
 ## 🎬 Online Demo
 
-[Click to access online demo](https://smart-api.example.com)
+[Click to access online demo](http://180.76.135.68/login)
 
 > Default login: `admin` / `123456`
 

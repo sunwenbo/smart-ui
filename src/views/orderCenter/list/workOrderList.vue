@@ -113,7 +113,7 @@
                 {{ formatDepartment(scope.row) }}
               </template>
             </el-table-column>
-            <el-table-column :label="$t('table.currentNode')" align="center" width="100px" prop="currentNode">
+            <el-table-column :label="$t('table.currentNode')" align="center" width="120px" prop="currentNode">
               <template slot-scope="scope">
                 <el-tag :type="scope.row.currentNode === '结束' ? 'success' : 'warning'">
                   {{ scope.row.currentNode }}
