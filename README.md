@@ -5,7 +5,6 @@ Smart-API 工单系统是基于 Go 语言开发的后台管理系统，前后端
 
 <img align="right" width="320" src="https://github.com/sunwenbo/golang/raw/master/logo.png">
 
-[![Build Status](https://github.com/sunwenbo/smart/workflows/build/badge.svg)](https://github.com/sunwenbo/smart-api)
 [![Static Badge](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/sunwenbo/smart-api/releases)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/sunwenbo/smart-api)
 
@@ -461,3 +460,4 @@ Smart-API 工单系统使用 [MIT 许可证](LICENSE) 开源，欢迎个人和�
 [MIT](https://github.com/sunwenbo/smart-api/blob/main/LICENSE.md)
 
 Copyright (c) 2022 sunwenbo
+g
