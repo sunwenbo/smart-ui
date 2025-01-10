@@ -414,6 +414,6 @@ export default {
 }
 .CodeMirror {
   border: 1px solid #eee;
-  height: 100%;
+  height: 600px;
 }
 </style>

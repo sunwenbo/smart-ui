@@ -162,7 +162,7 @@
               v-if="wfdDesignRefresh"
               :isView=false
               :data="ruleForm.structure"
-              :height="600"
+              :height="650"
               :users="users"
               :roles="roles"
               :groups="groups"

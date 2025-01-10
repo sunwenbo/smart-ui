@@ -301,7 +301,6 @@ import {
 import { listUser } from '@/api/admin/sys-user'
 import {createOrderWorkNotify, sendFeishuNotify} from "@/api/smart/common";
 import {mapGetters} from "vuex";
-import {getDeptList} from "@/api/admin/sys-dept";
 
 export default {
   name: 'OrderWorksList',

@@ -66,7 +66,7 @@
       },
       height: {
         type: Number,
-        default: 800,
+        default: 700,
       },
       lang: {
         type: String,
