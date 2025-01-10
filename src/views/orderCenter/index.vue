@@ -244,8 +244,8 @@ export default {
       color: #FCE38A;
       transition: color 0.3s;
       position: absolute;
-      top: -10px;
-      right: 5px
+      top: -15px;
+      right: -2px
     }
   }
   .custom-icon {

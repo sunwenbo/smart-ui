@@ -52,7 +52,7 @@
         </el-table>
       </div>
       <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.pageSize" @pagination="getTaskList" />
-      <el-dialog :title="dialogTaskVisibleName === 1 ? '新建任务' : '编辑任务'" :visible.sync="dialogVisible" width="70%" style="margin-top: 0">
+      <el-dialog :title="dialogTaskVisibleName === 1 ? '新建任务' : '编辑任务'" :visible.sync="dialogVisible" width="70%" style="margin-top: 10px">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
           <el-row :gutter="20">
             <el-col :span="24">
@@ -80,7 +80,7 @@
           <el-form-item label="描述:" prop="description">
             <el-input v-model="ruleForm.description" placeholder="请输入流程描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" style="width: 100%" />
           </el-form-item>
-          <el-form-item label="内容:" prop="content">
+          <el-form-item label="内容:" prop="content" style="height: 300px">
             <codemirror v-model="ruleForm.content" :options="editorOptions" class="code-editor" />
           </el-form-item>
         </el-form>
@@ -399,12 +399,12 @@ export default {
 
 /* 自定义样式 */
 .code-editor {
-  height: 303px;              /* 设置容器高度 */
+  height: auto;              /* 设置容器高度 */
   border: 1px solid #dcdfe6;  /* 增加边框 */
   border-radius: 2px;         /* 可选：圆角 */
   padding: 1px;               /* 可选：内边距 */
   box-sizing: border-box;     /* 确保内边距不会影响整体尺寸 */
-  line-height: 20px;          /* 设置行高 */
-  font-size: 14px;            /* 字体大小 */
+  line-height: 23px;          /* 设置行高 */
+  font-size: 15px;            /* 字体大小 */
 }
 </style>
