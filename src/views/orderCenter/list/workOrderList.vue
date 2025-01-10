@@ -109,9 +109,6 @@
             </el-table-column>
             <el-table-column :label="$t('table.title')" min-width="300px" align="center" prop="title" />
             <el-table-column :label="$t('table.department')" min-width="150px" align="center" prop="department">
-              <template slot-scope="scope">
-                {{ formatDepartment(scope.row) }}
-              </template>
             </el-table-column>
             <el-table-column :label="$t('table.currentNode')" align="center" width="120px" prop="currentNode">
               <template slot-scope="scope">
@@ -210,7 +207,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="部门:">
-                <el-input :value="formattedDepartment" :disabled="true" style="width: 100%" />
+                <el-input v-model="currentRow.department" :disabled="true" style="width: 100%" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -244,7 +241,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="部门:">
-                <el-input :value="formattedDepartment" :disabled="true" style="width: 100%" />
+                <el-input v-model="currentRow.department" :disabled="true" style="width: 100%" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -304,6 +301,7 @@ import {
 import { listUser } from '@/api/admin/sys-user'
 import {createOrderWorkNotify, sendFeishuNotify} from "@/api/smart/common";
 import {mapGetters} from "vuex";
+import {getDeptList} from "@/api/admin/sys-dept";
 
 export default {
   name: 'OrderWorksList',
@@ -409,9 +407,6 @@ export default {
     inputPlaceholder() {
       return this.searchType === 'title' ? '请输入标题信息' : '请输入工单ID'
     },
-    formattedDepartment() {
-      return this.formatDepartment(this.currentRow)
-    }
   },
   watch: {
     orderWorks: {
@@ -697,18 +692,6 @@ export default {
         value,
         label: value
       }))
-    },
-    formatDepartment(row) {
-      switch (row.department) {
-        case 'open-platform':
-          return '开放平台'
-        case 'hz-enterprise':
-          return '杭州企业解决方案'
-        case 'bj-enterprise':
-          return '北京企业解决方案'
-        default:
-          return '开放平台'
-      }
     },
     formatPriority(row) {
       const priority = this.orderWorksPriority.find(item => item.value === row.priority)
