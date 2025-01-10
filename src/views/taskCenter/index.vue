@@ -399,7 +399,7 @@ export default {
 
 /* 自定义样式 */
 .code-editor {
-  height: auto;              /* 设置容器高度 */
+  height: 300px;              /* 设置容器高度 */
   border: 1px solid #dcdfe6;  /* 增加边框 */
   border-radius: 2px;         /* 可选：圆角 */
   padding: 1px;               /* 可选：内边距 */
