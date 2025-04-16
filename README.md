@@ -289,16 +289,6 @@ env GOOS=linux GOARCH=amd64 go build main.go
      registry.cn-beijing.aliyuncs.com/sunwenbo/smart-api:latest   
   ```
 #### 前端
-⚠️⚠️⚠️要修改.env.production文件中配置信息
-   ```bash 
-   ENV = 'production'
-   
-   # base api
-   VUE_APP_BASE_API = 'http://${你的IP}:8000'
-   
-   VUE_APP_WEBSOCKET_HOST=ws://${你的IP}:8000
-   ```
-
    ```bash
    # 构建镜像
    docker buildx build --platform linux/amd64 -t registry.cn-beijing.aliyuncs.com/sunwenbo/smart-ui:latest . --load
