@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询菜单列表
 export function listMenu(query) {
   return request({
-    url: '/api/v1/menu',
+    url: '/v1/menu',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listMenu(query) {
 // 查询菜单详细
 export function getMenu(menuId) {
   return request({
-    url: '/api/v1/menu/' + menuId,
+    url: '/v1/menu/' + menuId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getMenu(menuId) {
 // 查询菜单下拉树结构
 // export function treeselect() {
 //   return request({
-//     url: '/api/v1/menuTreeselect',
+//     url: '/v1/menuTreeselect',
 //     method: 'get'
 //   })
 // }
@@ -28,7 +28,7 @@ export function getMenu(menuId) {
 // 根据角色ID查询菜单下拉树结构
 export function roleMenuTreeselect(roleId) {
   return request({
-    url: '/api/v1/roleMenuTreeselect/' + roleId,
+    url: '/v1/roleMenuTreeselect/' + roleId,
     method: 'get'
   })
 }
@@ -36,7 +36,7 @@ export function roleMenuTreeselect(roleId) {
 // 新增菜单
 export function addMenu(data) {
   return request({
-    url: '/api/v1/menu',
+    url: '/v1/menu',
     method: 'post',
     data: data
   })
@@ -45,7 +45,7 @@ export function addMenu(data) {
 // 修改菜单
 export function updateMenu(data, id) {
   return request({
-    url: '/api/v1/menu/' + id,
+    url: '/v1/menu/' + id,
     method: 'put',
     data: data
   })
@@ -54,7 +54,7 @@ export function updateMenu(data, id) {
 // 删除菜单
 export function delMenu(data) {
   return request({
-    url: '/api/v1/menu',
+    url: '/v1/menu',
     method: 'delete',
     data: data
   })

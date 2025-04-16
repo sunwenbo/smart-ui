@@ -3,10 +3,20 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+
+// 动态设置 baseURL
+const getBaseUrl = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return `${process.env.VUE_APP_BASE_API}${process.env.VUE_APP_API_PATH}`
+  } else {
+    // 生产环境：如果 VUE_APP_BASE_API 有值则使用，否则使用 VUE_APP_API_PATH
+    return process.env.VUE_APP_BASE_API || process.env.VUE_APP_API_PATH
+  }
+}
+
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
+  baseURL: getBaseUrl(), // 使用动态 baseURL
   timeout: 10000 // request timeout
 })
 
@@ -115,5 +125,17 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+
+// 动态获取 WebSocket 地址
+export const getWebSocketUrl = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.VUE_APP_WEBSOCKET_HOST
+  } else {
+    // 生产环境：如果配置了完整地址则使用，否则基于当前域名构建
+    return process.env.VUE_APP_WEBSOCKET_HOST ||
+      `ws://${window.location.host}${process.env.VUE_APP_API_PATH.replace('/api', '/ws')}`
+  }
+}
 
 export default service

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询字典数据列表
 export function listData(query) {
   return request({
-    url: '/api/v1/dict/data?dictType=' + query.dictType,
+    url: '/v1/dict/data?dictType=' + query.dictType,
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listData(query) {
 // 查询字典数据详细
 export function getData(dictCode) {
   return request({
-    url: '/api/v1/dict/data/' + dictCode,
+    url: '/v1/dict/data/' + dictCode,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getData(dictCode) {
 // 根据字典类型查询字典数据信息
 export function getDicts(dictType) {
   return request({
-    url: '/api/v1/dict-data/option-select?dictType=' + dictType,
+    url: '/v1/dict-data/option-select?dictType=' + dictType,
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function getDicts(dictType) {
 // 新增字典数据
 export function addData(data) {
   return request({
-    url: '/api/v1/dict/data',
+    url: '/v1/dict/data',
     method: 'post',
     data: data
   })
@@ -37,7 +37,7 @@ export function addData(data) {
 // 修改字典数据
 export function updateData(data) {
   return request({
-    url: '/api/v1/dict/data/' + data.dictCode,
+    url: '/v1/dict/data/' + data.dictCode,
     method: 'put',
     data: data
   })
@@ -46,7 +46,7 @@ export function updateData(data) {
 // 删除字典数据
 export function delData(dictCode) {
   return request({
-    url: '/api/v1/dict/data',
+    url: '/v1/dict/data',
     method: 'delete',
     data: dictCode
   })
@@ -55,7 +55,7 @@ export function delData(dictCode) {
 // 导出字典数据
 export function exportData(query) {
   return request({
-    url: '/api/v1/dict/data/export',
+    url: '/v1/dict/data/export',
     method: 'get',
     params: query
   })

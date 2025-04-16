@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // login 登陆
 export function login(data) {
   return request({
-    url: '/api/v1/login',
+    url: '/v1/login',
     method: 'post',
     data
   })
@@ -12,7 +12,7 @@ export function login(data) {
 // Ldap login 登陆
 export function ldapLogin(data) {
   return request({
-    url: '/api/v1/ldap/login',
+    url: '/v1/ldap/login',
     method: 'post',
     data
   })
@@ -21,7 +21,7 @@ export function ldapLogin(data) {
 // logout 退出
 export function logout() {
   return request({
-    url: '/api/v1/logout',
+    url: '/v1/logout',
     method: 'post'
   })
 }
@@ -38,7 +38,7 @@ export function refreshtoken(data) {
 // getInfo 获取用户基本信息
 export function getInfo() {
   return request({
-    url: '/api/v1/getinfo',
+    url: '/v1/getinfo',
     method: 'get'
   })
 }

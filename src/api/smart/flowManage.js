@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取所有流程
 export async function getFlowList(params) {
   return request({
-    url: '/api/v1/flow-manage',
+    url: '/v1/flow-manage',
     method: 'get',
     params
   })
@@ -19,7 +19,7 @@ export function flowDetails(id) {
 // 创建流程
 export function createFlow(data) {
   return request({
-    url: '/api/v1/flow-manage',
+    url: '/v1/flow-manage',
     method: 'post',
     data
   })
@@ -36,7 +36,7 @@ export function cloneFlow(id) {
 // 更新流程
 export function updateFlow(data) {
   return request({
-    url: '/api/v1/flow-manage',
+    url: '/v1/flow-manage',
     method: 'put',
     data
   })
@@ -45,7 +45,7 @@ export function updateFlow(data) {
 // 删除流程
 export function deleteFlow(data) {
   return request({
-    url: '/api/v1/flow-manage',
+    url: '/v1/flow-manage',
     method: 'delete',
     data
   })

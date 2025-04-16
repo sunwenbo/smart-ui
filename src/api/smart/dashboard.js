@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取工单统计
 export async function getOrderStatistics(params) {
   return request({
-    url: '/api/v1/statistics/orders',
+    url: '/v1/statistics/orders',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export async function getOrderStatistics(params) {
 // 根据周或月统计工单数量，以及个人提交排行榜
 export async function getOrderCountByPeriod(params) {
   return request({
-    url: '/api/v1/statistics/orders/count',
+    url: '/v1/statistics/orders/count',
     method: 'get',
     params
   })
@@ -22,7 +22,7 @@ export async function getOrderCountByPeriod(params) {
 // 根据周或月统计获取评分统计
 export async function getOrderRatingsByPeriod(params) {
   return request({
-    url: '/api/v1/statistics/ratings',
+    url: '/v1/statistics/ratings',
     method: 'get',
     params
   })

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取工单列表所有数据，支持分页
 export async function orderWorksList(params) {
   return request({
-    url: '/api/v1/order-works',
+    url: '/v1/order-works',
     method: 'get',
     params
   })
@@ -19,7 +19,7 @@ export async function orderWorksSearch(id) {
 // 获取我创建的工单
 export async function getCreatedByMeWorks(params) {
   return request({
-    url: '/api/v1/order-works/createdByMe',
+    url: '/v1/order-works/createdByMe',
     method: 'get',
     params
   })
@@ -28,7 +28,7 @@ export async function getCreatedByMeWorks(params) {
 // 获取我相关的工单
 export async function getRelatedToMeWorks(params) {
   return request({
-    url: '/api/v1/order-works/relatedToMe',
+    url: '/v1/order-works/relatedToMe',
     method: 'get',
     params
   })
@@ -37,7 +37,7 @@ export async function getRelatedToMeWorks(params) {
 // 获取我待处理的工单
 export async function getMyBacklogWorks(params) {
   return request({
-    url: '/api/v1/order-works/myBacklog',
+    url: '/v1/order-works/myBacklog',
     method: 'get',
     params
   })
@@ -46,7 +46,7 @@ export async function getMyBacklogWorks(params) {
 // 创建工单
 export async function createOrderWork(data) {
   return request({
-    url: '/api/v1/order-works',
+    url: '/v1/order-works',
     method: 'post',
     data
   })
@@ -55,7 +55,7 @@ export async function createOrderWork(data) {
 // 更新工单信息
 export async function updateOrderWork(data) {
   return request({
-    url: '/api/v1/order-works',
+    url: '/v1/order-works',
     method: 'put',
     data
   })
@@ -64,7 +64,7 @@ export async function updateOrderWork(data) {
 // 删除工单
 export async function deleteOrderWork(data) {
   return request({
-    url: '/api/v1/order-works',
+    url: '/v1/order-works',
     method: 'delete',
     data
   })
@@ -73,7 +73,7 @@ export async function deleteOrderWork(data) {
 // 获取工单变更历史记录
 export async function orderWorkHistory(params) {
   return request({
-    url: '/api/v1/order-works/history',
+    url: '/v1/order-works/history',
     method: 'get',
     params
   })
@@ -83,7 +83,7 @@ export async function orderWorkHistory(params) {
 // 处理工单
 export async function handleOrderWork(data) {
   return request({
-    url: '/api/v1/order-works/handle',
+    url: '/v1/order-works/handle',
     method: 'put',
     data
   })

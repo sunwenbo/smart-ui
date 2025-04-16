@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取所有任务
 export async function getTaskList(params) {
   return request({
-    url: '/api/v1/order-task',
+    url: '/v1/order-task',
     method: 'get',
     params
   })
@@ -21,7 +21,7 @@ export async function getTaskId(id) {
 // 创建任务
 export function createTask(data) {
   return request({
-    url: '/api/v1/order-task',
+    url: '/v1/order-task',
     method: 'post',
     data
   })
@@ -31,7 +31,7 @@ export function createTask(data) {
 // 更新任务
 export function updateTask(data) {
   return request({
-    url: '/api/v1/order-task',
+    url: '/v1/order-task',
     method: 'put',
     data
   })
@@ -40,7 +40,7 @@ export function updateTask(data) {
 // 删除删除
 export function deleteTask(data) {
   return request({
-    url: '/api/v1/order-task',
+    url: '/v1/order-task',
     method: 'delete',
     data
   })
@@ -50,7 +50,7 @@ export function deleteTask(data) {
 // 获取所有历史执行任务
 export async function getTaskHistory(params) {
   return request({
-    url: '/api/v1/order-task/history',
+    url: '/v1/order-task/history',
     method: 'get',
     params
   })
