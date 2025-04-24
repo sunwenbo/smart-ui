@@ -12,7 +12,7 @@ export async function getTaskList(params) {
 // 根据id获取指定的任务
 export async function getTaskId(id) {
   return request({
-    url: `/api/v1/order-task/${id}`,
+    url: `/v1/order-task/${id}`,
     method: 'get'
   })
 }
@@ -59,7 +59,7 @@ export async function getTaskHistory(params) {
 // 获取所有历史执行任务
 export async function getTaskHistoryLog(id) {
   return request({
-    url: `/api/v1/order-task/history/${id}/logs`,
+    url: `/v1/order-task/history/${id}/logs`,
     method: 'get',
     id
   })

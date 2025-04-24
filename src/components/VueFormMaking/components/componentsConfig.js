@@ -420,7 +420,7 @@ export const advanceComponents = [
       headers: {},
       // isQiniu: false,
       tip: '', // 提示说明
-      action: 'http://ipaddress:port/api/v1/public/uploadFile',
+      action: 'http://ipaddress:port/v1/public/uploadFile',
       labelWidth: 100,
       labelWidthDisabled: false,
       labelWidthStatus: true,

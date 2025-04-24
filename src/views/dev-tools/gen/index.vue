@@ -291,7 +291,7 @@ export default {
         this.msgError('请选择要生成的数据')
         return
       }
-      downLoadFile('/api/v1/gen/gencode/' + ids)
+      downLoadFile('/v1/gen/gencode/' + ids)
     },
     /** 打开导入表弹窗 */
     openImportTable() {

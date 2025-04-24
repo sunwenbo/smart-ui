@@ -12,7 +12,7 @@ export async function flowTemplateList(params) {
 // 根据模板ID获取模板数据
 export async function flowTemplateListId(id) {
   return request({
-    url: `/api/v1/flow-templates/${id}`,
+    url: `/v1/flow-templates/${id}`,
     method: 'get',
   })
 }

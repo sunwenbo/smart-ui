@@ -11,7 +11,7 @@ export async function getFlowList(params) {
 // 流程详情
 export function flowDetails(id) {
   return request({
-    url: `/api/v1/flow-manage/${id}`,
+    url: `/v1/flow-manage/${id}`,
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function createFlow(data) {
 // 克隆流程
 export function cloneFlow(id) {
   return request({
-    url: `/api/v1/flow-manage/${id}`,
+    url: `/v1/flow-manage/${id}`,
     method: 'post',
   })
 }

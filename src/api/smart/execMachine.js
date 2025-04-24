@@ -12,7 +12,7 @@ export async function getExecMachine(params) {
 // 根据id获取指定的执行节点
 export async function getExecMachineId(id) {
   return request({
-    url: `/api/v1/exec-machine/${id}`,
+    url: `/v1/exec-machine/${id}`,
     method: 'get'
   })
 }

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取所有留言
 export async function getOrderComment(id) {
   return request({
-    url: `/api/v1/order-comments/${id}`,
+    url: `/v1/order-comments/${id}`,
     method: 'get',
     id
   })
@@ -42,7 +42,7 @@ export function deleteOrderComment(data) {
 // 获取指定工单的评分
 export async function getOrderRating(id) {
   return request({
-    url: `/api/v1/order-ratings/${id}`,
+    url: `/v1/order-ratings/${id}`,
     method: 'get',
     id
   })
