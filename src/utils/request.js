@@ -10,7 +10,7 @@ const getBaseUrl = () => {
     return `${process.env.VUE_APP_BASE_API}${process.env.VUE_APP_API_PATH}`
   } else {
     // 生产环境：如果 VUE_APP_BASE_API 有值则使用，否则使用 VUE_APP_API_PATH
-    return process.env.VUE_APP_BASE_API || process.env.VUE_APP_API_PATH
+    return process.env.VUE_APP_BASE_API + process.env.VUE_APP_API_PATH
   }
 }
 
