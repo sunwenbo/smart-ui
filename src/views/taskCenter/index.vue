@@ -81,7 +81,7 @@
             <el-input v-model="ruleForm.description" placeholder="请输入流程描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" style="width: 100%" />
           </el-form-item>
           <el-form-item label="内容:" prop="content" style="height: 300px">
-            <div style="height: 100%; overflow: auto;">
+            <div>
               <codemirror v-model="ruleForm.content" :options="editorOptions" class="code-editor" />
             </div>
           </el-form-item>
@@ -400,7 +400,7 @@ export default {
 
 /* 自定义样式 */
 .code-editor {
-  height: 500px;              /* 设置容器高度 */
+  /* 设置容器高度 */
   border: 1px solid #dcdfe6;  /* 增加边框 */
   border-radius: 2px;         /* 可选：圆角 */
   padding: 1px;               /* 可选：内边距 */
