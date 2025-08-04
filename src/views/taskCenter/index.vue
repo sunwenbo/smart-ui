@@ -80,7 +80,7 @@
           <el-form-item label="描述:" prop="description">
             <el-input v-model="ruleForm.description" placeholder="请输入流程描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" style="width: 100%" />
           </el-form-item>
-          <el-form-item label="内容:" prop="content" style="height: 300px">
+          <el-form-item label="内容:" prop="content" style="height: auto">
             <div>
               <codemirror v-model="ruleForm.content" :options="editorOptions" class="code-editor" />
             </div>
