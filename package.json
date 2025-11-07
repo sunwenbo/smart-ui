@@ -5,7 +5,7 @@
   "author": "https://github.com/wenjianzhang",
   "license": "MIT",
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "dev": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "preview": "node build/index.js --preview",
@@ -120,7 +120,7 @@
     "chokidar": "3.4.2",
     "compression-webpack-plugin": "^4.0.0",
     "connect": "3.7.0",
-    "eslint": "7.6.0",
+    "eslint": "^6.8.0",
     "eslint-plugin-vue": "6.2.2",
     "html-webpack-plugin": "4.3.0",
     "husky": "4.2.5",
