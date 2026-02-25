@@ -1,14 +1,14 @@
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
+import { buildApiUrl } from '@/utils/url'
 
 const mimeMap = {
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   zip: 'application/zip'
 }
 
-const baseUrl = process.env.VUE_APP_BASE_API
 export function downLoadZip(str, filename) {
-  var url = baseUrl + str
+  var url = buildApiUrl(str)
   axios({
     method: 'get',
     url: url,
@@ -20,7 +20,7 @@ export function downLoadZip(str, filename) {
 }
 
 export function downLoadFile(str) {
-  var url = baseUrl + str
+  var url = buildApiUrl(str)
   const aLink = document.createElement('a')
   aLink.href = url
   document.body.appendChild(aLink)

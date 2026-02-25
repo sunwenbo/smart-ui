@@ -1,5 +1,6 @@
 import { login, ldapLogin, logout, getInfo, refreshtoken } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { buildHostUrl } from '@/utils/url'
 import router, { resetRouter } from '@/router'
 import storage from '@/utils/storage'
 
@@ -31,7 +32,7 @@ const mutations = {
     if (avatar.indexOf('http') !== -1) {
       state.avatar = avatar
     } else {
-      state.avatar = process.env.VUE_APP_BASE_API + avatar
+      state.avatar = buildHostUrl(avatar)
     }
   },
   SET_ROLES: (state, roles) => {

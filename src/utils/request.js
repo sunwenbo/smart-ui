@@ -2,16 +2,14 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import { getApiBaseUrl, buildApiUrl, buildHostUrl } from '@/utils/url'
+
+export { getApiBaseUrl, buildApiUrl, buildHostUrl } from '@/utils/url'
 
 
 // 动态设置 baseURL
 const getBaseUrl = () => {
-  if (process.env.NODE_ENV === 'development') {
-    return `${process.env.VUE_APP_BASE_API}${process.env.VUE_APP_API_PATH}`
-  } else {
-    // 生产环境：如果 VUE_APP_BASE_API 有值则使用，否则使用 VUE_APP_API_PATH
-    return process.env.VUE_APP_BASE_API + process.env.VUE_APP_API_PATH
-  }
+  return getApiBaseUrl()
 }
 
 // create an axios instance

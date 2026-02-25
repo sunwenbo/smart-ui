@@ -55,6 +55,7 @@
 import store from '@/store'
 import { VueCropper } from 'vue-cropper'
 import { uploadAvatar } from '@/api/admin/sys-user'
+import { buildHostUrl } from '@/utils/url'
 
 export default {
   components: { VueCropper },
@@ -119,7 +120,7 @@ export default {
         uploadAvatar(formData).then(response => {
           if (response.code === 200) {
             this.open = false
-            this.options.img = process.env.VUE_APP_BASE_API + response.data
+            this.options.img = buildHostUrl(response.data)
             this.msgSuccess(response.msg)
           } else {
             this.msgError(response.msg)

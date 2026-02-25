@@ -327,6 +327,7 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, exportUser, resetUserPwd, changeUserStatus, importTemplate } from '@/api/admin/sys-user'
 import { getToken } from '@/utils/auth'
+import { buildApiUrl } from '@/utils/url'
 
 import { listPost } from '@/api/admin/sys-post'
 import { listRole } from '@/api/admin/sys-role'
@@ -391,7 +392,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: 'Bearer ' + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + '/system/user/importData'
+        url: buildApiUrl('/system/user/importData')
       },
       // 查询参数
       queryParams: {
