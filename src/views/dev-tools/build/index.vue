@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { buildHostUrl } from '@/utils/url'
 
 export default {
   components: {
@@ -18,7 +19,7 @@ export default {
   },
   data() {
     return {
-      src: process.env.VUE_APP_BASE_API + '/form-generator/index.html',
+      src: buildHostUrl('/form-generator/index.html'),
       height: document.documentElement.clientHeight - 94.5 + 'px;',
       loading: true
     }

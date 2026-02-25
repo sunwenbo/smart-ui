@@ -15,12 +15,14 @@
   </BasicLayout>
 </template>
 <script>
+import { buildHostUrl } from '@/utils/url'
+
 export default {
   name: 'Swagger',
   components: {},
   data() {
     return {
-      src: process.env.VUE_APP_BASE_API + '/swagger/smart/index.html',
+      src: buildHostUrl('/swagger/smart/index.html'),
       height: document.documentElement.clientHeight - 94.5 + 'px;',
       loading: true
     }

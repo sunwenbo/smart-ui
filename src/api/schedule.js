@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function list(data) {
   return request({
-    url: 'api/v1/schedule/list',
+    url: '/v1/schedule/list',
     method: 'get',
     params: data
   })
@@ -10,7 +10,7 @@ export function list(data) {
 
 export function add(data) {
   return request({
-    url: 'api/v1/schedule/add',
+    url: '/v1/schedule/add',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function add(data) {
 
 export function edit(data) {
   return request({
-    url: 'api/v1/schedule/update',
+    url: '/v1/schedule/update',
     method: 'put',
     data
   })
@@ -26,7 +26,7 @@ export function edit(data) {
 
 export function getSchedule(id) {
   return request({
-    url: 'api/v1/schedule/query',
+    url: '/v1/schedule/query',
     method: 'get',
     params: {
       id
@@ -36,7 +36,7 @@ export function getSchedule(id) {
 
 export function deleteSchedule(data) {
   return request({
-    url: 'api/v1/schedule/delete',
+    url: '/v1/schedule/delete',
     method: 'delete',
     data
   })

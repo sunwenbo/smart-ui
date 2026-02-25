@@ -52,6 +52,7 @@ import {
 } from '@/api/admin/sys-config'
 
 import { getToken } from '@/utils/auth'
+import { buildApiUrl, buildHostUrl } from '@/utils/url'
 
 export default {
   name: 'SysConfigSet',
@@ -94,7 +95,7 @@ export default {
           trigger: 'change'
         }]
       },
-      sys_app_logoAction: process.env.VUE_APP_BASE_API + '/v1/public/uploadFile',
+      sys_app_logoAction: buildApiUrl('/v1/public/uploadFile'),
       sys_app_logofileList: [],
       sys_index_skinNameOptions: [{
         'label': '蓝色',
@@ -152,7 +153,7 @@ export default {
     },
     uploadSuccess(response, file, fileList) {
       console.log('sss')
-      this.form.sys_app_logo = process.env.VUE_APP_BASE_API + response.data.full_path
+      this.form.sys_app_logo = buildHostUrl(response.data.full_path)
       console.log(response.data.full_path)
     },
     /** 查询参数列表 */
