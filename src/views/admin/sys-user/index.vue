@@ -625,7 +625,11 @@ export default {
               }
             })
           } else {
-            addUser(this.form).then(response => {
+          const addForm = {
+              ...this.form,
+              source: this.form.source || 'SYSTEM'
+            }
+            addUser(addForm).then(response => {
               if (response.code === 200) {
                 this.msgSuccess(response.msg)
                 this.open = false
